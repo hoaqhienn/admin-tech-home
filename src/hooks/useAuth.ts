@@ -1,0 +1,8 @@
+// hooks/useAuth.ts
+import { useSelector } from 'react-redux';
+import { RootState } from 'store';
+
+export const useAuth = () => {
+  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
+  return { isLogin };
+};

@@ -8,12 +8,18 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import IconifyIcon from 'components/base/IconifyIcon';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from 'store/slices/authSlice';
 
 interface User {
   [key: string]: string;
 }
 
 const Signin = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [user, setUser] = useState<User>({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,6 +30,11 @@ const Signin = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(user);
+
+    const token = '123';
+    
+    dispatch(login(token));
+    navigate('/');    
   };
 
   return (

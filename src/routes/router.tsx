@@ -6,6 +6,7 @@ import MainLayout from 'layouts/main-layout';
 import Splash from 'components/loader/Splash';
 import PageLoader from 'components/loader/PageLoader';
 import AuthLayout from 'layouts/auth-layout';
+import ProtectedRoute from 'components/loader/ProtectedRoute';
 
 const App = lazy(() => import('App'));
 const Dashboard = lazy(() => import('pages/dashboard/Dashbaord'));
@@ -25,7 +26,9 @@ const router = createBrowserRouter(
           element: (
             <MainLayout>
               <Suspense fallback={<PageLoader />}>
-                <Outlet />
+                <ProtectedRoute>
+                  <Outlet />
+                </ProtectedRoute>
               </Suspense>
             </MainLayout>
           ),
