@@ -87,6 +87,11 @@ const sitemap: MenuItem[] = [
         path: '/',
       },
       {
+        name: 'Events',
+        pathName: 'events',
+        path: paths.events,
+      },
+      {
         name: 'Service',
         pathName: 'service',
         path: '/',
