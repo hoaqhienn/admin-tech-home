@@ -94,7 +94,7 @@ const sitemap: MenuItem[] = [
       {
         name: 'Service',
         pathName: 'service',
-        path: '/',
+        path: paths.services,
       },
       {
         name: 'Settings',

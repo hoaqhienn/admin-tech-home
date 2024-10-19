@@ -79,11 +79,7 @@ const Events = () => {
       };
 
       await api.put(`/admin/event/${currentEvent.eventId}`, updatedEvent);
-      setEvent(
-        event.map((a) =>
-          a.eventId === currentEvent.eventId ? updatedEvent : a,
-        ),
-      );
+      setEvent(event.map((a) => (a.eventId === currentEvent.eventId ? updatedEvent : a)));
     } else {
       // Add new event
       const createdAt = new Date().toISOString();
@@ -114,8 +110,7 @@ const Events = () => {
       const response = await api.get('/admin/event/getAll');
       if (response.status) {
         setEvent(response.data);
-        console.log('Events:',event);
-        
+        console.log('Events:', event);
       }
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -124,7 +119,7 @@ const Events = () => {
 
   useEffect(() => {
     console.log('Fetching events...');
-    
+
     fetchAllEvents();
   }, []);
 

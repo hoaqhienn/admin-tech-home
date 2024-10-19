@@ -23,4 +23,5 @@ export default {
   floors: `/${rootPaths.propertiesRoot}/floors`,
   apartments: `/${rootPaths.propertiesRoot}/apartments`,
   events: `/${rootPaths.moreRoot}/events`,
+  services: `/${rootPaths.moreRoot}/services`,
 };

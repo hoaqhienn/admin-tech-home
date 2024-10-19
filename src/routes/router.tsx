@@ -15,6 +15,7 @@ const Buildings = lazy(() => import('pages/properties/Buildings'));
 const Floors = lazy(() => import('pages/properties/Floors'));
 const Apartments = lazy(() => import('pages/properties/Apartments'));
 const Events = lazy(() => import('pages/more/Events'));
+const Services = lazy(() => import('pages/more/Services'));
 
 const router = createBrowserRouter(
   [
@@ -56,6 +57,10 @@ const router = createBrowserRouter(
             {
               path: paths.events,
               element: <Events />,
+            },
+            {
+              path: paths.services,
+              element: <Services />,
             }
           ],
         },
