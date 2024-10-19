@@ -1,6 +1,5 @@
 // components/ProtectedRoute.tsx
 import { Navigate } from 'react-router-dom';
-import { useAuth } from 'hooks/useAuth';
 import { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
@@ -8,9 +7,9 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isLogin } = useAuth();
+  const token = localStorage.getItem('_token');
 
-  if (!isLogin) {
+  if (!token) {
     return <Navigate to="/auth/signin" replace />;
   }
 

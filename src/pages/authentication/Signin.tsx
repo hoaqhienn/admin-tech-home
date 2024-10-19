@@ -9,8 +9,6 @@ import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { login } from 'store/slices/authSlice';
 import { api } from 'apis';
 
 interface User {
@@ -19,7 +17,7 @@ interface User {
 
 const Signin = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [user, setUser] = useState<User>({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -34,14 +32,11 @@ const Signin = () => {
 
     try {
       const response : any = await api.post('/admin/login', user);
-      console.log(response);
-      
+      console.log(response);    
       if (response.status) {
-        dispatch(login(response.token));
+        localStorage.setItem('_token', JSON.stringify(response.data.token));
         navigate('/');
-      }
-      console.log(response);
-      
+      }     
     } catch (error) {
       console.error('Login failed:', error);
       alert('An error occurred during login.');  

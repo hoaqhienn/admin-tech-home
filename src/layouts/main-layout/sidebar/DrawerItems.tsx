@@ -13,13 +13,10 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import LogoImg from 'assets/images/logo.png';
 import sitemap from 'routes/sitemap';
 import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { logout } from 'store/slices/authSlice';
 
 const DrawerItems = () => {
-  const dispatch = useDispatch(); 
   const navigate = useNavigate(); 
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -33,7 +30,7 @@ const DrawerItems = () => {
   };
 
   const handleConfirmLogout = () => {
-    dispatch(logout()); 
+    localStorage.removeItem('_token');
     navigate('/auth/signin');
     setOpenDialog(false);
   };

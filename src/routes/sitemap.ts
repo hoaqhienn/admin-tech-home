@@ -1,3 +1,5 @@
+import paths from './paths';
+
 export interface SubMenuItem {
   name: string;
   pathName: string;
@@ -35,17 +37,17 @@ const sitemap: MenuItem[] = [
       {
         name: 'Buildings',
         pathName: 'buildings',
-        path: '/',
+        path: paths.buildings,
       },
       {
         name: 'Floors',
         pathName: 'floors',
-        path: '/',
+        path: paths.floors,
       },
       {
         name: 'Apartments',
         pathName: 'apartments',
-        path: '/',
+        path: paths.apartments,
       },
     ],
   },
@@ -93,7 +95,7 @@ const sitemap: MenuItem[] = [
         name: 'Settings',
         pathName: 'settings',
         path: '/',
-      }
+      },
     ],
   },
 ];
