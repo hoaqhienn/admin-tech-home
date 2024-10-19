@@ -1,3 +1,7 @@
+export const black = {
+  500: '#000000',
+};
+
 export const gray = {
   500: '#A3AED0',
 };

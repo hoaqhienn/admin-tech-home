@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 
-const Dashbaord = () => {
+const Dashboard = () => {
   return (
     <Grid container spacing={2.5}>
       <Grid item xs={12}>
@@ -10,4 +10,4 @@ const Dashbaord = () => {
   );
 };
 
-export default Dashbaord;
+export default Dashboard;

@@ -1,6 +1,6 @@
 import { PaletteColorOptions, PaletteOptions } from '@mui/material/styles';
 import {
-  gray,
+  black,
   red,
   green,
   blue,
@@ -50,7 +50,7 @@ declare module '@mui/material/styles' {
 
 const palette: PaletteOptions = {
   neutral: {
-    main: gray[500],
+    main: black[500],
   },
   primary: {
     main: purple[500],
@@ -76,7 +76,7 @@ const palette: PaletteOptions = {
   text: {
     primary: blue[500],
     secondary: blue[400],
-    disabled: gray[500],
+    disabled: black[500],
   },
   gradients: {
     primary: {

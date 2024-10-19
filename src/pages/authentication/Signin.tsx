@@ -11,6 +11,7 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from 'store/slices/authSlice';
+import { api } from 'apis';
 
 interface User {
   [key: string]: string;
@@ -27,14 +28,24 @@ const Signin = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(user);
 
-    const token = '123';
-    
-    dispatch(login(token));
-    navigate('/');    
+    try {
+      const response : any = await api.post('/admin/login', user);
+      console.log(response);
+      
+      if (response.status) {
+        dispatch(login(response.token));
+        navigate('/');
+      }
+      console.log(response);
+      
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('An error occurred during login.');  
+    }
   };
 
   return (

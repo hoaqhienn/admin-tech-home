@@ -9,7 +9,7 @@ import AuthLayout from 'layouts/auth-layout';
 import ProtectedRoute from 'components/loader/ProtectedRoute';
 
 const App = lazy(() => import('App'));
-const Dashboard = lazy(() => import('pages/dashboard/Dashbaord'));
+const Dashboard = lazy(() => import('pages/dashboard/Dashboard'));
 const Signin = lazy(() => import('pages/authentication/Signin'));
 
 const router = createBrowserRouter(

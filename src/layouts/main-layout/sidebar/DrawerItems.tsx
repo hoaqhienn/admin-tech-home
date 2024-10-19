@@ -12,8 +12,31 @@ import Image from 'components/base/Image';
 import IconifyIcon from 'components/base/IconifyIcon';
 import LogoImg from 'assets/images/logo.png';
 import sitemap from 'routes/sitemap';
+import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { logout } from 'store/slices/authSlice';
 
 const DrawerItems = () => {
+  const dispatch = useDispatch(); 
+  const navigate = useNavigate(); 
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+   const handleLogoutClick = () => {
+    setOpenDialog(true); 
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmLogout = () => {
+    dispatch(logout()); 
+    navigate('/auth/signin');
+    setOpenDialog(false);
+  };
   return (
     <>
       <Stack
@@ -67,10 +90,18 @@ const DrawerItems = () => {
       </List>
 
       <Box mt="auto" px={3} pb={6}>
-        <Button variant="text" startIcon={<IconifyIcon icon="ic:baseline-logout" />}>
+        <Button variant="text" startIcon={<IconifyIcon icon="ic:baseline-logout" />} onClick={handleLogoutClick}>
           Log Out
         </Button>
       </Box>
+
+      <ConfirmationDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirmLogout}
+      />
+
+
     </>
   );
 };
