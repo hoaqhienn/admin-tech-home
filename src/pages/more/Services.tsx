@@ -198,12 +198,6 @@ const Services = () => {
               <p>
                 <strong>Building ID:</strong> {service.buildingId}
               </p>
-              <p>
-                <strong>Resident ID:</strong> {service.residentId}
-              </p>
-              <p>
-                <strong>Payment ID:</strong> {service.paymentId}
-              </p>
               <Button variant="contained" color="warning" onClick={() => handleClickOpen(service)}>
                 Update
               </Button>
