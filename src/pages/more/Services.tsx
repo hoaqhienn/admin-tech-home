@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { Service } from 'interface/Service';
 import { api } from 'apis';
+import { ButtonGroup, Paper } from '@mui/material';
 
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -168,8 +169,6 @@ const Services = () => {
             value={newService.buildingId}
             onChange={handleInputChange}
           />
-         
-
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
@@ -183,8 +182,8 @@ const Services = () => {
 
       {services.length > 0 ? (
         services.map((service) => (
-          <Grid item xs={12} md={2} key={service.serviceId}>
-            <div>
+          <Grid item xs={12} md={4} key={service.serviceId}>
+            <Paper>
               <h2>{service.serviceName}</h2>
               <p>
                 <strong>Price:</strong> ${service.servicePrice}
@@ -198,17 +197,24 @@ const Services = () => {
               <p>
                 <strong>Building ID:</strong> {service.buildingId}
               </p>
-              <Button variant="contained" color="warning" onClick={() => handleClickOpen(service)}>
-                Update
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDelete(service.serviceId)}
-              >
-                Delete
-              </Button>
-            </div>
+              <div style={{ height: '20px' }} />
+              <ButtonGroup>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  onClick={() => handleClickOpen(service)}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleDelete(service.serviceId)}
+                >
+                  Delete
+                </Button>
+              </ButtonGroup>
+            </Paper>
           </Grid>
         ))
       ) : (
