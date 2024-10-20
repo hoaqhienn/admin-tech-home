@@ -4,6 +4,7 @@ export const rootPaths = {
   authRoot: 'auth',
   errorRoot: 'error',
   propertiesRoot: 'properties',
+  residentsRoot: 'residents',
   moreRoot: 'more',
 };
 
@@ -24,4 +25,5 @@ export default {
   apartments: `/${rootPaths.propertiesRoot}/apartments`,
   events: `/${rootPaths.moreRoot}/events`,
   services: `/${rootPaths.moreRoot}/services`,
+  residents: `/${rootPaths.residentsRoot}/residents`,
 };

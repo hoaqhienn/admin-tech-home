@@ -61,7 +61,7 @@ const sitemap: MenuItem[] = [
       {
         name: 'Residents Management',
         pathName: 'residents-card',
-        path: '/',
+        path: paths.residents,
       },
       {
         name: 'Requests & Recommendations',
