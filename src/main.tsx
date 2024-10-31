@@ -6,6 +6,7 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import { theme } from 'theme/theme.ts';
 import './index.css';
+import './output.css';
 import { Provider } from 'react-redux';
 import { store } from 'store';
 
