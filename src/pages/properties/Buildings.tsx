@@ -9,8 +9,9 @@ import { useEffect, useState } from 'react';
 
 import { Building } from 'interface/Properties';
 import { api } from 'apis';
-import { Paper, Typography } from '@mui/material';
+import { IconButton, Paper, Typography } from '@mui/material';
 import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
+import IconifyIcon from 'components/base/IconifyIcon';
 
 const Buildings = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
@@ -141,20 +142,20 @@ const Buildings = () => {
           <Typography variant="h2">Buildings</Typography>
         </Grid>
 
-        <Button
+        <IconButton
           type="submit"
-          variant="contained"
-          size="medium"
+          size="large"
+          sx={{ color: 'primary.main', bgcolor: 'info.light', '&:hover': { bgcolor: 'info.main' } }}
           onClick={() => handleClickOpen()}
           style={{
             position: 'fixed',
-            bottom: '20px',
-            right: '20px',
+            bottom: '50px',
+            right: '50px',
             zIndex: 1000,
           }}
         >
-          Add Building
-        </Button>
+          <IconifyIcon icon="ic:baseline-add" />
+        </IconButton>
 
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>{isEditing ? 'Update Building' : 'Add New Building'}</DialogTitle>

@@ -13,20 +13,35 @@ interface ConfirmationDialogProps {
   message?: string;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onClose, onConfirm, title, message }) => {
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  message,
+}) => {
   return (
-      <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {message}
-        </DialogContentText>
+        <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button
+          onClick={onClose}
+          sx={{
+            color: 'error.main',
+          }}
+        >
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="error" autoFocus>
+        <Button
+          onClick={onConfirm}
+          sx={{
+            color: 'primary.main',
+          }}
+          autoFocus
+        >
           Confirm
         </Button>
       </DialogActions>

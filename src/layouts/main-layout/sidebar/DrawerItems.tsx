@@ -17,12 +17,12 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const DrawerItems = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const [openDialog, setOpenDialog] = useState(false);
 
-   const handleLogoutClick = () => {
-    setOpenDialog(true); 
+  const handleLogoutClick = () => {
+    setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
@@ -76,7 +76,7 @@ const DrawerItems = () => {
         </ButtonBase>
       </Stack>
 
-      <List component="nav" sx={{ mt: 2.5, mb: 10, px: 4.5 }}>
+      <List component="nav" sx={{ mt: 2.5, px: 4.5 }}>
         {sitemap.map((route) =>
           route.items ? (
             <CollapseListItem key={route.id} {...route} />
@@ -87,7 +87,14 @@ const DrawerItems = () => {
       </List>
 
       <Box mt="auto" px={3} pb={6}>
-        <Button variant="text" startIcon={<IconifyIcon icon="ic:baseline-logout" />} onClick={handleLogoutClick}>
+        <Button
+          sx={{
+            color: 'error.main',
+          }}
+          variant="text"
+          startIcon={<IconifyIcon icon="ic:baseline-logout" />}
+          onClick={handleLogoutClick}
+        >
           Log Out
         </Button>
       </Box>
@@ -99,8 +106,6 @@ const DrawerItems = () => {
         title="Logout"
         message="Are you sure you want to logout?"
       />
-
-
     </>
   );
 };
