@@ -96,6 +96,8 @@ const DrawerItems = () => {
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmLogout}
+        title="Logout"
+        message="Are you sure you want to logout?"
       />
 
 

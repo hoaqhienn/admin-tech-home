@@ -9,15 +9,17 @@ interface ConfirmationDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  title?: string;
+  message?: string;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onClose, onConfirm }) => {
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onClose, onConfirm, title, message }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Confirm Logout</DialogTitle>
+      <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to log out?
+          {message}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -25,7 +27,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onClose, 
           Cancel
         </Button>
         <Button onClick={onConfirm} color="error" autoFocus>
-          Logout
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>
