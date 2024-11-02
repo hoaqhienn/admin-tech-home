@@ -21,6 +21,8 @@ const DrawerItems = () => {
 
   const [openDialog, setOpenDialog] = useState(false);
 
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
   const handleLogoutClick = () => {
     setOpenDialog(true);
   };
@@ -79,14 +81,30 @@ const DrawerItems = () => {
       <List component="nav" sx={{ mt: 2.5, px: 4.5 }}>
         {sitemap.map((route) =>
           route.items ? (
-            <CollapseListItem key={route.id} {...route} />
+            <CollapseListItem
+              key={route.id}
+              {...route}
+              isOpen={openMenuId === route.id}
+              onToggle={(isOpen) => setOpenMenuId(isOpen ? route.id : null)}
+            />
           ) : (
             <ListItem key={route.id} {...route} />
           ),
         )}
       </List>
 
-      <Box mt="auto" px={3} pb={6}>
+      <Box
+        mt="auto"
+        p={1}
+        position="sticky"
+        top={0}
+        bgcolor="info.light"
+        alignItems="center"
+        justifyContent="flex-start"
+        borderBottom={1}
+        borderColor="info.main"
+        zIndex={1000}
+      >
         <Button
           sx={{
             color: 'error.main',

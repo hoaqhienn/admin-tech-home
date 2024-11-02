@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { MenuItem } from 'routes/sitemap';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -9,11 +8,14 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import IconifyIcon from 'components/base/IconifyIcon';
 
-const CollapseListItem = ({ subheader, active, items, icon }: MenuItem) => {
-  const [open, setOpen] = useState(false);
+interface CollapseListItemProps extends MenuItem {
+  isOpen: boolean;
+  onToggle: (isOpen: boolean) => void;
+}
 
+const CollapseListItem = ({ subheader, active, items, icon, isOpen, onToggle }: CollapseListItemProps) => {
   const handleClick = () => {
-    setOpen(!open);
+    onToggle(!isOpen);
   };
 
   return (
@@ -41,13 +43,13 @@ const CollapseListItem = ({ subheader, active, items, icon }: MenuItem) => {
           icon="iconamoon:arrow-down-2-duotone"
           sx={{
             color: active ? 'text.primary' : 'text.disabled',
-            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.2s ease-in-out',
           }}
         />
       </ListItemButton>
 
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {items?.map((route) => {
             return (
