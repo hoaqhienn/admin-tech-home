@@ -2,11 +2,11 @@ import axios from 'axios';
 
 // get token from local storage
 const getToken = async () => {
-    const token = localStorage.getItem('_token');
-    if (token) {
-        return JSON.parse(token);
-    }
-    return null;
+  const token = localStorage.getItem('_token');
+  if (token) {
+    return JSON.parse(token);
+  }
+  return null;
 };
 
 export const api = axios.create({
@@ -43,16 +43,10 @@ api.interceptors.response.use(
   function (error) {
     if (error.response) {
       if (error.response.status === 403) {
-        //logout
+        window.location.href = '/auth/signin';
       }
       if (error.response.status === 401) {
-        // _retrieveData('login_data').then(data => {
-        //     if (data) {
-        //         error.config.headers.Authorization =
-        //             'Bearer ' + data.token;
-        //         return api(error.config);
-        //     }
-        // });
+        window.location.href = '/auth/signin';
       }
     }
 
