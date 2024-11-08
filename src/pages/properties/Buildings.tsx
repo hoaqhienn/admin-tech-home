@@ -9,20 +9,30 @@ import { useEffect, useState } from 'react';
 
 import { Building } from 'interface/Properties';
 import { api } from 'apis';
-import { IconButton, Paper, Typography } from '@mui/material';
+import { IconButton, Modal, Paper, Typography } from '@mui/material';
 import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
 import IconifyIcon from 'components/base/IconifyIcon';
+import PropertiesPaper from 'components/paper/PropertiesPaper';
 
 const Buildings = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentBuilding, setCurrentBuilding] = useState<Building | null>(null);
-
   const [newBuilding, setNewBuilding] = useState({
     buildingName: '',
     buildingAddress: '',
   });
+
+  const [modal, setModal] = useState(false);
+
+  const handleModalOpen = () => {
+    setModal(true);
+  };
+
+  const handleModalClose = () => {
+    setModal(false);
+  };
 
   const handleClickOpen = (building?: Building) => {
     if (building) {
@@ -209,7 +219,10 @@ const Buildings = () => {
                     size="small"
                     variant="contained"
                     color="primary"
-                    onClick={() => handleClickOpen()}
+                    onClick={() => {
+                      handleModalOpen();
+                      setCurrentBuilding(building);
+                    }}
                   >
                     View
                   </Button>
@@ -243,6 +256,24 @@ const Buildings = () => {
           </Grid>
         )}
       </Grid>
+      <Modal
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        open={modal}
+        onClose={handleModalClose}
+      >
+        <PropertiesPaper
+          type="building"
+          properties={[]}
+          buildings={currentBuilding ? [currentBuilding] : []}
+          floors={[]}
+          apartments={[]}
+          onClose={handleModalClose}
+        />
+      </Modal>
     </>
   );
 };

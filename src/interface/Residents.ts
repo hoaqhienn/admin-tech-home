@@ -9,6 +9,16 @@ export interface Resident {
   User: User;
 }
 
+export interface ResidentViaApartment {
+  residentId: number;
+  fullname: string;
+  avatar: string;
+  username: string;
+  idcard: string;
+  phonenumber: string;
+  email: string;
+}
+
 export interface User {
   userId: number;
   avatar: string;
