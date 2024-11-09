@@ -17,7 +17,6 @@ interface User {
 
 const Signin = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
 
   const [user, setUser] = useState<User>({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -28,13 +27,11 @@ const Signin = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(user);
-
     try {
       const response : any = await api.post('/admin/login', user);
       console.log(response);    
       if (response.status) {
-        localStorage.setItem('_token', JSON.stringify(response.data.token));
+        localStorage.setItem('_token', JSON.stringify(response.token));
         navigate('/');
       }     
     } catch (error) {
