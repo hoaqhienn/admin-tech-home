@@ -9,9 +9,22 @@ import { useEffect, useState } from 'react';
 
 import { Apartment } from 'interface/Properties';
 import { api } from 'apis';
+import { Paper, Typography } from '@mui/material';
+
+export interface FloorProps {
+  floorId: number;
+  floorNumber: number;
+  apartments: Apartment[];
+}
+
+export interface BuildingProps {
+  buildingId: number;
+  buildingName: string;
+  floors: FloorProps[];
+}
 
 const Apartments = () => {
-  const [apartments, setApartments] = useState<Apartment[]>([]);
+  const [buildings, setBuildings] = useState<BuildingProps[]>([]); // Changed from Apartment[] to Building[]
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentApartment, setCurrentApartment] = useState<Apartment | null>(null);
@@ -23,6 +36,9 @@ const Apartments = () => {
     updatedAt: '',
     floorId: '',
   });
+
+  const [expandedBuildings, setExpandedBuildings] = useState<number[]>([]);
+  const [expandedFloors, setExpandedFloors] = useState<Set<number>>(new Set());
 
   const handleClickOpen = (apartment?: Apartment) => {
     if (apartment) {
@@ -72,11 +88,7 @@ const Apartments = () => {
       };
 
       await api.put(`/admin/apartment/${currentApartment.apartmentId}`, updatedApartment);
-      setApartments(
-        apartments.map((a) =>
-          a.apartmentId === currentApartment.apartmentId ? updatedApartment : a,
-        ),
-      );
+      fetchAllApartments();
     } else {
       // Add new apartment
       const createdAt = new Date().toISOString();
@@ -89,7 +101,7 @@ const Apartments = () => {
       };
 
       await api.post('/admin/apartment', newApartmentData);
-      setApartments([...apartments, { ...newApartmentData, apartmentId: apartments.length + 1 }]);
+      fetchAllApartments();
     }
 
     handleClose();
@@ -97,16 +109,15 @@ const Apartments = () => {
 
   const handleDelete = async (apartmentId: number) => {
     await api.delete(`/admin/apartment/${apartmentId}`);
-    setApartments(apartments.filter((a) => a.apartmentId !== apartmentId));
+    fetchAllApartments();
   };
 
   const fetchAllApartments = async () => {
     try {
-      const response = await api.get('/admin/apartment/getAll');
+      const response = await api.get('/admin/building/detail-include-apartment');
       if (response.status) {
-        setApartments(response.data);
-        console.log('Buildings:', apartments);
-        
+        setBuildings(response.data);
+        console.log('Buildings:', buildings);
       }
     } catch (error) {
       console.error('Failed to fetch apartments:', error);
@@ -117,10 +128,28 @@ const Apartments = () => {
     fetchAllApartments();
   }, []);
 
+  const toggleBuildingExpansion = (buildingId: number) => {
+    setExpandedBuildings((prev) =>
+      prev.includes(buildingId) ? prev.filter((id) => id !== buildingId) : [...prev, buildingId],
+    );
+  };
+
+  const toggleFloorExpansion = (floorId: number) => {
+    setExpandedFloors((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(floorId)) {
+        newSet.delete(floorId);
+      } else {
+        newSet.add(floorId);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <Grid container spacing={2.5}>
       <Grid item xs={12}>
-        <h1>Apartments</h1>
+        <Typography variant="h2">Apartments</Typography>
       </Grid>
 
       <Button
@@ -180,38 +209,90 @@ const Apartments = () => {
         </DialogActions>
       </Dialog>
 
-      {apartments.length > 0 ? (
-        apartments.map((apartment) => (
-          <Grid item xs={12} md={2} key={apartment.apartmentId}>
-            <div>
-              <h2>{apartment.apartmentNumber}</h2>
-              <p>
-                <strong>Type:</strong> {apartment.apartmentType}
-              </p>
-              <p>
-                <strong>Created At:</strong> {new Date(apartment.createdAt).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Updated At:</strong> {new Date(apartment.updatedAt).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Floor ID:</strong> {apartment.floorId}
-              </p>
-              <Button
-                variant="contained"
-                color="warning"
-                onClick={() => handleClickOpen(apartment)}
-              >
-                Update
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDelete(apartment.apartmentId)}
-              >
-                Delete
-              </Button>
-            </div>
+      {buildings.length > 0 ? (
+        buildings.map((building) => (
+          <Grid item xs={12} key={building.buildingId}>
+            <Paper>
+              <div className="flex flex-row items-center justify-between">
+                <Typography variant="h3">{building.buildingName}</Typography>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => toggleBuildingExpansion(building.buildingId)}
+                >
+                  {expandedBuildings.includes(building.buildingId) ? 'Hide' : 'Show'}
+                </Button>
+              </div>
+              {expandedBuildings.includes(building.buildingId) &&
+                building.floors.map((floor) => (
+                  <Paper
+                    sx={{
+                      padding: 2,
+                      border: 1,
+                      marginBottom: 2,
+                    }}
+                    key={floor.floorId}
+                  >
+                    <div className="flex flex-row items-center justify-between">
+                      <Typography variant="h4">Floor {floor.floorNumber}</Typography>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        onClick={() => toggleFloorExpansion(floor.floorId)}
+                      >
+                        {expandedFloors.has(floor.floorId) ? 'Hide' : 'Show'}
+                      </Button>
+                    </div>
+
+                    {expandedFloors.has(floor.floorId) && (
+                      <Grid container spacing={2}>
+                        {floor.apartments.map((apartment: Apartment) => (
+                          <Grid item xs={4} md={4} key={apartment.apartmentId}>
+                            <Paper
+                              sx={{
+                                padding: 2,
+                                backgroundColor: '#f6f6f6 ',
+                                border: 1,
+                              }}
+                            >
+                              <Typography variant="body2">
+                                <strong>Apartment: </strong>
+                                {apartment.apartmentNumber}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Type: </strong>
+                                {apartment.apartmentType}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Create At: </strong>
+                                {new Date(apartment.createdAt).toLocaleDateString()}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Update At: </strong>
+                                {new Date(apartment.updatedAt).toLocaleDateString()}
+                              </Typography>
+                              <Button
+                                variant="text"
+                                color="warning"
+                                onClick={() => handleClickOpen(apartment)}
+                              >
+                                Update
+                              </Button>
+                              <Button
+                                variant="text"
+                                color="error"
+                                onClick={() => handleDelete(apartment.apartmentId)}
+                              >
+                                Delete
+                              </Button>
+                            </Paper>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                  </Paper>
+                ))}
+            </Paper>
           </Grid>
         ))
       ) : (

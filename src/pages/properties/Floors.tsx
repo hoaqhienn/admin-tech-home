@@ -2,16 +2,23 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
 
 import { Floor } from 'interface/Properties';
 import { api } from 'apis';
+import { DialogActions, Paper, Typography } from '@mui/material';
+
+interface BuildingProps {
+  buildingId: number;
+  buildingName: string;
+  floors: Floor[];
+}
 
 const Floors = () => {
-  const [floors, setFloors] = useState<Floor[]>([]);
+  const [floors, setFloors] = useState<BuildingProps[]>([]);
+  const [expandedBuildings, setExpandedBuildings] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentFloor, setCurrentFloor] = useState<Floor | null>(null);
@@ -68,7 +75,7 @@ const Floors = () => {
       };
 
       await api.put(`/admin/floor/${currentFloor.floorId}`, updatedFloor);
-      setFloors(floors.map((f) => (f.floorId === currentFloor.floorId ? updatedFloor : f)));
+      fetchAllFloors();
     } else {
       // Add new floor
       const createdAt = new Date().toISOString();
@@ -80,7 +87,7 @@ const Floors = () => {
       };
 
       await api.post('/admin/floor', newFloorData);
-      setFloors([...floors, { ...newFloorData, floorId: floors.length + 1 }]);
+      fetchAllFloors();
     }
 
     handleClose();
@@ -88,15 +95,14 @@ const Floors = () => {
 
   const handleDelete = async (floorId: number) => {
     await api.delete(`/admin/floor/${floorId}`);
-    setFloors(floors.filter((f) => f.floorId !== floorId));
+    fetchAllFloors();
   };
 
   const fetchAllFloors = async () => {
     try {
-      const response = await api.get('/admin/floor/getAll');
+      const response = await api.get('/admin/building/detail');
       if (response.status) {
         setFloors(response.data);
-        console.log('Floors:', floors);
       }
     } catch (error) {
       console.error('Failed to fetch floors:', error);
@@ -107,10 +113,16 @@ const Floors = () => {
     fetchAllFloors();
   }, []);
 
+  const toggleBuilding = (buildingId: number) => {
+    setExpandedBuildings((prev) =>
+      prev.includes(buildingId) ? prev.filter((id) => id !== buildingId) : [...prev, buildingId],
+    );
+  };
+
   return (
     <Grid container spacing={2.5}>
       <Grid item xs={12}>
-        <h1>Floors</h1>
+        <Typography variant="h2"> Floors </Typography>
       </Grid>
 
       <Button
@@ -161,35 +173,65 @@ const Floors = () => {
         </DialogActions>
       </Dialog>
 
-      {floors.length > 0 ? (
-        floors.map((floor) => (
-          <Grid item xs={12} md={2} key={floor.floorId}>
-            <div>
-              <h2>{floor.floorNumber}</h2>
-              <p>
-                <strong>Building ID:</strong> {floor.buildingId}
-              </p>
-              <p>
-                <strong>Created At:</strong> {new Date(floor.createdAt).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Updated At:</strong> {new Date(floor.updatedAt).toLocaleDateString()}
-              </p>
-
-              <Button variant="contained" color="warning" onClick={() => handleClickOpen(floor)}>
-                Update
-              </Button>
-              <Button variant="contained" color="error" onClick={() => handleDelete(floor.floorId)}>
-                Delete
+      {floors.map((building) => (
+        <Grid item xs={12} key={building.buildingId}>
+          <Paper>
+            <div className="flex flex-row items-center justify-between">
+              <Typography variant="h5">{building.buildingName}</Typography>
+              <Button variant="text" onClick={() => toggleBuilding(building.buildingId)}>
+                {expandedBuildings.includes(building.buildingId) ? 'Show Less' : 'Show All Floors'}
               </Button>
             </div>
-          </Grid>
-        ))
-      ) : (
-        <Grid item xs={12}>
-          <p>No floors available.</p>
+            <Grid container spacing={2}>
+              {(expandedBuildings.includes(building.buildingId)
+                ? building.floors
+                : building.floors.slice(0, 3)
+              ).map((floor) => (
+                <Grid item xs={4} md={4} key={floor.floorId}>
+                  <Paper
+                    sx={{
+                      padding: 2,
+                      backgroundColor: '#f6f6f6 ',
+                      border: 1,
+                    }}
+                    elevation={1}
+                    onClick={() => handleClickOpen(floor)}
+                    style={{ padding: '16px', cursor: 'pointer' }}
+                  >
+                    <Typography variant="h6">Floor {floor.floorNumber}</Typography>
+                    <Typography variant="body2">
+                      <strong>Created At:</strong> {new Date(floor.createdAt).toLocaleDateString()}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Updated At:</strong> {new Date(floor.updatedAt).toLocaleDateString()}
+                    </Typography>
+                    <Button
+                      variant="text"
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleClickOpen(floor);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="text"
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(floor.floorId);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
         </Grid>
-      )}
+      ))}
     </Grid>
   );
 };
