@@ -216,9 +216,8 @@ const Buildings = () => {
                 </p>
                 <div className="space-x-1 p-1">
                   <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
+                    variant="text"
+                    sx={{ color: 'primary.main' }}
                     onClick={() => {
                       handleModalOpen();
                       setCurrentBuilding(building);
@@ -227,18 +226,15 @@ const Buildings = () => {
                     View
                   </Button>
                   <Button
-                    size="small"
-                    variant="contained"
-                    color="warning"
+                    variant="text"
+                    sx={{ color: 'warning.main' }}
                     onClick={() => handleClickOpen(building)}
                   >
                     Update
                   </Button>
                   <Button
-                    className="pl-10"
-                    size="small"
-                    variant="contained"
-                    color="error"
+                    variant="text"
+                    sx={{ color: 'error.main' }}
                     onClick={() => {
                       handleOpenDialog();
                       setCurrentBuilding(building);
