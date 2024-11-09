@@ -83,12 +83,17 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
     }
   };
 
+  const clearResidents = () => {
+    setResidents([]);
+  }
+
   useEffect(() => {
     fetchFloors();
   }, []);
 
   useEffect(() => {
     fetchApartment();
+    clearResidents();
   }, [currentFloor]);
 
   useEffect(() => {
