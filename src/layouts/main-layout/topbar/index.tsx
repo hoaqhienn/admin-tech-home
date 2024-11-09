@@ -7,10 +7,10 @@ import ButtonBase from '@mui/material/ButtonBase';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconifyIcon from 'components/base/IconifyIcon';
-import LanguageSelect from './LanguageSelect';
 import ProfileMenu from './ProfileMenu';
 import Image from 'components/base/Image';
 import LogoImg from 'assets/images/logo.png';
+import ChatMenu from './ChatMenu';
 
 interface TopbarProps {
   isClosing: boolean;
@@ -76,7 +76,7 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
       </Stack>
 
       <Stack spacing={{ xs: 1, sm: 2 }} alignItems="center">
-        <LanguageSelect />
+        <ChatMenu />
         <IconButton size="large">
           <Badge badgeContent={2} color="error">
             <IconifyIcon icon="ic:outline-notifications-none" />
