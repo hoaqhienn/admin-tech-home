@@ -1,3 +1,4 @@
+import { forwardRef, useEffect, useState } from 'react';
 import {
   Avatar,
   Grid,
@@ -13,7 +14,6 @@ import { api } from 'apis';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { Apartment, Building, Floor } from 'interface/Properties';
 import { ResidentViaApartment } from 'interface/Residents';
-import { useEffect, useState } from 'react';
 
 interface PropertiesPaperProps {
   properties: { name: string; value: string }[];
@@ -24,7 +24,7 @@ interface PropertiesPaperProps {
   onClose: () => void;
 }
 
-const PropertiesPaper = (props: PropertiesPaperProps) => {
+const PropertiesPaper = forwardRef<HTMLDivElement, PropertiesPaperProps>((props, ref) => {
   const { buildings, onClose } = props;
   const [floors, setFloors] = useState<Floor[]>([]);
   const [currentFloor, setCurrentFloor] = useState(-1);
@@ -37,12 +37,11 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
   };
 
   const fetchFloors = async () => {
+    if (!buildings[0]) return;
     try {
       const response = await api.get(`/admin/building/${buildings[0].buildingId}`);
       if (response.status) {
         setFloors(response.data.floors);
-        console.log('floors:', floors);
-
         console.log('floors by building id:', response.data.floors);
       }
     } catch (error) {
@@ -51,49 +50,38 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
   };
 
   const fetchApartment = async () => {
-    console.log('current floor:', currentFloor);
-    if (currentFloor === -1) {
-      return;
-    }
+    if (currentFloor === -1) return;
     try {
       const response = await api.get(`/admin/floor/apartment/${currentFloor}`);
       if (response.status) {
         setApartments(response.data);
-        console.log('apartments:', apartments);
         console.log('apartments by floor id:', response.data);
       }
     } catch (error) {
-      console.error('Failed to fetch floors:', error);
+      console.error('Failed to fetch apartments:', error);
     }
   };
 
   const fetchResidents = async () => {
-    console.log('current apartment:', currentApartment);
-    if (currentApartment === -1) {
-      return;
-    }
+    if (currentApartment === -1) return;
     try {
       const response = await api.get(`/admin/apartment/resident/${currentApartment}`);
       if (response.status) {
         setResidents(response.data);
-        console.log('residents:', residents);
+        console.log('residents:', response.data);
       }
     } catch (error) {
       console.error('Failed to fetch residents:', error);
     }
   };
 
-  const clearResidents = () => {
-    setResidents([]);
-  }
-
   useEffect(() => {
     fetchFloors();
-  }, []);
+  }, [buildings]);
 
   useEffect(() => {
     fetchApartment();
-    clearResidents();
+    setResidents([]);
   }, [currentFloor]);
 
   useEffect(() => {
@@ -102,6 +90,8 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
 
   return (
     <Paper
+      ref={ref}
+      tabIndex={-1}
       sx={{
         width: '90%',
         maxWidth: '90%',
@@ -117,24 +107,16 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
           <Typography variant="h2">Properties</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="h4">Building: {buildings[0].buildingId}</Typography>
-          <Typography variant="body2"> - Name: {buildings[0].buildingName}</Typography>
-          <Typography variant="body2"> - Address:</Typography>
-          <Typography variant="body2"> - Number of floors:</Typography>
-          <Typography variant="body2"> - Number of residents:</Typography>
+          <Typography variant="h4">Building: {buildings[0]?.buildingId}</Typography>
+          <Typography variant="body2"> - Name: {buildings[0]?.buildingName}</Typography>
+          <Typography variant="body2"> - Address: {buildings[0]?.buildingAddress}</Typography>
         </Grid>
         <Grid item xs={3}>
           <Paper>
             <Typography variant="h4">
               Floor {floors.length > 0 ? `(${floors.length})` : ''}
             </Typography>
-            <Paper
-              style={{
-                height: 350,
-                maxHeight: 350,
-                overflowY: 'auto',
-              }}
-            >
+            <Paper style={{ height: 350, maxHeight: 350, overflowY: 'auto' }}>
               <List>
                 {floors.map((floor) => (
                   <ListItem
@@ -142,10 +124,6 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
                     button
                     onClick={() => setCurrentFloor(floor.floorId)}
                     divider
-                    sx={{
-                      maxHeight: 300,
-                      overflowY: 'auto',
-                    }}
                   >
                     <ListItemText primary={`Floor: ${floor.floorNumber}`} />
                   </ListItem>
@@ -159,13 +137,7 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
             <Typography variant="h4">
               Apartment {apartments.length > 0 ? `(${apartments.length})` : ''}
             </Typography>
-            <Paper
-              style={{
-                height: 350,
-                maxHeight: 350,
-                overflowY: 'auto',
-              }}
-            >
+            <Paper style={{ height: 350, maxHeight: 350, overflowY: 'auto' }}>
               <List>
                 {apartments.map((apartment) => (
                   <ListItem
@@ -173,10 +145,6 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
                     button
                     onClick={() => setCurrentApartment(apartment.apartmentId)}
                     divider
-                    sx={{
-                      maxHeight: 300,
-                      overflowY: 'auto',
-                    }}
                   >
                     <ListItemText
                       primary={`Number: ${apartment.apartmentId} (${apartment.apartmentType})`}
@@ -192,13 +160,7 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
             <Typography variant="h4">
               Resident {residents.length > 0 ? `(${residents.length})` : ''}
             </Typography>
-            <Paper
-              style={{
-                height: 350,
-                maxHeight: 350,
-                overflowY: 'auto',
-              }}
-            >
+            <Paper style={{ height: 350, maxHeight: 350, overflowY: 'auto' }}>
               <List>
                 {residents.map((resident) => (
                   <ListItem
@@ -206,10 +168,6 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
                     button
                     onClick={() => console.log('resident:', resident)}
                     divider
-                    sx={{
-                      maxHeight: 300,
-                      overflowY: 'auto',
-                    }}
                   >
                     <ListItemAvatar>
                       <Avatar src={resident.avatar} />
@@ -240,6 +198,6 @@ const PropertiesPaper = (props: PropertiesPaperProps) => {
       </IconButton>
     </Paper>
   );
-};
+});
 
 export default PropertiesPaper;
