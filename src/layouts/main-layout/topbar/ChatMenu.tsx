@@ -440,21 +440,25 @@ const ChatMenu: React.FC = () => {
             </Grid>
             <Grid item md={3}>
               {selectedUser && (
-                <>
+                <Paper
+                  sx={{
+                    p: 2,
+                    height: 'calc(100vh - 100px)',
+                    maxHeight: 'calc(100vh - 100px)',
+                  }}
+                >
                   <Typography variant="h6">Chat Info</Typography>
-                  <Paper sx={{ p: 2, mt: 2 }}>
-                    <Avatar
-                      src={selectedUser.avatar || 'https://via.placeholder.com/150'}
-                      sx={{ width: 100, height: 100, mx: 'auto', mb: 2 }}
-                    />
-                    <Typography variant="h6" align="center">
-                      {selectedUser.name}
-                    </Typography>
-                    <Typography variant="body2" align="center" color="text.secondary">
-                      {selectedUser.online ? 'Online' : 'Offline'}
-                    </Typography>
-                  </Paper>
-                </>
+                  <Avatar
+                    src={selectedUser.avatar || 'https://via.placeholder.com/150'}
+                    sx={{ width: 100, height: 100, mx: 'auto', mb: 2 }}
+                  />
+                  <Typography variant="h6" align="center">
+                    {selectedUser.name}
+                  </Typography>
+                  <Typography variant="body2" align="center" color="text.secondary">
+                    {selectedUser.online ? 'Online' : 'Offline'}
+                  </Typography>
+                </Paper>
               )}
             </Grid>
           </Grid>

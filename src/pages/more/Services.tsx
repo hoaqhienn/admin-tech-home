@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { Service } from 'interface/Service';
 import { api } from 'apis';
-import { ButtonGroup, Paper } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -22,7 +22,6 @@ const Services = () => {
     servicePrice: '',
     createdAt: '',
     updatedAt: '',
-    buildingId: '',
   });
 
   const handleClickOpen = (service?: Service) => {
@@ -32,7 +31,6 @@ const Services = () => {
         servicePrice: service.servicePrice.toString(),
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
-        buildingId: service.buildingId.toString(),
       });
       setCurrentService(service);
       setIsEditing(true);
@@ -42,7 +40,6 @@ const Services = () => {
         servicePrice: '',
         createdAt: '',
         updatedAt: '',
-        buildingId: '',
       });
       setIsEditing(false);
     }
@@ -69,7 +66,6 @@ const Services = () => {
         servicePrice: parseFloat(newService.servicePrice),
         createdAt: newService.createdAt,
         updatedAt: updatedAt,
-        buildingId: parseInt(newService.buildingId),
       };
 
       await api.put(`/admin/service/${currentService.serviceId}`, updatedService);
@@ -84,9 +80,6 @@ const Services = () => {
         servicePrice: parseFloat(newService.servicePrice),
         createdAt,
         updatedAt,
-        buildingId: parseInt(newService.buildingId),
-        residentId: -1,
-        paymentId: -1,
       };
 
       await api.post('/admin/service', newServiceData);
@@ -160,15 +153,6 @@ const Services = () => {
             value={newService.servicePrice}
             onChange={handleInputChange}
           />
-          <TextField
-            margin="dense"
-            label="Building ID"
-            name="buildingId"
-            fullWidth
-            variant="outlined"
-            value={newService.buildingId}
-            onChange={handleInputChange}
-          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
@@ -184,7 +168,7 @@ const Services = () => {
         services.map((service) => (
           <Grid item xs={12} md={4} key={service.serviceId}>
             <Paper>
-              <h2>{service.serviceName}</h2>
+              <Typography variant='h4'>{service.serviceName}</Typography>
               <p>
                 <strong>Price:</strong> ${service.servicePrice}
               </p>
@@ -194,26 +178,25 @@ const Services = () => {
               <p>
                 <strong>Updated At:</strong> {new Date(service.updatedAt).toLocaleDateString()}
               </p>
-              <p>
-                <strong>Building ID:</strong> {service.buildingId}
-              </p>
               <div style={{ height: '20px' }} />
-              <ButtonGroup>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={() => handleClickOpen(service)}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleDelete(service.serviceId)}
-                >
-                  Delete
-                </Button>
-              </ButtonGroup>
+              <Button
+                variant="text"
+                sx={{
+                  color: 'orange',
+                }}
+                onClick={() => handleClickOpen(service)}
+              >
+                Update
+              </Button>
+              <Button
+                variant="text"
+                sx={{
+                  color: 'red',
+                }}
+                onClick={() => handleDelete(service.serviceId)}
+              >
+                Delete
+              </Button>
             </Paper>
           </Grid>
         ))

@@ -4,7 +4,4 @@ export interface Service {
   servicePrice: number;
   createdAt: string;
   updatedAt: string;
-  buildingId: number;
-  residentId: number;
-  paymentId: number;
 }

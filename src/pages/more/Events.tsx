@@ -9,12 +9,20 @@ import { useEffect, useState } from 'react';
 
 import { Event } from 'interface/Event';
 import { api } from 'apis';
+import { Paper, Typography } from '@mui/material';
+
+interface Props {
+  buildingId: number;
+  buildingName: string;
+  events: Event[];
+}
 
 const Events = () => {
-  const [event, setEvent] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Props[]>([]);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [countEvents, setCountEvents] = useState(0);
 
   const [newEvent, setNewEvent] = useState({
     eventName: '',
@@ -79,7 +87,7 @@ const Events = () => {
       };
 
       await api.put(`/admin/event/${currentEvent.eventId}`, updatedEvent);
-      setEvent(event.map((a) => (a.eventId === currentEvent.eventId ? updatedEvent : a)));
+      fetchAllEvents();
     } else {
       // Add new event
       const createdAt = new Date().toISOString();
@@ -94,7 +102,7 @@ const Events = () => {
       };
 
       await api.post('/admin/event', newEventData);
-      setEvent([...event, { ...newEventData, eventId: event.length + 1 }]);
+      fetchAllEvents();
     }
 
     handleClose();
@@ -102,15 +110,15 @@ const Events = () => {
 
   const handleDelete = async (eventId: number) => {
     await api.delete(`/admin/event/${eventId}`);
-    setEvent(event.filter((a) => a.eventId !== eventId));
+    fetchAllEvents();
   };
 
   const fetchAllEvents = async () => {
     try {
-      const response = await api.get('/admin/event/getAll');
+      const response: any = await api.get('/admin/event/getAll');
       if (response.status) {
-        setEvent(response.data);
-        console.log('Events:', event);
+        setEvents(response.data);
+        setCountEvents(response.count);
       }
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -118,15 +126,24 @@ const Events = () => {
   };
 
   useEffect(() => {
-    console.log('Fetching events...');
-
     fetchAllEvents();
   }, []);
 
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    };
+    return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
+  };
+
   return (
-    <Grid container spacing={2.5}>
+    <Grid container spacing={2}>
       <Grid item xs={12}>
-        <h1>Events</h1>
+        <Typography variant="h2" color={countEvents > 0 ? 'primary' : 'error'}>
+          Events ({countEvents > 0 ? countEvents : 'No events found.'})
+        </Typography>
       </Grid>
 
       <Button
@@ -207,49 +224,56 @@ const Events = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {event.length > 0 ? (
-        event.map((eventItem) => (
-          <Grid item xs={12} md={2} key={eventItem.eventId}>
-            <div>
-              <h2>{eventItem.eventName}</h2>
-              <p>
-                <strong>Description:</strong> {eventItem.eventDescription}
-              </p>
-              <p>
-                <strong>Location:</strong> {eventItem.eventLocation}
-              </p>
-              <p>
-                <strong>Date:</strong> {new Date(eventItem.eventDate).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Created At:</strong> {new Date(eventItem.createdAt).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Updated At:</strong> {new Date(eventItem.updatedAt).toLocaleDateString()}
-              </p>
-              <Button
-                variant="contained"
-                color="warning"
-                onClick={() => handleClickOpen(eventItem)}
-              >
-                Update
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDelete(eventItem.eventId)}
-              >
-                Delete
-              </Button>
-            </div>
+      {Object.entries(events).map(([buildingId, e]) => (
+        <Paper
+          sx={{
+            marginBottom: '10px',
+          }}
+        >
+          <Grid item xs={12} key={buildingId}>
+            <Typography variant="h4" color="primary">
+              {e.buildingName}
+            </Typography>
+            <Grid container spacing={2}>
+              {e.events.map((eventItem) => (
+                <Grid item md={4} key={eventItem.eventId}>
+                  <Paper
+                    sx={{
+                      border: '1px solid #ccc',
+                      height: '100%',
+                      maxHeight: '300px',
+                    }}
+                  >
+                    <Typography variant="h5">{eventItem.eventName}</Typography>
+                    <Typography variant="body1">
+                      <strong>Location:</strong> {eventItem.eventLocation}
+                    </Typography>
+                    <Typography variant="body1" color="primary">
+                      <strong>Date:</strong> {formatDate(eventItem.eventDate)}
+                    </Typography>
+                    <Button
+                      sx={{
+                        color: 'orange',
+                      }}
+                      onClick={() => handleClickOpen(eventItem)}
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      sx={{
+                        color: 'red',
+                      }}
+                      onClick={() => handleDelete(eventItem.eventId)}
+                    >
+                      Delete
+                    </Button>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-        ))
-      ) : (
-        <Grid item xs={12}>
-          <p>No events available.</p>
-        </Grid>
-      )}
+        </Paper>
+      ))}
     </Grid>
   );
 };
