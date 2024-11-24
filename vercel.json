@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/" },
+    { "source": "/settings", "destination": "/more/settings" },
+    { "source": "/report-statistics", "destination": "/more/report-statistics" },
+    { "source": "/signin", "destination": "/auth/signin" },
+    { "source": "/signup", "destination": "/auth/signup" },
+    { "source": "/forgot-password", "destination": "/auth/forgot-password" },
+    { "source": "/404", "destination": "/error/404" },
+    { "source": "/buildings", "destination": "/properties/buildings" },
+    { "source": "/floors", "destination": "/properties/floors" },
+    { "source": "/apartments", "destination": "/properties/apartments" },
+    { "source": "/events", "destination": "/more/events" },
+    { "source": "/services", "destination": "/more/services" },
+    { "source": "/residents", "destination": "/residents/residents" },
+    { "source": "/overview", "destination": "/properties/overview" }
+  ]
+}
