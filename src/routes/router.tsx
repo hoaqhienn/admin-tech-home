@@ -2,7 +2,7 @@
 import paths, { rootPaths } from './paths';
 import { Suspense, lazy } from 'react';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
-import MainLayout from 'layouts/main-layout';
+import MainLayout from 'layouts/main-layout/index';
 import Splash from 'components/loader/Splash';
 import PageLoader from 'components/loader/PageLoader';
 import AuthLayout from 'layouts/auth-layout';
