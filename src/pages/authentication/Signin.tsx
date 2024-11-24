@@ -1,15 +1,17 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { useNavigate } from 'react-router-dom';
-import { api } from 'apis';
+import { loginUser } from 'services/authService';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Modal,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 interface User {
   [key: string]: string;
@@ -20,6 +22,7 @@ const Signin = () => {
 
   const [user, setUser] = useState<User>({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -27,17 +30,23 @@ const Signin = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const response : any = await api.post('/admin/login', user);
-      console.log(response);    
-      if (response.status) {
-        localStorage.setItem('_token', JSON.stringify(response.token));
+      if (!user.email || !user.password) {
+        throw new Error('Please fill in all required fields.');
+      }
+      if (await loginUser({ email: user.email, password: user.password })) {
         navigate('/');
-      }     
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert('An error occurred during login.');  
+      } else {
+        throw new Error('Invalid credentials. Please try again.');
+      }
+    } catch (error: any) {
+      setShowErrorModal(true);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowErrorModal(false);
   };
 
   return (
@@ -111,16 +120,61 @@ const Signin = () => {
           }}
         />
 
-        <FormControlLabel
-          control={<Checkbox id="checkbox" name="checkbox" size="medium" color="primary" />}
-          label="Remember me"
-          sx={{ ml: -0.75 }}
-        />
-
         <Button type="submit" variant="contained" size="medium" fullWidth>
           Sign In
         </Button>
       </Stack>
+      <Modal open={showErrorModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            borderRadius: '8px',
+            width: '80%',
+            maxWidth: 400,
+            p: 4,
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{
+              color: 'error.main',
+              fontWeight: 'bold',
+            }}
+          >
+            Error
+          </Typography>
+          <Typography>
+            Invalid <strong>email</strong> or <strong>password</strong>. Please try again!
+          </Typography>
+          <Button
+            variant="text"
+            onClick={handleCloseModal}
+            size="medium"
+            sx={{
+              // position center
+              display: 'block',
+              margin: 'auto',
+              width: '100%',
+              // center text
+              textAlign: 'center',
+              color: 'primary.main',
+              fontWeight: 'bold',
+              fontSize: 16,
+              '&:hover': {
+                backgroundColor: 'primary.light',
+              },
+            }}
+          >
+            OK
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };

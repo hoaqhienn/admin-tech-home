@@ -35,6 +35,11 @@ const sitemap: MenuItem[] = [
     active: true,
     items: [
       {
+        name: 'Overview',
+        pathName: 'overview',
+        path: paths.overview,
+      },
+      {
         name: 'Buildings',
         pathName: 'buildings',
         path: paths.buildings,
@@ -82,24 +87,24 @@ const sitemap: MenuItem[] = [
     active: true,
     items: [
       {
-        name: 'Advertisements',
-        pathName: 'advertisements',
-        path: '/',
-      },
-      {
         name: 'Events',
         pathName: 'events',
         path: paths.events,
       },
       {
-        name: 'Service',
-        pathName: 'service',
+        name: 'Services & Advertisements',
+        pathName: 'services',
         path: paths.services,
+      },
+      {
+        name: 'Reports & Statistics',
+        pathName: 'settings',
+        path: paths.reportStatistics,
       },
       {
         name: 'Settings',
         pathName: 'settings',
-        path: '/',
+        path: paths.settings,
       },
     ],
   },

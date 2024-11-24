@@ -5,26 +5,24 @@
       "destination": "/index.html"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/auth/(.*)",
-      "dest": "/index.html"
+      "source": "/build/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
-      "src": "/error/(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/properties/(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/residents/(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/more/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*).(.+)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

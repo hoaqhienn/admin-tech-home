@@ -3,39 +3,19 @@ import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import ListItem from './list-items/ListItem';
 import CollapseListItem from './list-items/CollapseListItem';
 import Image from 'components/base/Image';
-import IconifyIcon from 'components/base/IconifyIcon';
 import LogoImg from 'assets/images/logo.png';
 import sitemap from 'routes/sitemap';
-import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import LogoutComponent from 'components/auth/Logout';
 
 const DrawerItems = () => {
-  const navigate = useNavigate();
-
-  const [openDialog, setOpenDialog] = useState(false);
-
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  const handleLogoutClick = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handleConfirmLogout = () => {
-    localStorage.removeItem('_token');
-    navigate('/auth/signin');
-    setOpenDialog(false);
-  };
   return (
     <>
       <Stack
@@ -105,25 +85,8 @@ const DrawerItems = () => {
         borderColor="info.main"
         zIndex={1000}
       >
-        <Button
-          sx={{
-            color: 'error.main',
-          }}
-          variant="text"
-          startIcon={<IconifyIcon icon="ic:baseline-logout" />}
-          onClick={handleLogoutClick}
-        >
-          Log Out
-        </Button>
+        <LogoutComponent />
       </Box>
-
-      <ConfirmationDialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        onConfirm={handleConfirmLogout}
-        title="Logout"
-        message="Are you sure you want to logout?"
-      />
     </>
   );
 };

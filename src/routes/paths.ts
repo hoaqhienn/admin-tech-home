@@ -1,6 +1,5 @@
 export const rootPaths = {
   root: '/',
-  pageRoot: 'pages',
   authRoot: 'auth',
   errorRoot: 'error',
   propertiesRoot: 'properties',
@@ -9,12 +8,8 @@ export const rootPaths = {
 };
 
 export default {
-  dashboard: `/${rootPaths.pageRoot}/dashboard`,
-  activity: `/${rootPaths.pageRoot}/activity`,
-  library: `/${rootPaths.pageRoot}/library`,
-  schedules: `/${rootPaths.pageRoot}/schedules`,
-  payouts: `/${rootPaths.pageRoot}/payouts`,
-  settings: `/${rootPaths.pageRoot}/settings`,
+  settings: `/${rootPaths.moreRoot}/settings`,
+  reportStatistics: `/${rootPaths.moreRoot}/report-statistics`,
 
   signin: `/${rootPaths.authRoot}/signin`,
   signup: `/${rootPaths.authRoot}/signup`,
@@ -26,4 +21,5 @@ export default {
   events: `/${rootPaths.moreRoot}/events`,
   services: `/${rootPaths.moreRoot}/services`,
   residents: `/${rootPaths.residentsRoot}/residents`,
+  overview: `/${rootPaths.propertiesRoot}/overview`,
 };

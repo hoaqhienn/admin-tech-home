@@ -3,7 +3,15 @@ import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 import { Resident } from 'interface/Residents';
 import { api } from 'apis';
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 const Residents = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -127,11 +135,10 @@ const Residents = () => {
     console.log('Residents:', residents);
   }, []);
 
-
   return (
-    <Grid container spacing={2.5}>
+    <Grid container spacing={2}>
       <Grid item xs={12}>
-        <h1>Residents</h1>
+        <Typography variant="h4">Residents</Typography>
       </Grid>
 
       <Button
@@ -231,43 +238,59 @@ const Residents = () => {
 
       {residents.length > 0 ? (
         residents.map((resident) => (
-          <Grid item xs={12} md={3} key={resident.residentId}>
-            <div>
-              <h2>
-                {resident.User.fullname} ({resident.User.username})
-              </h2>
-              <img
-                src={resident.User.avatar}
-                alt={resident.User.fullname}
-                style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-              />
-
-              <p>
-                <strong>ID Card:</strong> {resident.idcard}
-              </p>
-              <p>
-                <strong>Phone Number:</strong> {resident.phonenumber} 
-              </p>
-              <p>
-                <strong>User Email:</strong> {resident.User.email}
-              </p>
-              <p>
-                <strong>Active:</strong> {resident.active ? 'Yes' : 'No'}
-              </p>
-              <p>
-                <strong>Created At:</strong> {resident.createdAt}
-              </p>
-              <p>
-                <strong>Updated At:</strong> {resident.updatedAt}
-              </p>
-              <Button variant="contained" color="warning" onClick={() => handleClickOpen(resident)}>
-                Update
-              </Button>
-              {/* create button to active / de active resident */}
-              <Button variant="contained"color={resident.active ? 'primary' : 'secondary'} onClick={() => isActive(resident)}>
-                {resident.active ? 'Deactivate' : 'Activate'}
-              </Button>
-            </div>
+          <Grid item xs={12} md={6} key={resident.residentId}>
+            <Paper>
+              <div className="flex flex-row">
+                <img
+                  src={resident.User.avatar}
+                  alt={resident.User.fullname}
+                  style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+                />
+                <div className="pl-5">
+                  <Typography variant="h6">
+                    {resident.User.fullname} ({resident.User.username})
+                  </Typography>
+                  <p>
+                    <strong>ID Card:</strong> {resident.idcard}
+                  </p>
+                  <p>
+                    <strong>Phone Number:</strong> {resident.phonenumber}
+                  </p>
+                  <p>
+                    <strong>User Email:</strong> {resident.User.email}
+                  </p>
+                  <p>
+                    <strong>Active:</strong> {resident.active ? 'True' : 'False'}
+                  </p>
+                  <p>
+                    <strong>Created At:</strong> {resident.createdAt}
+                  </p>
+                  <p>
+                    <strong>Updated At:</strong> {resident.updatedAt}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <Button
+                  variant="text"
+                  sx={{
+                    color: 'orange',
+                  }}
+                  onClick={() => handleClickOpen(resident)}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="text"
+                  sx={{
+                    color: resident.active ? 'red' : 'green',
+                  }}
+                  onClick={() => isActive(resident)}
+                >
+                  {resident.active ? 'Deactivate' : 'Activate'}
+                </Button>
+              </div>
+            </Paper>
           </Grid>
         ))
       ) : (
