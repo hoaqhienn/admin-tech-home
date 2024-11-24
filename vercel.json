@@ -1,18 +1,30 @@
 {
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "routes": [
-    { "src": "/", "dest": "/" },
-    { "src" : "/settings", "dest": "/more/settings" },
-    { "src" : "/report-statistics", "dest": "/more/report-statistics" },
-    { "src" : "/signin", "dest": "/auth/signin" },
-    { "src" : "/signup", "dest": "/auth/signup" },
-    { "src" : "/forgot-password", "dest": "/auth/forgot-password" },
-    { "src" : "/404", "dest": "/error/404" },
-    { "src" : "/buildings", "dest": "/properties/buildings" },
-    { "src" : "/floors", "dest": "/properties/floors" },
-    { "src" : "/apartments", "dest": "/properties/apartments" },
-    { "src" : "/events", "dest": "/more/events" },
-    { "src" : "/services", "dest": "/more/services" },
-    { "src" : "/residents", "dest": "/residents/residents" },
-    { "src" : "/overview", "dest": "/properties/overview" }
+    {
+      "src": "/auth/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/error/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/properties/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/residents/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/more/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
