@@ -6,14 +6,16 @@ import MainLayout from 'layouts/main-layout/index';
 import Splash from 'components/loader/Splash';
 import PageLoader from 'components/loader/PageLoader';
 import AuthLayout from 'layouts/auth-layout';
-import ProtectedRoute from 'components/loader/ProtectedRoute';
+import { Typography } from '@mui/material';
 
 // Lazy load components with error boundaries
-const lazyLoad = (importFunc : any) => {
-  return lazy(() => importFunc().catch((error : any) => {
-    console.error('Error loading component:', error);
-    return { default: () => <div>Error loading page</div> };
-  }));
+const lazyLoad = (importFunc: any) => {
+  return lazy(() =>
+    importFunc().catch((error: any) => {
+      console.error('Error loading component:', error);
+      return { default: () => <div>Error loading page</div> };
+    }),
+  );
 };
 
 const App = lazyLoad(() => import('App'));
@@ -22,13 +24,21 @@ const Signin = lazyLoad(() => import('pages/authentication/Signin'));
 const Buildings = lazyLoad(() => import('pages/properties/Buildings/index'));
 const Floors = lazyLoad(() => import('pages/properties/Floors/index'));
 const Apartments = lazyLoad(() => import('pages/properties/Apartments/index'));
-const Events = lazyLoad(() => import('pages/more/Events'));
-const Services = lazyLoad(() => import('pages/more/Services'));
+const Events = lazyLoad(() => import('pages/event/Events'));
+const Services = lazyLoad(() => import('pages/service/Services'));
 const Residents = lazyLoad(() => import('pages/residents/Residents'));
 const Settings = lazyLoad(() => import('pages/more/Settings'));
 const RS = lazyLoad(() => import('pages/more/ReportsAndStatistics'));
-const Overview = lazyLoad(() => import('pages/properties/Overview/index'));
-const NotFound = () => <div>Page not found</div>;
+const VehiclePage = lazyLoad(() => import('pages/vehicles/VehiclePage'));
+const BillPage = lazyLoad(() => import('pages/bill/BillPage'));
+const ComplaintPage = lazyLoad(() => import('pages/complaint/ComplaintPage'));
+const FacilityPage = lazyLoad(() => import('pages/facility/FacilityPage'));
+const NotifyPage = lazyLoad(() => import('pages/notification/NotifyPage'));
+const NotFound = () => (
+  <div>
+    <Typography variant="h1">Page not found - 404</Typography>
+  </div>
+);
 
 const router = createBrowserRouter(
   [
@@ -45,9 +55,7 @@ const router = createBrowserRouter(
           element: (
             <MainLayout>
               <Suspense fallback={<PageLoader />}>
-                <ProtectedRoute>
-                  <Outlet />
-                </ProtectedRoute>
+                <Outlet />
               </Suspense>
             </MainLayout>
           ),
@@ -56,10 +64,6 @@ const router = createBrowserRouter(
             {
               index: true,
               element: <Dashboard />,
-            },
-            {
-              path: paths.overview.replace('/', ''),
-              element: <Overview />,
             },
             {
               path: paths.buildings.replace('/', ''),
@@ -86,12 +90,32 @@ const router = createBrowserRouter(
               element: <Residents />,
             },
             {
+              path: paths.vehicles.replace('/', ''),
+              element: <VehiclePage />,
+            },
+            {
               path: paths.settings.replace('/', ''),
               element: <Settings />,
             },
             {
               path: paths.reportStatistics.replace('/', ''),
               element: <RS />,
+            },
+            {
+              path: paths.bills.replace('/', ''),
+              element: <BillPage />,
+            },
+            {
+              path: paths.complaints.replace('/', ''),
+              element: <ComplaintPage />,
+            },
+            {
+              path: paths.facilities.replace('/', ''),
+              element: <FacilityPage />,
+            },
+            {
+              path: paths.notifications.replace('/', ''),
+              element: <NotifyPage />,
             },
           ],
         },
@@ -107,7 +131,7 @@ const router = createBrowserRouter(
           errorElement: <NotFound />,
           children: [
             {
-              path: paths.signin.split('/').pop(),
+              path: paths.signin,
               element: <Signin />,
             },
           ],
@@ -121,7 +145,7 @@ const router = createBrowserRouter(
   ],
   {
     basename: '/',
-  }
+  },
 );
 
 export default router;

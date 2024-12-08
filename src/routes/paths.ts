@@ -1,25 +1,31 @@
 export const rootPaths = {
   root: '/',
   authRoot: 'auth',
-  errorRoot: 'error',
-  propertiesRoot: 'properties',
-  residentsRoot: 'residents',
   moreRoot: 'more',
+  errorRoot: 'error',
+  residentsRoot: 'residents',
+  propertiesRoot: 'properties',
 };
 
 export default {
-  settings: `/${rootPaths.moreRoot}/settings`,
-  reportStatistics: `/${rootPaths.moreRoot}/report-statistics`,
+  404: `/${rootPaths.errorRoot}/404`,
 
   signin: `/${rootPaths.authRoot}/signin`,
-  signup: `/${rootPaths.authRoot}/signup`,
   forgotPassword: `/${rootPaths.authRoot}/forgot-password`,
-  404: `/${rootPaths.errorRoot}/404`,
-  buildings: `/${rootPaths.propertiesRoot}/buildings`,
+
   floors: `/${rootPaths.propertiesRoot}/floors`,
+  buildings: `/${rootPaths.propertiesRoot}/buildings`,
   apartments: `/${rootPaths.propertiesRoot}/apartments`,
-  events: `/${rootPaths.moreRoot}/events`,
-  services: `/${rootPaths.moreRoot}/services`,
+  facilities: `/${rootPaths.propertiesRoot}/facilities`,
+
+  complaints: `/${rootPaths.residentsRoot}/complaints`,
   residents: `/${rootPaths.residentsRoot}/residents`,
-  overview: `/${rootPaths.propertiesRoot}/overview`,
+  vehicles: `/${rootPaths.residentsRoot}/vehicles`,
+
+  bills: `/${rootPaths.moreRoot}/bills`,
+  events: `/${rootPaths.moreRoot}/events`,
+  settings: `/${rootPaths.moreRoot}/settings`,
+  services: `/${rootPaths.moreRoot}/services`,
+  notifications: `/${rootPaths.moreRoot}/notifications`,
+  reportStatistics: `/${rootPaths.moreRoot}/report-statistics`,
 };
