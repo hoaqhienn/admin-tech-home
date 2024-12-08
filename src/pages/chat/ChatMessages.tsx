@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
-import { ChatMessage, ChatUser } from 'interface/Chat';
+import { ChatMessage, ChatUser } from 'interface/chat/ChatInterface';
 import { useState } from 'react';
 
 interface ChatMessagesProps {

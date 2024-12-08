@@ -1,5 +1,5 @@
 import { Avatar, Paper, Typography } from '@mui/material';
-import { ChatUser } from 'interface/Chat';
+import { ChatUser } from 'interface/chat/ChatInterface';
 
 
 interface Props {

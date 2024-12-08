@@ -10,9 +10,12 @@ import ButtonBase from '@mui/material/ButtonBase';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import IconifyIcon from 'components/base/IconifyIcon';
 import ProfileImage from 'assets/images/profile.png';
+import ConfirmDialog from 'components/dialog/ConfirmDialog';
+import { useNavigate } from 'react-router-dom';
 
 interface MenuItems {
   id: number;
+  key: string;
   title: string;
   icon: string;
 }
@@ -20,32 +23,38 @@ interface MenuItems {
 const menuItems: MenuItems[] = [
   {
     id: 1,
+    key: 'view-profile',
     title: 'View Profile',
     icon: 'ic:outline-account-circle',
   },
   {
     id: 2,
+    key: 'edit-profile',
     title: 'Account Settings',
     icon: 'ic:outline-manage-accounts',
   },
   {
     id: 3,
+    key: 'notifications',
     title: 'Notifications',
     icon: 'ic:outline-notifications-none',
   },
   {
     id: 4,
+    key: 'switch-account',
     title: 'Switch Account',
     icon: 'ic:outline-switch-account',
   },
   {
     id: 5,
+    key: 'help-center',
     title: 'Help Center',
     icon: 'ic:outline-contact-support',
   },
   {
     id: 6,
-    title: 'Logout',
+    key: 'logout',
+    title: 'Đăng xuất',
     icon: 'ic:baseline-logout',
   },
 ];
@@ -53,6 +62,15 @@ const menuItems: MenuItems[] = [
 const ProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [openDialog, setOpenDialog] = useState(false);
+  const nav = useNavigate();
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,8 +80,27 @@ const ProfileMenu = () => {
     setAnchorEl(null);
   };
 
+  const handleMenuItemClick = (item: MenuItems) => {
+    if (item.key === 'logout') {
+      handleClickOpen();
+    }
+    handleProfileMenuClose();
+  };
+
+  const handleConfirm = () => {
+    localStorage.removeItem('_token');
+    nav('/auth/signin');
+  };
+
   return (
     <>
+      <ConfirmDialog
+        open={openDialog}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+        title="Đăng xuất"
+        message="Xác nhận đăng xuất?"
+      />
       <ButtonBase
         sx={{ ml: 1 }}
         onClick={handleProfileClick}
@@ -117,7 +154,13 @@ const ProfileMenu = () => {
         <Box p={1}>
           {menuItems.map((item) => {
             return (
-              <MenuItem key={item.id} onClick={handleProfileMenuClose} sx={{ py: 1 }}>
+              <MenuItem
+                key={item.id}
+                onClick={() => {
+                  handleMenuItemClick(item);
+                }}
+                sx={{ py: 1 }}
+              >
                 <ListItemIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 'h5.fontSize' }}>
                   <IconifyIcon icon={item.icon} />
                 </ListItemIcon>

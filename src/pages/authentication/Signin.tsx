@@ -1,7 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from 'services/authService';
 import {
   Box,
   Button,
@@ -35,7 +34,7 @@ const Signin = () => {
       if (!user.email || !user.password) {
         throw new Error('Please fill in all required fields.');
       }
-      if (await loginUser({ email: user.email, password: user.password })) {
+      if (await handleLogin({ email: user.email, password: user.password })) {
         navigate('/');
       } else {
         throw new Error('Invalid credentials. Please try again.');
@@ -52,10 +51,10 @@ const Signin = () => {
   return (
     <>
       <Typography align="center" variant="h4">
-        Sign In
+        Đăng Nhập
       </Typography>
       <Typography mt={1.5} align="center" variant="body2">
-        Welcome back!
+        Chào mừng trở lại!
       </Typography>
 
       <Stack component="form" mt={3} onSubmit={handleSubmit} direction="column" gap={2}>
@@ -66,7 +65,7 @@ const Signin = () => {
           value={user.email}
           onChange={handleInputChange}
           variant="filled"
-          placeholder="Your Email"
+          placeholder="Email"
           autoComplete="email"
           fullWidth
           autoFocus
@@ -86,7 +85,7 @@ const Signin = () => {
           value={user.password}
           onChange={handleInputChange}
           variant="filled"
-          placeholder="Your Password"
+          placeholder="Mật khẩu"
           autoComplete="current-password"
           fullWidth
           required
@@ -121,7 +120,10 @@ const Signin = () => {
         />
 
         <Button type="submit" variant="contained" size="medium" fullWidth>
-          Sign In
+          Đăng nhập
+        </Button>
+        <Button variant="text" size="small" fullWidth>
+          Đặt lại mật khẩu
         </Button>
       </Stack>
       <Modal open={showErrorModal} onClose={handleCloseModal}>
@@ -147,11 +149,9 @@ const Signin = () => {
               fontWeight: 'bold',
             }}
           >
-            Error
+            Đăng nhập không thành công
           </Typography>
-          <Typography>
-            Invalid <strong>email</strong> or <strong>password</strong>. Please try again!
-          </Typography>
+          <Typography>Thông tin đăng nhập không chính xác. Vui lòng thử lại!</Typography>
           <Button
             variant="text"
             onClick={handleCloseModal}
@@ -171,7 +171,7 @@ const Signin = () => {
               },
             }}
           >
-            OK
+            Đồng Ý
           </Button>
         </Box>
       </Modal>

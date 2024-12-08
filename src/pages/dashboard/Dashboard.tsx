@@ -1,66 +1,19 @@
-import { Divider, Grid, Paper, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
+import { useAuth } from 'hooks/auth/useAuth';
 import React from 'react';
 
 const Dashboard: React.FC = () => {
+  const { user } = useAuth();
+
+  console.log('user :: ', user);
+
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h3">Properties</Typography>
+          <Typography variant="h3">Trang chủ</Typography>
+          <Typography variant="body1">Xin chào, {user?.user.fullname}</Typography>
           <Divider />
-        </Grid>
-        <Grid item md={3}>
-          <Paper>
-            <Typography variant="h4">Buildings</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={3}>
-          <Paper>
-            <Typography variant="h4">Floors</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={3}>
-          <Paper>
-            <Typography variant="h4">Apartments</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={3}>
-          <Paper>
-            <Typography variant="h4">Facilities</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h3">Users</Typography>
-          <Divider />
-        </Grid>
-        <Grid item md={6}>
-          <Paper>
-            <Typography variant="h4">Residents</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={6}>
-          <Paper>
-            <Typography variant="h4">Vehicles</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h3">More</Typography>
-          <Divider />
-        </Grid>
-        <Grid item md={4}>
-          <Paper>
-            <Typography variant="h4">Advertisements</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={4}>
-          <Paper>
-            <Typography variant="h4">Events</Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={4}>
-          <Paper>
-            <Typography variant="h4">Services</Typography>
-          </Paper>
         </Grid>
       </Grid>
     </>

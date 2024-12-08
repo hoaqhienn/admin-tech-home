@@ -40,8 +40,8 @@ const Sidebar = ({ mobileOpen, setMobileOpen, setIsClosing }: SidebarProps) => {
             '::-webkit-scrollbar': {
               display: 'none',
             },
-            msOverflowStyle: 'none',  // IE and Edge
-            scrollbarWidth: 'none',   // Firefox
+            msOverflowStyle: 'none', // IE and Edge
+            scrollbarWidth: 'none', // Firefox
           },
         }}
       >
@@ -60,8 +60,8 @@ const Sidebar = ({ mobileOpen, setMobileOpen, setIsClosing }: SidebarProps) => {
             '::-webkit-scrollbar': {
               display: 'none',
             },
-            msOverflowStyle: 'none',  // IE and Edge
-            scrollbarWidth: 'none',   // Firefox
+            msOverflowStyle: 'none', // IE and Edge
+            scrollbarWidth: 'none', // Firefox
           },
         }}
       >

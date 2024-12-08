@@ -13,9 +13,9 @@ const Footer = () => {
       letterSpacing={0.5}
       fontWeight={500}
     >
-      Made with ❤️ by{' '}
+      Made with ❤️ by {' '}
       <Link href="https://www.facebook.com/hoaqhienn/" target="_blank" rel="noreferrer">
-        {'Davi'}
+        <em>hoaqhienn</em>
       </Link>
     </Typography>
   );

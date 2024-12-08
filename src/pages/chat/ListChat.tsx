@@ -7,7 +7,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import { ChatUser } from 'interface/Chat';
+import { ChatUser } from 'interface/chat/ChatInterface';
 
 interface Props {
   filteredUsers: ChatUser[];

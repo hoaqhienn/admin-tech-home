@@ -10,7 +10,6 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import ProfileMenu from './ProfileMenu';
 import Image from 'components/base/Image';
 import LogoImg from 'assets/images/logo.png';
-import ChatLayout from 'layouts/chat-layout/ChatLayout';
 
 interface TopbarProps {
   isClosing: boolean;
@@ -76,7 +75,6 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
       </Stack>
 
       <Stack spacing={{ xs: 1, sm: 2 }} alignItems="center">
-        <ChatLayout />
         <IconButton size="large">
           <Badge badgeContent={2} color="error">
             <IconifyIcon icon="ic:outline-notifications-none" />

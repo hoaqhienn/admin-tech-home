@@ -21,7 +21,7 @@ const AuthLayout = ({ children }: PropsWithChildren) => {
     >
       <ButtonBase
         component={Link}
-        href="/"
+        href="/auth/signin"
         disableRipple
         sx={{ position: 'absolute', top: 24, left: 24 }}
       >

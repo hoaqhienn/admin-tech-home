@@ -1,15 +1,13 @@
 import Grid from '@mui/material/Grid';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Apartment } from 'interface/Properties';
-import { Checkbox, FormControlLabel, Paper, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import ScrollToTop from 'components/fab/ScrollToTop';
-import { useApartments } from 'hooks/useApartment';
-import { ApartmentCard } from './ApartmentCard';
 import { FormDialog, TextFieldProps } from 'components/input/FormDialog';
 import { SpeedDialActionType, SpeedDialCustom } from 'components/fab/SpeedDial';
 import IconifyIcon from 'components/base/IconifyIcon';
-import { useBuildings } from 'hooks/useBuilding';
+import ApartmentsDataGrid from './ApartmentsDataGrid';
 
 export interface FloorProps {
   floorId: number;
@@ -24,18 +22,10 @@ export interface BuildingProps {
 }
 
 const Apartments = () => {
-  const { buildingIds, fetchBuildings } = useBuildings();
-  const {
-    apartments,
-    fetchApartments,
-    addApartment,
-    updateApartment,
-    deleteApartment,
-    searchApartments,
-  } = useApartments();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentApartment, setCurrentApartment] = useState<Apartment | null>(null);
+  console.log('currentApartment:', currentApartment);
 
   const [newApartment, setNewApartment] = useState({
     apartmentNumber: '',
@@ -44,11 +34,6 @@ const Apartments = () => {
     updatedAt: '',
     floorId: '',
   });
-
-  useEffect(() => {
-    fetchBuildings();
-    fetchApartments();
-  }, []);
 
   const handleClickOpen = (apartment?: Apartment) => {
     if (apartment) {
@@ -85,32 +70,36 @@ const Apartments = () => {
   };
 
   const handleSubmit = async () => {
-    const updatedAt = new Date().toISOString();
+    // const updatedAt = new Date().toISOString();
 
-    if (isEditing && currentApartment) {
-      // Update the apartment
-      const updatedApartment: Apartment = {
-        ...currentApartment,
-        apartmentNumber: newApartment.apartmentNumber,
-        apartmentType: newApartment.apartmentType,
-        createdAt: newApartment.createdAt,
-        updatedAt: updatedAt,
-        floorId: parseInt(newApartment.floorId),
-      };
+    // if (isEditing && currentApartment) {
+    //   // Update the apartment
+    //   const updatedApartment: Apartment = {
+    //     ...currentApartment,
+    //     apartmentNumber: newApartment.apartmentNumber,
+    //     apartmentType: newApartment.apartmentType,
+    //     createdAt: newApartment.createdAt,
+    //     updatedAt: updatedAt,
+    //     floorId: parseInt(newApartment.floorId),
+    //   };
 
-      await updateApartment(updatedApartment);
-    } else {
-      // Add new apartment
-      const createdAt = new Date().toISOString();
-      const newApartmentData: Omit<Apartment, 'apartmentId'> = {
-        apartmentNumber: newApartment.apartmentNumber,
-        apartmentType: newApartment.apartmentType,
-        createdAt,
-        updatedAt,
-        floorId: parseInt(newApartment.floorId),
-      };
-      await addApartment(newApartmentData);
-    }
+    //   await updateApartment(updatedApartment);
+    // } else {
+    //   // Add new apartment
+    //   const createdAt = new Date().toISOString();
+    //   const newApartmentData: Omit<Apartment, 'apartmentId'> = {
+    //     apartmentNumber: newApartment.apartmentNumber,
+    //     apartmentType: newApartment.apartmentType,
+    //     createdAt,
+    //     updatedAt,
+    //     floorId: parseInt(newApartment.floorId),
+    //     floorNumber: -1,
+    //     buildingId: -1,
+    //     buildingName: '',
+    //     residents: [],
+    //   };
+    //   await addApartment(newApartmentData);
+    // }
 
     handleClose();
   };
@@ -143,11 +132,14 @@ const Apartments = () => {
     },
   ];
 
-  const [selectedBuildingIds, setSelectedBuildingIds] = useState<number>();
+  const handleDelete = async (apartmentId: number) => {
+    // await fetch(`/api/apartments/${apartmentId}`, { method: 'DELETE' });
+    // fetchApartments();
+    console.log('Delete:', apartmentId);
+  };
 
-  const handleCheckboxChange = (buildingId: number) => {
-    setSelectedBuildingIds(buildingId);
-    searchApartments({ buildingId: selectedBuildingIds, floorId: [] });
+  const handleBulkDelete = async (apartmentIds: number[]) => {
+    console.log('Bulk delete:', apartmentIds);
   };
 
   return (
@@ -164,42 +156,15 @@ const Apartments = () => {
       />
       <Grid container spacing={2.5}>
         <Grid item xs={12}>
-          <Typography variant="h2">Apartments</Typography>
+          <Typography variant="h1">Danh sách căn hộ</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Paper>
-            <Typography variant="h6">Filter by Building ID:</Typography>
-            {buildingIds.map((id) => (
-              <FormControlLabel
-                key={id}
-                control={
-                  <Checkbox
-                    checked={selectedBuildingIds === id}
-                    onClick={() => handleCheckboxChange(id)}
-                    value={id}
-                  />
-                }
-                label={`Building ${id}`}
-              />
-            ))}
-            <Typography variant="h6">Filter by Floor Number:</Typography>
-          </Paper>
+          <ApartmentsDataGrid
+            onEdit={handleClickOpen}
+            onDelete={handleDelete}
+            onBulkDelete={handleBulkDelete}
+          />
         </Grid>
-
-        {apartments.map((a) => (
-          <Grid item xs={6} md={4} key={a.apartmentId}>
-            <ApartmentCard
-              apartment={a}
-              handleToggle={() => {}}
-              handleEdit={() => {
-                handleClickOpen(a);
-              }}
-              handleDelete={() => {
-                deleteApartment(a.apartmentId);
-              }}
-            />
-          </Grid>
-        ))}
       </Grid>
     </>
   );

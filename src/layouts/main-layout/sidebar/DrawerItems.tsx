@@ -40,7 +40,7 @@ const DrawerItems = () => {
               color="primary.main"
               textTransform="uppercase"
               letterSpacing={1}
-              fontFamily={fontFamily.poppins}
+              fontFamily={fontFamily.notoSans}
             >
               TECH HOME
             </Typography>

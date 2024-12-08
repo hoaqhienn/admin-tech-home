@@ -1,201 +1,79 @@
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Typography,
-} from '@mui/material';
+import { useCallback, useState } from 'react';
+import { Grid, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import ScrollToTop from 'components/fab/ScrollToTop';
-import { FloorCard } from './FloorCard';
 import { Floor } from 'interface/Properties';
-import { FloorFilter } from './FloorFilter';
 import { SpeedDialActionType, SpeedDialCustom } from 'components/fab/SpeedDial';
 import { FormDialog, TextFieldProps } from 'components/input/FormDialog';
-import { useBuildings } from 'hooks/useBuilding';
-import { useFloors } from 'hooks/useFloor';
+import FloorsDataGrid from './FloorsDataGrid';
+import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
+import FloorResidentsChart from './FloorResidentsChart';
 
-interface FloorFormData {
-  floorNumber: string;
-  buildingId: string;
-}
-
-const INITIAL_FORM_DATA: FloorFormData = {
-  floorNumber: '',
-  buildingId: '',
-};
+const initialFloorState = { floorNumber: '', buildingId: -1 };
 
 const Floors = () => {
-  // Main state
-  const { fetchBuildings } = useBuildings();
-  const { floors, AddFloor, UpdateFloor, RemoveFloor, fetchFloors } = useFloors();
+  // Form states
+  const [open, setOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentFloor, setCurrentFloor] = useState<Floor | null>(null);
+  const [newFloor, setNewFloor] = useState(initialFloorState);
 
-  const [selectedBuildingIds, setSelectedBuildingIds] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Delete dialog states
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+  const [selectedFloorIds, setSelectedFloorIds] = useState<number[]>([]);
 
-  // Dialog states
-  const [formData, setFormData] = useState<FloorFormData>(INITIAL_FORM_DATA);
-  const [dialogState, setDialogState] = useState({
-    isOpen: false,
-    isEditing: false,
-    isSubmitting: false,
-    currentFloor: null as Floor | null,
-  });
-
-  // Delete confirmation dialog state
-  const [deleteDialog, setDeleteDialog] = useState({
-    isOpen: false,
-    floorToDelete: null as number | null,
-    isSubmitting: false,
-  });
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetchFloors();
-    fetchBuildings();
-    setIsLoading(false);
+  const handleClickOpen = useCallback((floor?: Floor) => {
+    if (floor) {
+      setNewFloor({
+        floorNumber: floor.floorNumber,
+        buildingId: floor.buildingId,
+      });
+      setCurrentFloor(floor);
+      setIsEditing(true);
+    } else {
+      setNewFloor(initialFloorState);
+      setIsEditing(false);
+    }
+    setOpen(true);
   }, []);
 
-  // Form handlers
-  const handleFormOpen = (floor?: Floor) => {
-    if (floor) {
-      setFormData({
-        floorNumber: floor.floorNumber,
-        buildingId: floor.buildingId.toString(),
-      });
-      setDialogState({
-        isOpen: true,
-        isEditing: true,
-        isSubmitting: false,
-        currentFloor: floor,
-      });
-    } else {
-      setFormData(INITIAL_FORM_DATA);
-      setDialogState({
-        isOpen: true,
-        isEditing: false,
-        isSubmitting: false,
-        currentFloor: null,
-      });
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    setCurrentFloor(null);
+  }, []);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewFloor((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    console.log('newFloor:', newFloor);
+  }, [newFloor]);
+
+  const handleDelete = useCallback((id: number) => {
+    console.log('Deleting floor with id:', id);
+  }, []);
+
+  const handleBulkDelete = useCallback(() => {
+    console.log('Deleting floors with ids:', selectedFloorIds);
+  }, [selectedFloorIds]);
+
+  const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
+  const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (currentFloor) {
+      await handleDelete(currentFloor.floorId);
+      setOpenDialog(false);
     }
-  };
-
-  const handleFormClose = () => {
-    setDialogState((prev) => ({ ...prev, isOpen: false }));
-    setFormData(INITIAL_FORM_DATA);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Submit handlers
-  const handleSubmit = async () => {
-    try {
-      setDialogState((prev) => ({ ...prev, isSubmitting: true }));
-      const updatedAt = new Date().toISOString();
-
-      if (dialogState.isEditing && dialogState.currentFloor) {
-        const updatedFloor: Floor = {
-          ...dialogState.currentFloor,
-          floorNumber: formData.floorNumber,
-          buildingId: parseInt(formData.buildingId),
-          updatedAt,
-        };
-        await UpdateFloor(updatedFloor);
-      } else {
-        const newFloorData = {
-          floorNumber: formData.floorNumber,
-          buildingId: parseInt(formData.buildingId),
-          createdAt: new Date().toISOString(),
-          updatedAt,
-        };
-        await AddFloor(newFloorData);
-      }
-
-      await fetchFloors();
-      handleFormClose();
-    } catch (error) {
-      console.error('Error submitting floor:', error);
-      // Here you might want to add error handling UI
-    } finally {
-      setDialogState((prev) => ({ ...prev, isSubmitting: false }));
-    }
-  };
-
-  // Delete handlers
-  const handleDeleteConfirm = (floor: Floor) => {
-    setDeleteDialog({
-      isOpen: true,
-      floorToDelete: floor.floorId,
-      isSubmitting: false,
-    });
-  };
-
-  const handleDelete = async () => {
-    if (!deleteDialog.floorToDelete) return;
-
-    try {
-      setDeleteDialog((prev) => ({ ...prev, isSubmitting: true }));
-      await RemoveFloor(deleteDialog.floorToDelete);
-      await fetchFloors();
-    } catch (error) {
-      console.error('Error deleting floor:', error);
-      // Here you might want to add error handling UI
-    } finally {
-      setDeleteDialog({
-        isOpen: false,
-        floorToDelete: null,
-        isSubmitting: false,
-      });
-    }
-  };
-
-  const renderFloorCards = () => {
-    if (isLoading) {
-      return Array.from({ length: 6 }).map((_, index) => (
-        <Grid item xs={12} md={4} key={`skeleton-${index}`}>
-          <FloorCard isLoading />
-        </Grid>
-      ));
-    }
-
-    const filteredFloors =
-      selectedBuildingIds.length > 0
-        ? floors.filter((floor) => selectedBuildingIds.includes(floor.buildingId))
-        : floors;
-
-    if (!filteredFloors.length) {
-      return (
-        <Grid item xs={12}>
-          <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-            <Typography>No floors found</Typography>
-          </Box>
-        </Grid>
-      );
-    }
-
-    return filteredFloors.map((floor) => (
-      <Grid item xs={12} md={4} key={floor.floorId}>
-        <FloorCard
-          floor={floor}
-          handleEdit={() => handleFormOpen(floor)}
-          handleDelete={() => handleDeleteConfirm(floor)}
-        />
-      </Grid>
-    ));
-  };
+  }, [currentFloor, handleDelete]);
 
   const actions: SpeedDialActionType[] = [
     {
       icon: <IconifyIcon icon="ic:round-add" />,
       title: 'Add floor',
-      onClick: () => handleFormOpen(),
+      onClick: () => handleClickOpen(),
     },
   ];
 
@@ -203,23 +81,40 @@ const Floors = () => {
     {
       name: 'buildingId',
       label: 'Building ID',
-      value: formData.buildingId,
+      value: newFloor.buildingId.toString(),
     },
     {
       name: 'floorNumber',
       label: 'Floor Number',
-      value: formData.floorNumber,
+      value: newFloor.floorNumber,
     },
   ];
-
-  const open = dialogState.isOpen;
-  const isEditing = dialogState.isEditing;
-  const handleClose = handleFormClose;
 
   return (
     <>
       <ScrollToTop />
       <SpeedDialCustom actions={actions} />
+
+      {/* Single Delete Confirmation */}
+      <ConfirmationDialog
+        key="delete"
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirmDelete}
+        title="Delete Floor"
+        message="Are you sure you want to delete this floor?"
+      />
+
+      {/* Bulk Delete Confirmation */}
+      <ConfirmationDialog
+        key="bulk-delete"
+        open={openBulkDeleteDialog}
+        onClose={handleCloseBulkDeleteDialog}
+        onConfirm={handleBulkDelete}
+        title="Delete Multiple Floors"
+        message={`Are you sure you want to delete ${selectedFloorIds.length} selected floors?`}
+      />
+
       <FormDialog
         open={open}
         isEditing={isEditing}
@@ -228,53 +123,28 @@ const Floors = () => {
         onInputChange={handleInputChange}
         textInput={inputs}
       />
-      {/* Main Content */}
+
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Typography variant="h2">Floors</Typography>
+          <Typography variant="h1">Danh sách tầng</Typography>
         </Grid>
-
         <Grid item xs={12}>
-          <FloorFilter
-            floors={floors}
-            selectedBuildingIds={selectedBuildingIds}
-            setSelectedBuildingIds={setSelectedBuildingIds}
+          <FloorsDataGrid
+            onEdit={handleClickOpen}
+            onDelete={(floorId) => {
+              setCurrentFloor({ floorId } as Floor);
+              setOpenDialog(true);
+            }}
+            onBulkDelete={(floorIds) => {
+              setSelectedFloorIds(floorIds);
+              setOpenBulkDeleteDialog(true);
+            }}
           />
         </Grid>
-
         <Grid item xs={12}>
-          <Grid container spacing={3}>
-            {renderFloorCards()}
-          </Grid>
+          <FloorResidentsChart />
         </Grid>
       </Grid>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteDialog.isOpen}
-        onClose={
-          deleteDialog.isSubmitting
-            ? undefined
-            : () => setDeleteDialog((prev) => ({ ...prev, isOpen: false }))
-        }
-      >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete this floor?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setDeleteDialog((prev) => ({ ...prev, isOpen: false }))}
-            color="secondary"
-            disabled={deleteDialog.isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="error" disabled={deleteDialog.isSubmitting}>
-            {deleteDialog.isSubmitting ? 'Deleting...' : 'Delete'}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 };
