@@ -4,8 +4,8 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
-import Image from 'components/base/Image';
 import Logo from 'assets/images/logo.png';
+import Image from 'components/base/Image';
 
 const AuthLayout = ({ children }: PropsWithChildren) => {
   return (

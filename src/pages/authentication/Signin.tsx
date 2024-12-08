@@ -11,15 +11,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-
-interface User {
-  [key: string]: string;
-}
+import { useAuth } from 'hooks/auth/useAuth';
 
 const Signin = () => {
   const navigate = useNavigate();
-
-  const [user, setUser] = useState<User>({ email: '', password: '' });
+  const { handleLogin } = useAuth();
+  const [user, setUser] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 

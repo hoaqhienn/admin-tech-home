@@ -1,5 +1,5 @@
 import { SpeedDial, SpeedDialAction } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
+import { Menu } from 'lucide-react';
 import { theme } from 'theme/theme';
 
 export interface SpeedDialActionType {
@@ -18,7 +18,7 @@ export const SpeedDialCustom = ({ actions }: SpeedDialProps) => {
       <SpeedDial
         ariaLabel="floor actions"
         sx={{ position: 'fixed', bottom: theme.spacing(10), right: theme.spacing(2) }}
-        icon={<IconifyIcon icon="ic:menu" />}
+        icon={<Menu />}
         direction="up"
       >
         {actions.map((action) => (

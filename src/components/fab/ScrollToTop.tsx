@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Fab } from '@mui/material';
 import { styled } from '@mui/system';
-import IconifyIcon from 'components/base/IconifyIcon';
+import { ChevronUp } from 'lucide-react';
 
 const ScrollToTopButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
@@ -41,7 +41,7 @@ const ScrollToTop: React.FC = () => {
           onClick={handleScrollToTop}
           aria-label="scroll to top"
         >
-          <IconifyIcon icon="ic:round-arrow-upward" />
+          <ChevronUp />
         </ScrollToTopButton>
       )}
     </>

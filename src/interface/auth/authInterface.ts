@@ -15,3 +15,12 @@ export interface CurrentUserResponse {
   admin: Admin;
 }
 
+export interface AuthResponse {
+  token: string;
+  longToken: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}

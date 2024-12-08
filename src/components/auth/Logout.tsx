@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import ConfirmationDialog from 'components/dialog/ConfirmationDialog';
-import IconifyIcon from 'components/base/IconifyIcon';
+import { useAuth } from 'hooks/auth/useAuth';
+import { LogOut } from 'lucide-react';
+import ConfirmDialog from 'components/dialog/ConfirmDialog';
 
 const LogoutComponent = () => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const { handleLogout } = useAuth();
 
   const handleLogoutClick = () => {
     setOpenDialog(true);
@@ -17,7 +19,7 @@ const LogoutComponent = () => {
   };
 
   const handleConfirmLogout = () => {
-    localStorage.removeItem('_token');
+    handleLogout();
     navigate('/auth/signin');
     setOpenDialog(false);
   };
@@ -29,13 +31,13 @@ const LogoutComponent = () => {
           color: 'error.main',
         }}
         variant="text"
-        startIcon={<IconifyIcon icon="ic:baseline-logout" />}
+        startIcon={<LogOut />}
         onClick={handleLogoutClick}
       >
         Đăng xuất
       </Button>
 
-      <ConfirmationDialog
+      <ConfirmDialog
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmLogout}

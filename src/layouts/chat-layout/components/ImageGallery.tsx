@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { IconButton } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
 import { VideoPlayer } from './VideoPlayer';
 import { PdfViewer } from './PdfViewer';
 import { CustomFile } from 'interface/chat/ChatInterface';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 interface ImageGalleryProps {
@@ -41,7 +41,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
         disabled={currentIndex === 0}
         className="absolute left"
       >
-        <IconifyIcon icon="ic:outline-arrow-back" />
+        <ChevronLeft />
       </IconButton>
 
       {files[currentIndex].fileType === 'image' ? (
@@ -68,7 +68,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
         disabled={currentIndex === files.length - 1}
         className="absolute right"
       >
-        <IconifyIcon icon="ic:outline-arrow-forward" />
+        <ChevronRight />
       </IconButton>
 
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-white">

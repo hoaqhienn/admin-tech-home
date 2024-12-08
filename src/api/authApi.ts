@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { CurrentUserResponse } from 'interface/auth/authInterface';
+import { AuthResponse, CurrentUserResponse } from 'interface/auth/authInterface';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -7,8 +7,9 @@ export const authApi = createApi({
     baseUrl: 'http://localhost:3000/admin',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('_token');
+
       if (token) {
-        headers.set('authorization', `Bearer ${JSON.parse(token)}`);
+        headers.set('authorization', `Bearer ${token}`);
       }
       return headers;
     },
@@ -16,13 +17,12 @@ export const authApi = createApi({
   tagTypes: ['Authorization'],
   endpoints: (builder) => ({
     // Auth endpoints
-    login: builder.mutation<{ token: string }, { email: string; password: string }>({
+    login: builder.mutation<AuthResponse, { email: string; password: string }>({
       query: (credentials) => ({
         url: '/authentication',
         method: 'POST',
         body: credentials,
       }),
-      transformResponse: (response: { token: string }) => response,
     }),
 
     getCurrentUser: builder.query<CurrentUserResponse, void>({

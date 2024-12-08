@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Badge, IconButton, Modal, Box } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
 import { PropsWithChildren } from 'react';
+import { MessageCircle, X } from 'lucide-react';
 
 const modalStyle = {
   position: 'absolute' as const,
@@ -29,7 +29,7 @@ const ChatLayout = ({ children }: PropsWithChildren) => {
     <>
       <IconButton onClick={handleChatOpen} size="large" aria-label="Open chat">
         <Badge color="error">
-          <IconifyIcon icon="ic:outline-message" />
+          <MessageCircle />
         </Badge>
       </IconButton>
 
@@ -51,7 +51,7 @@ const ChatLayout = ({ children }: PropsWithChildren) => {
             size="large"
             aria-label="Close chat"
           >
-            <IconifyIcon icon="ic:outline-close" />
+            <X />
           </IconButton>
 
           {children}
