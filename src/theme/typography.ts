@@ -1,12 +1,13 @@
 import { TypographyOptions } from '@mui/material/styles/createTypography';
 
 export const fontFamily = {
+  notoSans: ['Noto Sans', 'sans-serif'].join(','),
   poppins: ['Poppins', 'sans-serif'].join(','),
   DMSans: ['DM Sans', 'sans-serif'].join(','),
 };
 
 const typography: TypographyOptions = {
-  fontFamily: fontFamily.DMSans,
+  fontFamily: fontFamily.notoSans,
   h1: {
     fontSize: '3rem',
     fontWeight: 700,
