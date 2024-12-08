@@ -41,20 +41,19 @@ export const FormDialog = ({
   );
 
   const _textFieldBuilder = () => {
-    return textInput.map(({ label, name, value }) => {
-      return (
-        <TextField
-          fullWidth
-          required
-          margin="dense"
-          label={label}
-          name={name}
-          variant="outlined"
-          value={value}
-          onChange={onInputChange}
-        />
-      );
-    });
+    return textInput.map(({ label, name, value }) => (
+      <TextField
+        key={name} // Add unique key prop using the name field
+        fullWidth
+        required
+        margin="dense"
+        label={label}
+        name={name}
+        variant="outlined"
+        value={value}
+        onChange={onInputChange}
+      />
+    ));
   };
 
   return (

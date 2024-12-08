@@ -6,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
-interface ConfirmationDialogProps {
+interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -18,7 +18,7 @@ interface ConfirmationDialogProps {
   fullWidth?: boolean;
 }
 
-const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
+const ConfirmDialog: FC<Props> = ({
   open,
   onClose,
   onConfirm,
@@ -30,21 +30,17 @@ const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
   fullWidth = true,
 }) => {
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       maxWidth={maxWidth}
       fullWidth={fullWidth}
       aria-labelledby="confirmation-dialog-title"
       aria-describedby="confirmation-dialog-description"
     >
-      <DialogTitle id="confirmation-dialog-title">
-        {title}
-      </DialogTitle>
+      <DialogTitle id="confirmation-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="confirmation-dialog-description">
-          {message}
-        </DialogContentText>
+        <DialogContentText id="confirmation-dialog-description">{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
@@ -52,21 +48,15 @@ const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
           variant="text"
           sx={{
             color: 'error.main',
-            '&:hover': {
-              backgroundColor: 'error.lighter',
-            },
           }}
         >
           {cancelText}
         </Button>
         <Button
           onClick={onConfirm}
-          variant="contained"
+          variant="text"
           sx={{
-            bgcolor: 'primary.main',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
+            color: 'primary.main',
           }}
           autoFocus
         >
@@ -77,4 +67,4 @@ const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default ConfirmationDialog;
+export default ConfirmDialog;

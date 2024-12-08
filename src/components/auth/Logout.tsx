@@ -32,15 +32,15 @@ const LogoutComponent = () => {
         startIcon={<IconifyIcon icon="ic:baseline-logout" />}
         onClick={handleLogoutClick}
       >
-        Logout
+        Đăng xuất
       </Button>
 
       <ConfirmationDialog
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmLogout}
-        title="Logout"
-        message="Are you sure you want to logout?"
+        title="Đăng xuất"
+        message="Bạn có chắc chắn muốn đăng xuất không?"
       />
     </>
   );
