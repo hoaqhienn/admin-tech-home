@@ -1,4 +1,6 @@
-export interface Event {
+import { Building } from "./Properties";
+
+export interface EEvent {
     eventId: number;
     eventName: string;
     eventDescription: string;
@@ -7,4 +9,5 @@ export interface Event {
     createdAt: string;
     updatedAt: string;
     buildingId: number;
+    Building: Building;
   }

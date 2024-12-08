@@ -1,3 +1,34 @@
+// interfaces.ts
+export interface User {
+  userId: number;
+  avatar: string;
+  fullname: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+  updatedAt: string;
+  roleId: number;
+}
+
+export interface LoginResponse {
+  token: string;
+  refreshToken: string;
+}
+
+export interface Admin {
+  adminId: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
+  buildingId: number;
+}
+
+export interface AdminCreateRequest {
+  userId: number;
+  buildingId: number;
+}
+
 export interface Resident {
   residentId: number;
   phonenumber: string;
@@ -17,15 +48,5 @@ export interface ResidentViaApartment {
   idcard: string;
   phonenumber: string;
   email: string;
-}
-
-export interface User {
-  userId: number;
-  avatar: string;
-  fullname: string;
-  username: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-  roleId: number;
+  fcmToken?: string;
 }

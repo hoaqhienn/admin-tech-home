@@ -4,6 +4,24 @@ export interface Building {
   buildingAddress: string;
   createdAt: string;
   updatedAt: string;
+  totalFloors: number;
+  totalApartments: number;
+  totalResidents: number;
+}
+
+export interface Floor {
+  floorId: number;
+  floorNumber: string;
+  createdAt: string;
+  updatedAt: string;
+  buildingId: number;
+  buildingName: string;
+  totalResidents: number;
+}
+
+export interface ApartmentResident {
+  residentId: number;
+  residentName: string;
 }
 
 export interface Apartment {
@@ -13,13 +31,16 @@ export interface Apartment {
   createdAt: string;
   updatedAt: string;
   floorId: number;
-}
-
-export interface Floor {
-  floorId: number;
-  floorNumber: string;
-  createdAt: string;
-  updatedAt: string;
+  floorNumber: number;
   buildingId: number;
+  buildingName: string;
+  residents: ApartmentResident[];
+  area?: string;
 }
 
+export interface Facility {
+  facilityId: number;
+  facilityName: string;
+  facilityDescription: string;
+  facilityLocation: string;
+}
