@@ -13,6 +13,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12}>
           <Typography variant="h3">Trang chủ</Typography>
           <Typography variant="body1">Xin chào, {user?.user.fullname}</Typography>
+          <Typography variant="body1">Your id, {user?.user.userId}</Typography>
           <Divider />
         </Grid>
       </Grid>

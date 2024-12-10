@@ -19,25 +19,25 @@ export const serviceApi = createApi({
   endpoints: (builder) => ({
     // Other endpoints following similar patterns...
     getBills: builder.query<Bill[], void>({
-      query: () => '/bill/getAll',
+      query: () => '/bills/getAll',
       transformResponse: (response: { data: Bill[] }) => response.data,
       providesTags: ['Bill'],
     }),
 
     getPayments: builder.query<Payment[], void>({
-      query: () => '/payment/getAll',
+      query: () => '/payments/getAll',
       transformResponse: (response: { data: Payment[] }) => response.data,
       providesTags: ['Payment'],
     }),
 
     getComplaints: builder.query<Complaint[], void>({
-      query: () => '/complaint/getAll',
+      query: () => '/complaints/getAll',
       transformResponse: (response: { data: Complaint[] }) => response.data,
       providesTags: ['Complaint'],
     }),
 
     getNotifications: builder.query<Notification[], void>({
-      query: () => '/notification/getAll',
+      query: () => '/notifications/getAll',
       transformResponse: (response: { data: Notification[] }) => response.data,
       providesTags: ['Notification'],
     }),

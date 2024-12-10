@@ -28,4 +28,6 @@ export default {
   services: `/${rootPaths.moreRoot}/services`,
   notifications: `/${rootPaths.moreRoot}/notifications`,
   reportStatistics: `/${rootPaths.moreRoot}/report-statistics`,
+
+  chat: `/${rootPaths.root}/chat`,
 };

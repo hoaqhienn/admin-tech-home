@@ -10,6 +10,8 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import ProfileMenu from './ProfileMenu';
 import Image from 'components/base/Image';
 import LogoImg from 'assets/images/logo.png';
+import { Bell, Search } from 'lucide-react';
+import MessageMenu from './MessageMenu';
 
 interface TopbarProps {
   isClosing: boolean;
@@ -67,7 +69,7 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <IconifyIcon icon="eva:search-fill" />
+                <Search />
               </InputAdornment>
             ),
           }}
@@ -75,9 +77,10 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
       </Stack>
 
       <Stack spacing={{ xs: 1, sm: 2 }} alignItems="center">
+        <MessageMenu />
         <IconButton size="large">
           <Badge badgeContent={2} color="error">
-            <IconifyIcon icon="ic:outline-notifications-none" />
+            <Bell />
           </Badge>
         </IconButton>
         <ProfileMenu />

@@ -76,7 +76,7 @@ const Buildings = () => {
 
       <Grid container spacing={2.5}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách tòa Nhà</Typography>
+          <Typography variant="h1">Danh sách tòa nhà</Typography>
         </Grid>
         <Grid item xs={12}>
           <BuildingsDataGrid

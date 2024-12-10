@@ -14,7 +14,9 @@ export const propertyApi = createApi({
     },
   }),
   tagTypes: ['Apartment', 'Building', 'Floor', 'Facility'],
+
   endpoints: (builder) => ({
+    
     // Building endpoints
     getBuildings: builder.query<Building[], void>({
       query: () => '/building/getAll',
@@ -102,7 +104,7 @@ export const propertyApi = createApi({
 
     // Facility endpoints
     getFacilities: builder.query<Facility[], void>({
-      query: () => '/facility/getAll',
+      query: () => '/facilities/getAll',
       transformResponse: (response: { data: Facility[] }) => response.data,
       providesTags: ['Facility'],
     }),

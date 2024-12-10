@@ -1,5 +1,5 @@
 interface User {
-  id: number;
+  userId: number;
   avatar: string;
   fullname: string;
   username: string;

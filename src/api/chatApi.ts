@@ -14,11 +14,12 @@ export const chatApi = createApi({
     },
   }),
   tagTypes: ['Chat', 'Messages'],
+
   endpoints: (builder) => ({
     // Get all chats
     getAllChats: builder.query<GroupChat[], void>({
       query: () => '/getAllChats',
-      providesTags: ['Chat'],
+      transformResponse: (response: { data: GroupChat[] }) => response.data,
     }),
 
     // Get messages by chat ID
@@ -31,7 +32,7 @@ export const chatApi = createApi({
         params: { offset, limit },
       }),
       transformResponse: (response: { messages: Messages[] }) => response.messages,
-      providesTags: (_result, _error, { chatId }) => [{ type: 'Messages', id: chatId }],
+      providesTags: ['Messages'],
     }),
 
     // Send message
@@ -61,6 +62,7 @@ export const chatApi = createApi({
           return { error: { status: 500, data: error } };
         }
       },
+      invalidatesTags: ['Messages'],
     }),
   }),
 });

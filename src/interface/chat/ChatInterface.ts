@@ -1,15 +1,5 @@
 import { ChangeEvent } from 'react';
 
-export interface ChatUser {
-  id: number;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadMessageCount: number;
-  online: boolean;
-}
-
 export interface ChatMessage {
   id: string;
   text: string;

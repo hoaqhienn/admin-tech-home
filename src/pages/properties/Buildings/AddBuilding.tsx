@@ -56,7 +56,7 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
     setErrors([]);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (validateInput()) {
       // Proceed with adding building
       console.log('Valid input:', input);

@@ -23,7 +23,7 @@ export const residentApi = createApi({
     }),
 
     getVehicles: builder.query<Vehicle[], void>({
-      query: () => '/vehicle/getAll',
+      query: () => '/vehicles/getAll',
       transformResponse: (response: { data: Vehicle[] }) => response.data,
       providesTags: ['Vehicle'],
     }),

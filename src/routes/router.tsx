@@ -34,6 +34,8 @@ const BillPage = lazyLoad(() => import('pages/bill/BillPage'));
 const ComplaintPage = lazyLoad(() => import('pages/complaint/ComplaintPage'));
 const FacilityPage = lazyLoad(() => import('pages/facility/FacilityPage'));
 const NotifyPage = lazyLoad(() => import('pages/notification/NotifyPage'));
+
+const ChatPage = lazyLoad(() => import('pages/chat/ChatPage'));
 const NotFound = () => (
   <div>
     <Typography variant="h1">Page not found - 404</Typography>
@@ -116,6 +118,10 @@ const router = createBrowserRouter(
             {
               path: paths.notifications.replace('/', ''),
               element: <NotifyPage />,
+            },
+            {
+              path: paths.chat.replace('/', ''),
+              element: <ChatPage />,
             },
           ],
         },
