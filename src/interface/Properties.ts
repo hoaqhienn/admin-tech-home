@@ -44,3 +44,9 @@ export interface Facility {
   facilityDescription: string;
   facilityLocation: string;
 }
+
+export interface NewBuilding {
+  buildingName: string;
+  numOfFloor: number | null;
+  numOfApartment: number | null;
+}

@@ -15,13 +15,9 @@ const ChatPage = () => {
   };
 
   return (
-    <Modal
-      open={true}
-      onClose={() => {}}
-      className="flex items-center justify-center h-full w-full"
-    >
+    <Modal open={true} onClose={() => {}} className="h-full w-full">
       <Paper
-        className="w-full h-full rounded-none"
+        className="w-full h-full"
         sx={{
           borderRadius: 0,
         }}
@@ -29,12 +25,7 @@ const ChatPage = () => {
         <Grid container spacing={1}>
           <Grid item xs={12} className="flex flex-row justify-between items-center">
             <Typography variant="h1">Chat</Typography>
-            <IconButton
-              className="absolute top-2.5 right-2.5 z-10"
-              onClick={() => navigate(-1)}
-              size="large"
-              aria-label="Close chat"
-            >
+            <IconButton onClick={() => navigate(-1)} size="large" aria-label="Close chat">
               <X size={32} />
             </IconButton>
           </Grid>

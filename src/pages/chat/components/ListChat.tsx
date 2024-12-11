@@ -52,11 +52,15 @@ const ListChat = React.memo(
             <ListItem
               key={chat.chatId}
               onClick={() => onSelectChat(chat)}
+              sx={{
+                // if is selected chat, add border to left
+                borderLeft: selectedChat?.chatId === chat.chatId ? '4px solid blue' : '1px solid lightgrey',
+              }}
               className={`border rounded-lg mb-1 cursor-pointer transition-all duration-200 hover:translate-x-1 ${
                 selectedChat?.chatId === chat.chatId
                   ? 'bg-primary-light'
                   : 'bg-background-paper hover:bg-action-hover'
-              }`}
+              } `}
             >
               <Avatar className="mr-2">{chat.chatName.charAt(0).toUpperCase()}</Avatar>
               <ListItemText

@@ -7,6 +7,8 @@ import Splash from 'components/loader/Splash';
 import PageLoader from 'components/loader/PageLoader';
 import AuthLayout from 'layouts/auth-layout';
 import { Typography } from '@mui/material';
+import { SocketProvider } from 'components/provider/SocketProvider';
+import { NotificationProvider } from 'components/provider/NotificationProvider';
 
 // Lazy load components with error boundaries
 const lazyLoad = (importFunc: any) => {
@@ -42,6 +44,20 @@ const NotFound = () => (
   </div>
 );
 
+const ProtectedLayout = () => {
+  return (
+    <NotificationProvider>
+      <SocketProvider>
+        <MainLayout>
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
+        </MainLayout>
+      </SocketProvider>
+    </NotificationProvider>
+  );
+};
+
 const router = createBrowserRouter(
   [
     {
@@ -54,13 +70,7 @@ const router = createBrowserRouter(
       children: [
         {
           path: '/',
-          element: (
-            <MainLayout>
-              <Suspense fallback={<PageLoader />}>
-                <Outlet />
-              </Suspense>
-            </MainLayout>
-          ),
+          element: <ProtectedLayout />,
           errorElement: <NotFound />,
           children: [
             {

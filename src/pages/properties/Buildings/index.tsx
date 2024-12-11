@@ -8,7 +8,7 @@ import BuildingsDataGrid from './BuildingsDataGrid';
 import BuildingResidentsChart from './BuildingResidentsChart';
 import AddBuilding from './AddBuilding';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
-
+import { useDeleteBuildingMutation } from 'api/propertyApi';
 
 const Buildings = () => {
   const [currentBuilding, setCurrentBuilding] = useState<Building | null>(null);
@@ -20,18 +20,65 @@ const Buildings = () => {
     message: '',
     severity: 'success' as 'success' | 'error',
   });
-  // add ref
   const addRef = useRef<HTMLDivElement>(null);
+
+  // Initialize delete mutation
+  const [deleteBuilding] = useDeleteBuildingMutation();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
+
+  // Handle single building deletion
+  const handleDeleteBuilding = async () => {
+    if (!currentBuilding?.buildingId) return;
+
+    try {
+      await deleteBuilding(currentBuilding.buildingId).unwrap();
+      setSnackbar({
+        open: true,
+        message: 'Xóa tòa nhà thành công',
+        severity: 'success',
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra khi xóa tòa nhà',
+        severity: 'error',
+      });
+    } finally {
+      handleCloseDialog();
+      setCurrentBuilding(null);
+    }
+  };
+
+  // Handle bulk building deletion
+  const handleBulkDeleteBuildings = async () => {
+    try {
+      // Sequential deletion of all selected buildings
+      await Promise.all(selectedBuildingIds.map((id) => deleteBuilding(id).unwrap()));
+
+      setSnackbar({
+        open: true,
+        message: 'Xóa các tòa nhà đã chọn thành công',
+        severity: 'success',
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra khi xóa các tòa nhà',
+        severity: 'error',
+      });
+    } finally {
+      handleCloseBulkDeleteDialog();
+      setSelectedBuildingIds([]);
+    }
+  };
 
   const actions: SpeedDialActionType[] = [
     {
       icon: <IconifyIcon icon="ic:add" />,
       title: 'Building',
       onClick: () => {
-        // handleClickOpen();
         addRef.current?.scrollIntoView({ behavior: 'smooth' });
       },
     },
@@ -59,7 +106,7 @@ const Buildings = () => {
         key="delete"
         open={openDialog}
         onClose={handleCloseDialog}
-        onConfirm={() => {}}
+        onConfirm={handleDeleteBuilding}
         title={`Xóa tòa nhà - ID: ${currentBuilding?.buildingId}`}
         message="Bạn có chắc chắn muốn xóa tòa nhà này không?"
       />
@@ -69,7 +116,7 @@ const Buildings = () => {
         key="bulk-delete"
         open={openBulkDeleteDialog}
         onClose={handleCloseBulkDeleteDialog}
-        onConfirm={() => {}}
+        onConfirm={handleBulkDeleteBuildings}
         title="Xóa nhiều tòa nhà"
         message={`Bạn có chắc chắn muốn xóa ${selectedBuildingIds.length} tòa nhà được chọn?`}
       />

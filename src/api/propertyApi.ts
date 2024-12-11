@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Apartment, Building, Facility, Floor } from 'interface/Properties';
+import type { Apartment, Building, Facility, Floor, NewBuilding } from 'interface/Properties';
 
 export const propertyApi = createApi({
   reducerPath: 'propertyApi',
@@ -16,13 +16,13 @@ export const propertyApi = createApi({
   tagTypes: ['Apartment', 'Building', 'Floor', 'Facility'],
 
   endpoints: (builder) => ({
-    
     // Building endpoints
     getBuildings: builder.query<Building[], void>({
       query: () => '/building/getAll',
       transformResponse: (response: { data: Building[] }) => response.data,
       providesTags: ['Building'],
     }),
+
     addBuilding: builder.mutation<void, Omit<Building, 'buildingId'>>({
       query: (building) => ({
         url: '/building',
@@ -31,6 +31,16 @@ export const propertyApi = createApi({
       }),
       invalidatesTags: ['Building'],
     }),
+
+    newBuilding: builder.mutation<void, Omit<NewBuilding, 'buildingId'>>({
+      query: (building) => ({
+        url: '/building/new',
+        method: 'POST',
+        body: building,
+      }),
+      invalidatesTags: ['Building'],
+    }),
+
     updateBuilding: builder.mutation<void, Building>({
       query: (building) => ({
         url: `/building/${building.buildingId}`,
@@ -39,6 +49,7 @@ export const propertyApi = createApi({
       }),
       invalidatesTags: ['Building'],
     }),
+    
     deleteBuilding: builder.mutation<void, number>({
       query: (id) => ({
         url: `/building/${id}`,
@@ -115,6 +126,7 @@ export const propertyApi = createApi({
 export const {
   useGetBuildingsQuery,
   useAddBuildingMutation,
+  useNewBuildingMutation,
   useUpdateBuildingMutation,
   useDeleteBuildingMutation,
   useGetFloorsQuery,

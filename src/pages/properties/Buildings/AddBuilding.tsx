@@ -8,14 +8,10 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useNewBuildingMutation } from 'api/propertyApi';
+import { NewBuilding } from 'interface/Properties';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-
-interface InputProps {
-  buildingName: string;
-  numOfFloor: number | null;
-  numOfApartment: number | null;
-}
 
 interface ValidationError {
   field: string;
@@ -28,11 +24,14 @@ interface Props {
 
 const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
-  const [input, setInput] = useState<InputProps>({
+  const [input, setInput] = useState<NewBuilding>({
     buildingName: '',
     numOfFloor: null,
     numOfApartment: null,
   });
+
+  // Correctly destructure the mutation hook
+  const [newBuilding, { isLoading }] = useNewBuildingMutation();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -47,6 +46,7 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
     // Clear error for this field when user starts typing
     setErrors((prev) => prev.filter((error) => error.field !== name));
   };
+
   const handleReset = () => {
     setInput({
       buildingName: '',
@@ -58,22 +58,33 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
 
   const handleAdd = async () => {
     if (validateInput()) {
-      // Proceed with adding building
-      console.log('Valid input:', input);
-      setSnackbar({
-        open: true,
-        message: 'Thêm tòa nhà thành công',
-        severity: 'success',
-      });
+      try {
+        // Properly call the mutation
+        await newBuilding(input).unwrap();
+
+        setSnackbar({
+          open: true,
+          message: 'Thêm tòa nhà thành công',
+          severity: 'success',
+        });
+
+        // Optionally reset the form after successful submission
+        handleReset();
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: 'Có lỗi xảy ra khi thêm tòa nhà',
+          severity: 'error',
+        });
+      }
     }
   };
 
-  // Validate input
+  // Rest of the component remains the same...
   const validateInput = (): boolean => {
     const newErrors: ValidationError[] = [];
     const { buildingName, numOfFloor, numOfApartment } = input;
 
-    // Validate building name
     if (!buildingName?.trim()) {
       newErrors.push({ field: 'buildingName', message: 'Tên tòa nhà không được để trống' });
     } else if (buildingName.length < 1) {
@@ -85,14 +96,12 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
       });
     }
 
-    // Validate number of floors
     if (numOfFloor === null) {
       newErrors.push({ field: 'numOfFloor', message: 'Số tầng không được để trống' });
     } else if (numOfFloor <= 0) {
       newErrors.push({ field: 'numOfFloor', message: 'Số tầng phải lớn hơn 0' });
     }
 
-    // Validate number of apartments per floor
     if (numOfApartment === null) {
       newErrors.push({
         field: 'numOfApartment',
@@ -169,8 +178,12 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
           />
         </AccordionDetails>
         <AccordionActions>
-          <Button onClick={handleReset}>Hủy</Button>
-          <Button onClick={handleAdd}>Thêm</Button>
+          <Button onClick={handleReset} disabled={isLoading}>
+            Hủy
+          </Button>
+          <Button onClick={handleAdd} disabled={isLoading}>
+            Thêm
+          </Button>
         </AccordionActions>
       </Accordion>
     </Paper>

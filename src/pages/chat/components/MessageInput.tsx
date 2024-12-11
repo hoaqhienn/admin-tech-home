@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { Send, Paperclip, File as FileIcon } from 'lucide-react';
 import { useSendMessageMutation } from 'api/chatApi';
+import { Messages } from 'interface/chat/ChatInterface';
 
 // Styled components using MUI's styled API
 const InputWrapper = styled(Paper)(({ theme }) => ({
@@ -37,7 +38,12 @@ const FileChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-const MessageInput = ({ chatId }: { chatId: number | null }) => {
+interface MessageInputProps {
+  chatId: number;
+  onMessageSent?: (message: Messages) => void;
+}
+
+const MessageInput = ({ chatId, onMessageSent }: MessageInputProps) => {
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [sendMessage, { isLoading }] = useSendMessageMutation();
@@ -47,14 +53,16 @@ const MessageInput = ({ chatId }: { chatId: number | null }) => {
     e.preventDefault();
 
     if (!chatId || (!message.trim() && files.length === 0)) return;
-    console.log('Sending message:', message, files);
 
     try {
-      await sendMessage({
+      const response = await sendMessage({
         chatId,
         message: message.trim(),
         files: files,
       }).unwrap();
+
+      // Call onMessageSent callback with the new message
+      onMessageSent?.(response);
 
       setMessage('');
       setFiles([]);
@@ -92,7 +100,12 @@ const MessageInput = ({ chatId }: { chatId: number | null }) => {
   if (!chatId) return null;
 
   return (
-    <InputWrapper elevation={3}>
+    <InputWrapper
+      elevation={3}
+      sx={{
+        borderRadius: 0,
+      }}
+    >
       {/* File Upload Input */}
       <input
         type="file"
@@ -136,7 +149,6 @@ const MessageInput = ({ chatId }: { chatId: number | null }) => {
         <TextField
           fullWidth
           multiline
-          maxRows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
@@ -172,6 +184,18 @@ const MessageInput = ({ chatId }: { chatId: number | null }) => {
             ),
             sx: {
               borderRadius: 2,
+              height: '56px !important',
+              '& .MuiInputBase-input': {
+                maxHeight: '56px',
+                overflow: 'auto',
+                '&::-webkit-scrollbar': {
+                  width: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  borderRadius: '4px',
+                },
+              },
               '&.Mui-focused': {
                 boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}1A`,
               },

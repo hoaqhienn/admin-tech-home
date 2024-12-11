@@ -28,26 +28,27 @@ const MessageBubble = React.memo(
           <Avatar className="w-8 h-8">{message.senderId?.toString().charAt(0)}</Avatar>
         )}
         <Box className={`p-3 rounded-lg relative ${isOwnMessage ? 'bg-blue-50' : 'bg-gray-100'}`}>
-          <Box className={`p-3 rounded-lg relative ${isOwnMessage ? 'bg-blue-50' : 'bg-gray-100'}`}>
+          <Box>
             {!isOwnMessage && (
               <Typography variant="caption" className="font-bold">
                 {message.senderId}
               </Typography>
             )}
             {message.content && <Typography variant="body1">{message.content}</Typography>}
+
+            {/* File attachments */}
+            {message.Files && message.Files.length > 0 && (
+              <Box className="mt-2 space-y-2">
+                {message.Files.map((file) => (
+                  <FileAttachment key={file.fileId} file={file} />
+                ))}
+              </Box>
+            )}
+
             <Typography variant="caption" className="block text-right mt-1 text-gray-600">
-              {new Date(message.createdAt).toLocaleTimeString()}
+              {new Date(message.createdAt!).toLocaleTimeString()}
             </Typography>
           </Box>
-
-          {/* File attachments */}
-          {message.Files && message.Files.length > 0 && (
-            <Box className="mt-2 space-y-2">
-              {message.Files.map((file) => (
-                <FileAttachment key={file.fileId} file={file} />
-              ))}
-            </Box>
-          )}
         </Box>
       </Box>
     );

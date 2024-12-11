@@ -1,5 +1,3 @@
-import { ChangeEvent } from 'react';
-
 export interface ChatMessage {
   id: string;
   text: string;
@@ -27,33 +25,6 @@ export interface Messages {
   updatedAt: string;
   Files: CustomFile[];
   avatar: string;
-}
-export interface GalleryState {
-  isOpen: boolean;
-  images: string[];
-  currentIndex: number;
-}
-
-export interface MessagePanelProps {
-  messages: Messages[];
-  newMessage: string;
-  onMessageChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
-  onKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-  onSendMessage: () => void;
-  onImageClick: (files: string[], index: number) => void;
-  files: File[];
-  onFileSelect: (files: File[]) => void;
-  onFileRemove: (file: File) => void;
-}
-
-export interface ChatHeaderProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}
-
-export interface MessageListProps {
-  messages: Messages[];
-  onImageClick: (files: string[], index: number) => void;
 }
 
 export interface CustomFile {
