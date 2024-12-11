@@ -1,5 +1,6 @@
 import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import { useActiveResidentMutation } from 'api/residentApi';
 import { useResidents } from 'hooks/resident/useResident';
 import { Resident, ResidentViaApartment } from 'interface/Residents';
 import { DeleteIcon, EditIcon, Info } from 'lucide-react';
@@ -21,6 +22,9 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
   const { residents, isLoading } = useResidents();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
+  // const active = useActiveResidentMutation
+  const [toggleActive] = useActiveResidentMutation();
+
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
   }, []);
@@ -35,10 +39,10 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
     [onEdit, clearSelection],
   );
 
-  const handleDeleteBuilding = useCallback(
-    (buildingId: number) => {
+  const handleDelete = useCallback(
+    (residentId: number) => {
       if (onDelete) {
-        onDelete(buildingId);
+        onDelete(residentId);
         clearSelection();
       }
     },
@@ -52,9 +56,9 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
     }
   }, [onBulkDelete, selectedRows, clearSelection]);
 
-  const handleToggleActive = useCallback((residentId: number, newActiveState: boolean) => {
-    // Call your API to update active status
-    console.log('Toggle active for resident:', residentId, 'to:', newActiveState);
+  const handleToggleActive = useCallback((residentId: number) => {
+    // Call the mutation
+    toggleActive({ residentId });
   }, []);
 
   // New handler for selection changes
@@ -85,10 +89,9 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
       flex: 1,
     },
     {
-      field: 'User.fullname',
+      field: 'fullname',
       headerName: 'Họ và tên',
       flex: 1,
-      renderCell: (params) => params.row.User?.fullname,
     },
     {
       field: 'phonenumber',
@@ -96,26 +99,25 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
       flex: 1,
     },
     {
-      field: 'User.email',
+      field: 'email',
       headerName: 'Email',
       flex: 1,
-      renderCell: (params) => params.row.User?.email,
     },
     {
-      field: 'active',
+      field: 'status',
       headerName: 'Status',
       flex: 0.5,
       renderCell: (params) => (
         <Button
           variant={'contained'}
-          color={params.row.active ? 'success' : 'error'}
+          color={params.row.status ? 'success' : 'error'}
           size="small"
           onClick={(e) => {
             e.stopPropagation();
-            handleToggleActive(params.row.residentId, !params.row.active);
+            handleToggleActive(params.row.residentId);
           }}
         >
-          {params.row.active ? 'Active' : 'Inactive'}
+          {params.row.status ? 'Active' : 'Inactive'}
         </Button>
       ),
     },
@@ -161,7 +163,7 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDeleteBuilding(params.row.buildingId);
+              handleDelete(params.row.residentId);
             }}
             sx={{ color: 'error.main' }}
           >

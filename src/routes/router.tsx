@@ -1,12 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import paths, { rootPaths } from './paths';
 import { Suspense, lazy } from 'react';
-import { Outlet, createBrowserRouter } from 'react-router-dom';
+import { Outlet, createBrowserRouter, useNavigate } from 'react-router-dom';
 import MainLayout from 'layouts/main-layout/index';
 import Splash from 'components/loader/Splash';
 import PageLoader from 'components/loader/PageLoader';
 import AuthLayout from 'layouts/auth-layout';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { SocketProvider } from 'components/provider/SocketProvider';
 import { NotificationProvider } from 'components/provider/NotificationProvider';
 
@@ -23,26 +23,38 @@ const lazyLoad = (importFunc: any) => {
 const App = lazyLoad(() => import('App'));
 const Dashboard = lazyLoad(() => import('pages/dashboard/Dashboard'));
 const Signin = lazyLoad(() => import('pages/authentication/Signin'));
-const Buildings = lazyLoad(() => import('pages/properties/Buildings/index'));
-const Floors = lazyLoad(() => import('pages/properties/Floors/index'));
+const Buildings = lazyLoad(() => import('pages/properties/Buildings/BuildingPage'));
+const Floors = lazyLoad(() => import('pages/properties/Floors/FloorPage'));
 const Apartments = lazyLoad(() => import('pages/properties/Apartments/index'));
 const Events = lazyLoad(() => import('pages/event/Events'));
 const Services = lazyLoad(() => import('pages/service/Services'));
-const Residents = lazyLoad(() => import('pages/residents/Residents'));
+const Residents = lazyLoad(() => import('pages/residents/ResidentPage'));
 const Settings = lazyLoad(() => import('pages/more/Settings'));
 const RS = lazyLoad(() => import('pages/more/ReportsAndStatistics'));
-const VehiclePage = lazyLoad(() => import('pages/vehicles/VehiclePage'));
+const VehiclePage = lazyLoad(() => import('pages/residents/vehicles/VehiclePage'));
 const BillPage = lazyLoad(() => import('pages/bill/BillPage'));
 const ComplaintPage = lazyLoad(() => import('pages/complaint/ComplaintPage'));
-const FacilityPage = lazyLoad(() => import('pages/facility/FacilityPage'));
+const FacilityPage = lazyLoad(() => import('pages/properties/Facility/FacilityPage'));
 const NotifyPage = lazyLoad(() => import('pages/notification/NotifyPage'));
+const ApartmentDetailPage = lazyLoad(() => import('pages/properties/Apartments/ApartmentDetail'));
+const AddMultiResidentPage = lazyLoad(() => import('pages/residents/AddResidentPage'));
 
 const ChatPage = lazyLoad(() => import('pages/chat/ChatPage'));
-const NotFound = () => (
-  <div>
-    <Typography variant="h1">Page not found - 404</Typography>
-  </div>
-);
+const NotFound = () => {
+  const nav = useNavigate();
+  return (
+    <div className="w-full h-screen flex justify-center items-center">
+      <div className="text-center">
+        <Typography variant="h1" onClick={() => nav('/')}>
+          Page Not Found
+        </Typography>
+        <Button onClick={() => nav('/')} variant="contained" color="primary" sx={{ mt: 3 }}>
+          Back to Home
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const ProtectedLayout = () => {
   return (
@@ -75,63 +87,75 @@ const router = createBrowserRouter(
           children: [
             {
               index: true,
-              element: <Dashboard />,
+              element: (
+                <Suspense fallback={<PageLoader />}>
+                  <Dashboard />
+                </Suspense>
+              ),
             },
             {
-              path: paths.buildings.replace('/', ''),
+              path: paths.buildings,
               element: <Buildings />,
             },
             {
-              path: paths.floors.replace('/', ''),
+              path: paths.floors,
               element: <Floors />,
             },
             {
-              path: paths.apartments.replace('/', ''),
+              path: paths.apartments,
               element: <Apartments />,
             },
             {
-              path: paths.events.replace('/', ''),
+              path: paths.apartmentDetail,
+              element: <ApartmentDetailPage />,
+            },
+            {
+              path: paths.events,
               element: <Events />,
             },
             {
-              path: paths.services.replace('/', ''),
+              path: paths.services,
               element: <Services />,
             },
             {
-              path: paths.residents.replace('/', ''),
+              path: paths.residents,
               element: <Residents />,
             },
             {
-              path: paths.vehicles.replace('/', ''),
+              path: paths.vehicles,
               element: <VehiclePage />,
             },
             {
-              path: paths.settings.replace('/', ''),
+              path: paths.settings,
               element: <Settings />,
             },
             {
-              path: paths.reportStatistics.replace('/', ''),
+              path: paths.reports,
               element: <RS />,
             },
             {
-              path: paths.bills.replace('/', ''),
+              path: paths.bills,
               element: <BillPage />,
             },
             {
-              path: paths.complaints.replace('/', ''),
+              path: paths.complaints,
               element: <ComplaintPage />,
             },
             {
-              path: paths.facilities.replace('/', ''),
+              path: paths.facilities,
               element: <FacilityPage />,
             },
             {
-              path: paths.notifications.replace('/', ''),
+              path: paths.notifications,
               element: <NotifyPage />,
             },
             {
-              path: paths.chat.replace('/', ''),
+              path: paths.chat,
               element: <ChatPage />,
+            },
+            {
+              path: paths.addResident,
+              element: <AddMultiResidentPage />,
             },
           ],
         },

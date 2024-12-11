@@ -192,7 +192,7 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDe
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(params.row.serviceId);
+              handleDelete(params.row.complaintId);
             }}
             sx={{ color: 'error.main' }}
           >

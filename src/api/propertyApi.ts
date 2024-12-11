@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Apartment, Building, Facility, Floor, NewBuilding } from 'interface/Properties';
+import type {
+  Apartment,
+  Building,
+  Facility,
+  Floor,
+  NewBuilding,
+  NewFloor,
+} from 'interface/Properties';
 
 export const propertyApi = createApi({
   reducerPath: 'propertyApi',
@@ -13,7 +20,7 @@ export const propertyApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Apartment', 'Building', 'Floor', 'Facility'],
+  tagTypes: ['Apartment', 'Building', 'Floor', 'Facility', 'joinApartment'],
 
   endpoints: (builder) => ({
     // Building endpoints
@@ -49,7 +56,7 @@ export const propertyApi = createApi({
       }),
       invalidatesTags: ['Building'],
     }),
-    
+
     deleteBuilding: builder.mutation<void, number>({
       query: (id) => ({
         url: `/building/${id}`,
@@ -69,7 +76,8 @@ export const propertyApi = createApi({
       transformResponse: (response: { data: { floors: Floor[] } }) => response.data.floors,
       providesTags: ['Floor'],
     }),
-    addFloor: builder.mutation<void, Omit<Floor, 'floorId'>>({
+
+    addFloor: builder.mutation<void, Omit<NewFloor, 'floorId'>>({
       query: (floor) => ({
         url: '/floor',
         method: 'POST',
@@ -77,6 +85,7 @@ export const propertyApi = createApi({
       }),
       invalidatesTags: ['Floor'],
     }),
+
     updateFloor: builder.mutation<void, Floor>({
       query: (floor) => ({
         url: `/floor/${floor.floorId}`,
@@ -97,12 +106,53 @@ export const propertyApi = createApi({
     getApartments: builder.query<Apartment[], void>({
       query: () => '/apartment/getAll',
       transformResponse: (response: { data: Apartment[] }) => response.data,
-      providesTags: ['Apartment'],
+      providesTags: ['Apartment', 'joinApartment'],
     }),
     getApartmentsByFloor: builder.query<Apartment[], number>({
       query: (floorId) => `/apartment/floor/${floorId}`,
       transformResponse: (response: { data: Apartment[] }) => response.data,
-      providesTags: ['Apartment'],
+      providesTags: ['Apartment', 'joinApartment'],
+    }),
+
+    getApartmentById: builder.query<Apartment, number>({
+      query: (id) => `/apartment/${id}`,
+      transformResponse: (response: { data: Apartment }) => response.data,
+      providesTags: ['joinApartment'],
+    }),
+
+    updateApartment: builder.mutation<void, Apartment>({
+      query: (apartment) => ({
+        url: `/apartment/${apartment.apartmentId}`,
+        method: 'PUT',
+        body: apartment,
+      }),
+      invalidatesTags: ['Apartment'],
+    }),
+
+    joinToApartment: builder.mutation<void, { apartmentId: number; residentId: number[] }>({
+      query: ({ residentId, apartmentId }) => ({
+        url: `/apartment/join/${apartmentId}`,
+        method: 'PUT',
+        body: { residentId },
+      }),
+      invalidatesTags: ['joinApartment'],
+    }),
+
+    leaveOutApartment: builder.mutation<void, { apartmentId: number; residentId: number[] }>({
+      query: ({ residentId, apartmentId }) => ({
+        url: `/apartment/leave/${apartmentId}`,
+        method: 'PUT',
+        body: { residentId },
+      }),
+      invalidatesTags: ['joinApartment'],
+    }),
+
+    deleteApartment: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/apartment/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Apartment'],
     }),
     searchApartments: builder.mutation<Apartment[], { floorId?: number[]; buildingId?: number }>({
       query: (searchParams) => ({
@@ -119,6 +169,35 @@ export const propertyApi = createApi({
       transformResponse: (response: { data: Facility[] }) => response.data,
       providesTags: ['Facility'],
     }),
+
+    // create a new facility
+    addFacility: builder.mutation<void, Facility>({
+      query: (facility) => ({
+        url: '/facilities',
+        method: 'POST',
+        body: facility,
+      }),
+      invalidatesTags: ['Facility'],
+    }),
+
+    // update a facility
+    updateFacility: builder.mutation<void, Facility>({
+      query: (facility) => ({
+        url: `/facilities/${facility.facilityId}`,
+        method: 'PUT',
+        body: facility,
+      }),
+      invalidatesTags: ['Facility'],
+    }),
+
+    // delete a facility
+    deleteFacility: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/facilities/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Facility'],
+    }),
   }),
 });
 
@@ -129,13 +208,24 @@ export const {
   useNewBuildingMutation,
   useUpdateBuildingMutation,
   useDeleteBuildingMutation,
+
   useGetFloorsQuery,
   useGetFloorsByBuildingQuery,
   useAddFloorMutation,
   useUpdateFloorMutation,
   useDeleteFloorMutation,
+
   useGetApartmentsQuery,
+  useGetApartmentByIdQuery,
   useGetApartmentsByFloorQuery,
   useSearchApartmentsMutation,
+  useUpdateApartmentMutation,
+  useJoinToApartmentMutation,
+  useLeaveOutApartmentMutation,
+  useDeleteApartmentMutation,
+
   useGetFacilitiesQuery,
+  useAddFacilityMutation,
+  useUpdateFacilityMutation,
+  useDeleteFacilityMutation,
 } = propertyApi;

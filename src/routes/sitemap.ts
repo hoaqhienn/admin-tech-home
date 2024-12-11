@@ -89,6 +89,7 @@ const sitemap: MenuItem[] = [
     id: 'more',
     subheader: 'Khác',
     icon: 'ri:more-fill',
+    path: '/',
     active: true,
     items: [
       {
@@ -114,7 +115,7 @@ const sitemap: MenuItem[] = [
       {
         name: 'Báo cáo và phân tích',
         pathName: 'reports',
-        path: paths.reportStatistics,
+        path: paths.reports,
       },
     ],
   },

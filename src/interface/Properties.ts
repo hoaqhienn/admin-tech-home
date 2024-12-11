@@ -21,7 +21,7 @@ export interface Floor {
 
 export interface ApartmentResident {
   residentId: number;
-  residentName: string;
+  fullname: string;
 }
 
 export interface Apartment {
@@ -49,4 +49,9 @@ export interface NewBuilding {
   buildingName: string;
   numOfFloor: number | null;
   numOfApartment: number | null;
+}
+
+export interface NewFloor {
+  buildingId: number | null;
+  floorNumber: number | null;
 }

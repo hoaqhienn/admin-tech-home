@@ -1,14 +1,13 @@
 import Grid from '@mui/material/Grid';
 import { Alert, Snackbar, Typography } from '@mui/material';
-import BillDataGrid from './BillDataGrid';
-import PaymentDataGrid from './PaymentDataGrid';
-import { Payment } from 'interface/Bill';
 import { useCallback, useState } from 'react';
-import { useDeletePaymentMutation } from 'api/serviceApi';
+import { Facility } from 'interface/Properties';
+import { useDeleteFacilityMutation } from 'api/propertyApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
+import FacilityDataGrid from './FacilityDataGrid';
 
-const BillPage = () => {
-  const [current, setCurrent] = useState<Payment | null>(null);
+const FacilityPage = () => {
+  const [currentFacility, setCurrentFacility] = useState<Facility | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -20,17 +19,17 @@ const BillPage = () => {
     severity: 'success' as 'success' | 'error',
   });
 
-  const [deletePayment] = useDeletePaymentMutation();
+  const [deleteFacility] = useDeleteFacilityMutation();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
 
   // Handle single deletion
   const handleDelete = async () => {
-    if (!current?.paymentId) return;
+    if (!currentFacility?.facilityId) return;
 
     try {
-      await deletePayment(current.paymentId).unwrap();
+      await deleteFacility(currentFacility.facilityId).unwrap();
       setSnackbar({
         open: true,
         message: 'Xóa thành công!',
@@ -44,7 +43,7 @@ const BillPage = () => {
       });
     } finally {
       handleCloseDialog();
-      setCurrent(null);
+      setCurrentFacility(null);
     }
   };
 
@@ -52,7 +51,7 @@ const BillPage = () => {
   const handleBulkDelete = async () => {
     try {
       // Sequential deletion of all selected buildings
-      await Promise.all(selectedIds.map((id) => deletePayment(id).unwrap()));
+      await Promise.all(selectedIds.map((id) => deleteFacility(id).unwrap()));
 
       setSnackbar({
         open: true,
@@ -90,7 +89,7 @@ const BillPage = () => {
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleDelete}
-        title={`Xóa cơ sở tiện ích - ID: ${current?.paymentId}`}
+        title={`Xóa cơ sở tiện ích - ID: ${currentFacility?.facilityId}`}
         message="Bạn có chắc chắn muốn xóa không?"
       />
 
@@ -105,19 +104,13 @@ const BillPage = () => {
       />
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách hóa đơn</Typography>
+          <Typography variant="h1">Danh sách cơ sở vật chất</Typography>
         </Grid>
         <Grid item xs={12}>
-          <BillDataGrid />
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h1">Lịch sử thanh toán</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <PaymentDataGrid
+          <FacilityDataGrid
             onEdit={() => {}}
-            onDelete={(paymentId) => {
-              setCurrent({ paymentId } as Payment);
+            onDelete={(facilityId) => {
+              setCurrentFacility({ facilityId } as Facility);
               setOpenDialog(true);
             }}
             onBulkDelete={(ids) => {
@@ -131,4 +124,4 @@ const BillPage = () => {
   );
 };
 
-export default BillPage;
+export default FacilityPage;

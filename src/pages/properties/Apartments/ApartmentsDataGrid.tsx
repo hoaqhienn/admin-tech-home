@@ -4,6 +4,7 @@ import { useApartments } from 'hooks/properties/useApartment';
 import { Apartment } from 'interface/Properties';
 import { DeleteIcon, EditIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ApartmentsDataGridProps {
   onEdit?: (a: Apartment) => void;
@@ -18,6 +19,7 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
 }) => {
   const { apartments, isLoading } = useApartments();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const nav = useNavigate();
 
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
@@ -122,7 +124,7 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(params.row as Apartment);
+              nav(`/apartment/${params.row.apartmentId}`);
             }}
             sx={{ color: 'blue' }}
           >
@@ -170,36 +172,38 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
   );
 
   return (
-    <Paper sx={{ height: '100%', width: '100%' }}>
-      <DataGrid
-        loading={isLoading}
-        rows={apartments}
-        columns={columns}
-        getRowId={(row) => row.apartmentId}
-        slots={{
-          toolbar: CustomToolbar,
-        }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
+    <>
+      <Paper sx={{ height: '100%', width: '100%' }}>
+        <DataGrid
+          loading={isLoading}
+          rows={apartments}
+          columns={columns}
+          getRowId={(row) => row.apartmentId}
+          slots={{
+            toolbar: CustomToolbar,
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
             },
-          },
-        }}
-        pageSizeOptions={[10, 20, 30]}
-        checkboxSelection
-        onRowSelectionModelChange={(newSelection) => {
-          setSelectedRows(newSelection as number[]);
-        }}
-        rowSelectionModel={selectedRows}
-      />
-    </Paper>
+          }}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          pageSizeOptions={[10, 20, 30]}
+          checkboxSelection
+          onRowSelectionModelChange={(newSelection) => {
+            setSelectedRows(newSelection as number[]);
+          }}
+          rowSelectionModel={selectedRows}
+        />
+      </Paper>
+    </>
   );
 };
 

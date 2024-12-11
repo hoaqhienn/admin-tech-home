@@ -49,4 +49,11 @@ export interface ResidentViaApartment {
   phonenumber: string;
   email: string;
   fcmToken?: string;
+  status: boolean;
+}
+
+export interface NewResident {
+  fullname: string;
+  idcard: string;
+  apartmentId?: number | null;
 }

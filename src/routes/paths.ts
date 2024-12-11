@@ -1,33 +1,47 @@
 export const rootPaths = {
   root: '/',
   authRoot: 'auth',
-  moreRoot: 'more',
   errorRoot: 'error',
+
+  buildingRoot: 'buildings',
+  floorRoot: 'floors',
+  apartmentRoot: 'apartments',
+  facilityRoot: 'facilities',
+
   residentsRoot: 'residents',
-  propertiesRoot: 'properties',
+  vehiclesRoot: 'vehicles',
+  notificationsRoot: 'notifications',
+  complaintsRoot: 'complaints',
+
+  billsRoot: 'bills',
+  eventsRoot: 'events',
+  servicesRoot: 'services',
+  settingsRoot: 'settings',
+  reportsRoot: 'reports',
 };
 
 export default {
   404: `/${rootPaths.errorRoot}/404`,
+  chat: `/${rootPaths.root}/chat`,
 
   signin: `/${rootPaths.authRoot}/signin`,
-  forgotPassword: `/${rootPaths.authRoot}/forgot-password`,
 
-  floors: `/${rootPaths.propertiesRoot}/floors`,
-  buildings: `/${rootPaths.propertiesRoot}/buildings`,
-  apartments: `/${rootPaths.propertiesRoot}/apartments`,
-  facilities: `/${rootPaths.propertiesRoot}/facilities`,
+  buildings: `/${rootPaths.buildingRoot}`,
+  floors: `/${rootPaths.floorRoot}`,
+  apartments: `/${rootPaths.apartmentRoot}`,
+  apartmentDetail: `/${rootPaths.apartmentRoot}/:id`,
+  facilities: `/${rootPaths.facilityRoot}`,
 
-  complaints: `/${rootPaths.residentsRoot}/complaints`,
-  residents: `/${rootPaths.residentsRoot}/residents`,
-  vehicles: `/${rootPaths.residentsRoot}/vehicles`,
+  residents: `/${rootPaths.residentsRoot}`,
+  addResident: `/${rootPaths.residentsRoot}/add`,
 
-  bills: `/${rootPaths.moreRoot}/bills`,
-  events: `/${rootPaths.moreRoot}/events`,
-  settings: `/${rootPaths.moreRoot}/settings`,
-  services: `/${rootPaths.moreRoot}/services`,
-  notifications: `/${rootPaths.moreRoot}/notifications`,
-  reportStatistics: `/${rootPaths.moreRoot}/report-statistics`,
+  vehicles: `/${rootPaths.vehiclesRoot}`,
+  notifications: `/${rootPaths.notificationsRoot}`,
+  complaints: `/${rootPaths.complaintsRoot}`,
 
-  chat: `/${rootPaths.root}/chat`,
+  bills: `/${rootPaths.billsRoot}`,
+  events: `/${rootPaths.eventsRoot}`,
+  services: `/${rootPaths.servicesRoot}`,
+  settings: `/${rootPaths.settingsRoot}`,
+  reports: `/${rootPaths.reportsRoot}`,
 };

@@ -128,7 +128,7 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(params.row.buildingId);
+              handleDelete(params.row.vehicleId);
             }}
             sx={{ color: 'error.main' }}
           >

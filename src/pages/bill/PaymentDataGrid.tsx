@@ -172,7 +172,7 @@ const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(params.row.serviceId);
+              handleDelete(params.row.paymentId);
             }}
             sx={{ color: 'error.main' }}
           >

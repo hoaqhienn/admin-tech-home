@@ -42,7 +42,7 @@ const Buildings = () => {
     } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Có lỗi xảy ra khi xóa tòa nhà',
+        message: 'Tòa nhà này đang được sử dụng',
         severity: 'error',
       });
     } finally {

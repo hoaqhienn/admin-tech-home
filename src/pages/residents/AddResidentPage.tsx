@@ -1,19 +1,19 @@
 import { Grid, Typography } from '@mui/material';
-import VehicleDataGrid from './VehicleDataGrid';
+import ExcelInput from './add/ExcelInput';
 
-const VehiclePage: React.FC = () => {
+const AddResidentPage = () => {
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách phương tiện</Typography>
+          <Typography variant="h1">Thêm cư dân</Typography>
         </Grid>
         <Grid item xs={12}>
-          <VehicleDataGrid />
+          <ExcelInput />
         </Grid>
       </Grid>
     </>
   );
 };
 
-export default VehiclePage;
+export default AddResidentPage;

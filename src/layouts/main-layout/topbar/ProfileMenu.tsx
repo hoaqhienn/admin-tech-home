@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import Box from '@mui/material/Box';
-import Menu from '@mui/material/Menu';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
-import ButtonBase from '@mui/material/ButtonBase';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import IconifyIcon from 'components/base/IconifyIcon';
-import ProfileImage from 'assets/images/profile.png';
-import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'hooks/auth/useAuth';
+import ConfirmDialog from 'components/dialog/ConfirmDialog';
+import {
+  ButtonBase,
+  Avatar,
+  MenuItem,
+  Stack,
+  Typography,
+  Divider,
+  ListItemIcon,
+  Menu,
+  Box,
+} from '@mui/material';
 
 interface MenuItems {
   id: number;
@@ -60,6 +62,8 @@ const menuItems: MenuItems[] = [
 ];
 
 const ProfileMenu = () => {
+  const { user } = useAuth();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
@@ -110,7 +114,7 @@ const ProfileMenu = () => {
         disableRipple
       >
         <Avatar
-          src={ProfileImage}
+          src={user?.user.avatar}
           sx={{
             height: 44,
             width: 44,
@@ -137,13 +141,13 @@ const ProfileMenu = () => {
       >
         <Box p={1}>
           <MenuItem onClick={handleProfileMenuClose} sx={{ '&:hover': { bgcolor: 'info.dark' } }}>
-            <Avatar src={ProfileImage} sx={{ mr: 1, height: 42, width: 42 }} />
+            <Avatar src={user?.user.avatar} sx={{ mr: 1, height: 42, width: 42 }} />
             <Stack direction="column">
               <Typography variant="body2" color="text.primary" fontWeight={600}>
-                Hien Le Hoang
+                {user?.user.fullname}
               </Typography>
               <Typography variant="caption" color="text.secondary" fontWeight={400}>
-                hoanghienle69@gmail.com
+                {user?.user.email}
               </Typography>
             </Stack>
           </MenuItem>

@@ -28,8 +28,16 @@ export const authApi = createApi({
     getCurrentUser: builder.query<CurrentUserResponse, void>({
       query: () => '/current',
     }),
+
+    changePassword: builder.mutation<void, { currentPassword: string; newPassword: string }>({
+      query: (credentials) => ({
+        url: '/change-password',
+        method: 'PUT',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
 // Export hooks for usage in components
-export const { useLoginMutation, useGetCurrentUserQuery } = authApi;
+export const { useLoginMutation, useGetCurrentUserQuery, useChangePasswordMutation } = authApi;

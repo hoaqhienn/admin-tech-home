@@ -1,21 +1,20 @@
-import { Avatar, Divider, Grid, Typography } from '@mui/material';
-import { useAuth } from 'hooks/auth/useAuth';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
+import MyInfo from './MyInfo';
+import ExcelDashboard from './ExcelDashboard';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
-
-  console.log('user :: ', user);
-
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h3">Trang chủ</Typography>
-          <Avatar alt="Remy Sharp" src={user?.user.avatar} />
-          <Typography variant="body1">Xin chào, {user?.user.fullname}</Typography>
-          <Typography variant="body1">Your id, {user?.user.userId}</Typography>
-          <Divider />
+          <Typography variant="h1">Trang chủ</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <MyInfo />
+        </Grid>
+        <Grid item xs={12}>
+          <ExcelDashboard />
         </Grid>
       </Grid>
     </>

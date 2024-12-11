@@ -30,10 +30,26 @@ export const serviceApi = createApi({
       providesTags: ['Payment'],
     }),
 
+    deletePayment: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/payments/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Payment'],
+    }),
+
     getComplaints: builder.query<Complaint[], void>({
       query: () => '/complaints/getAll',
       transformResponse: (response: { data: Complaint[] }) => response.data,
       providesTags: ['Complaint'],
+    }),
+
+    deleteComplaint: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/complaints/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Complaint'],
     }),
 
     getNotifications: builder.query<Notification[], void>({
@@ -42,10 +58,27 @@ export const serviceApi = createApi({
       providesTags: ['Notification'],
     }),
 
+    // delete notify
+    deleteNotification: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/notifications/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
+
     getService: builder.query<Service[], void>({
       query: () => '/service/getAll',
       transformResponse: (response: { data: Service[] }) => response.data,
       providesTags: ['Service'],
+    }),
+
+    deleteService: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/service/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Service'],
     }),
 
     getEvents: builder.query<Event[], void>({
@@ -59,9 +92,17 @@ export const serviceApi = createApi({
 // Export hooks for usage in components
 export const {
   useGetBillsQuery,
+
   useGetPaymentsQuery,
+  useDeletePaymentMutation,
+
   useGetComplaintsQuery,
+  useDeleteComplaintMutation,
   useGetNotificationsQuery,
+  useDeleteNotificationMutation,
+  
   useGetServiceQuery,
+  useDeleteServiceMutation,
+
   useGetEventsQuery,
 } = serviceApi;

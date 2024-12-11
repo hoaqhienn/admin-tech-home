@@ -1,14 +1,12 @@
-import Grid from '@mui/material/Grid';
-import { Alert, Snackbar, Typography } from '@mui/material';
-import BillDataGrid from './BillDataGrid';
-import PaymentDataGrid from './PaymentDataGrid';
-import { Payment } from 'interface/Bill';
+import { Alert, Grid, Snackbar, Typography } from '@mui/material';
+import VehicleDataGrid from './VehicleDataGrid';
+import { Vehicle } from 'interface/Vehicle';
 import { useCallback, useState } from 'react';
-import { useDeletePaymentMutation } from 'api/serviceApi';
+import { useDeleteVehicleMutation } from 'api/residentApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 
-const BillPage = () => {
-  const [current, setCurrent] = useState<Payment | null>(null);
+const VehiclePage: React.FC = () => {
+  const [current, setCurrent] = useState<Vehicle | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -20,17 +18,17 @@ const BillPage = () => {
     severity: 'success' as 'success' | 'error',
   });
 
-  const [deletePayment] = useDeletePaymentMutation();
+  const [deleteVehicle] = useDeleteVehicleMutation();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
 
   // Handle single deletion
   const handleDelete = async () => {
-    if (!current?.paymentId) return;
+    if (!current?.vehicleId) return;
 
     try {
-      await deletePayment(current.paymentId).unwrap();
+      await deleteVehicle(current.vehicleId).unwrap();
       setSnackbar({
         open: true,
         message: 'Xóa thành công!',
@@ -52,7 +50,7 @@ const BillPage = () => {
   const handleBulkDelete = async () => {
     try {
       // Sequential deletion of all selected buildings
-      await Promise.all(selectedIds.map((id) => deletePayment(id).unwrap()));
+      await Promise.all(selectedIds.map((id) => deleteVehicle(id).unwrap()));
 
       setSnackbar({
         open: true,
@@ -90,7 +88,7 @@ const BillPage = () => {
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleDelete}
-        title={`Xóa cơ sở tiện ích - ID: ${current?.paymentId}`}
+        title={`Xóa cơ sở tiện ích - ID: ${current?.vehicleId}`}
         message="Bạn có chắc chắn muốn xóa không?"
       />
 
@@ -105,19 +103,13 @@ const BillPage = () => {
       />
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách hóa đơn</Typography>
+          <Typography variant="h1">Danh sách phương tiện</Typography>
         </Grid>
         <Grid item xs={12}>
-          <BillDataGrid />
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h1">Lịch sử thanh toán</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <PaymentDataGrid
+          <VehicleDataGrid
             onEdit={() => {}}
-            onDelete={(paymentId) => {
-              setCurrent({ paymentId } as Payment);
+            onDelete={(vehicleId) => {
+              setCurrent({ vehicleId } as Vehicle);
               setOpenDialog(true);
             }}
             onBulkDelete={(ids) => {
@@ -131,4 +123,4 @@ const BillPage = () => {
   );
 };
 
-export default BillPage;
+export default VehiclePage;

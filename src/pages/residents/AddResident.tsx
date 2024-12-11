@@ -12,16 +12,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useAddResidentMutation } from 'api/residentApi';
 import { useApartments } from 'hooks/properties/useApartment';
+import { NewResident } from 'interface/Residents';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-
-interface ResidentsProps {
-  fullname: string;
-  idcard: string;
-  username: string;
-  apartment: number;
-}
 
 interface ValidationError {
   field: string;
@@ -33,14 +28,14 @@ interface Props {
 }
 
 const AddResident: React.FC<Props> = ({ setSnackbar }) => {
-  const [errors, setErrors] = useState<ValidationError[]>([]);
   const { apartments } = useApartments();
+  const [errors, setErrors] = useState<ValidationError[]>([]);
+  const [addResident, { isLoading }] = useAddResidentMutation();
 
-  const [residentInput, setResidentInput] = useState<ResidentsProps>({
+  const [residentInput, setResidentInput] = useState<NewResident>({
     fullname: '',
     idcard: '',
-    username: '',
-    apartment: 0,
+    apartmentId: null,
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,72 +44,63 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field when user starts typing
     setErrors((prev) => prev.filter((error) => error.field !== name));
   };
 
   const handleSelectChange = (event: any) => {
+    const value = event.target.value === 0 ? null : event.target.value;
     setResidentInput((prev) => ({
       ...prev,
-      apartment: event.target.value,
+      apartmentId: value,
     }));
-    setErrors((prev) => prev.filter((error) => error.field !== 'apartment'));
+    setErrors((prev) => prev.filter((error) => error.field !== 'apartmentId'));
   };
 
   const handleReset = () => {
     setResidentInput({
       fullname: '',
       idcard: '',
-      username: '',
-      apartment: 0,
+      apartmentId: 0,
     });
     setErrors([]);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (validateInput()) {
-      // Proceed with adding resident
-      console.log('Valid input:', residentInput);
-      setSnackbar({
-        open: true,
-        message: 'Thêm cư dân thành công',
-        severity: 'success',
-      });
+      try {
+        console.log(residentInput);
+
+        await addResident(residentInput).unwrap();
+        setSnackbar({
+          open: true,
+          message: 'Thêm cư dân thành công',
+          severity: 'success',
+        });
+        handleReset();
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: 'Có lỗi xảy ra khi thêm cư dân',
+          severity: 'error',
+        });
+      }
     }
   };
 
-  // Validate input
   const validateInput = (): boolean => {
     const newErrors: ValidationError[] = [];
-    const { fullname, idcard, username, apartment } = residentInput;
+    const { fullname, idcard } = residentInput;
 
-    // Validate fullname
     if (!fullname.trim()) {
       newErrors.push({ field: 'fullname', message: 'Họ và tên không được để trống' });
     } else if (fullname.length < 2) {
       newErrors.push({ field: 'fullname', message: 'Họ và tên phải có ít nhất 2 ký tự' });
     }
 
-    // Validate username
-    if (!username.trim()) {
-      newErrors.push({ field: 'username', message: 'Username không được để trống' });
-    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      newErrors.push({
-        field: 'username',
-        message: 'Username chỉ được chứa chữ cái, số và dấu gạch dưới',
-      });
-    }
-
-    // Validate idcard
     if (!idcard.trim()) {
       newErrors.push({ field: 'idcard', message: 'Mã định danh không được để trống' });
-    } else if (!/^\d{9,12}$/.test(idcard)) {
-      newErrors.push({ field: 'idcard', message: 'Mã định danh phải có từ 9-12 chữ số' });
-    }
-
-    // Validate apartment
-    if (!apartment) {
-      newErrors.push({ field: 'apartment', message: 'Vui lòng chọn căn hộ' });
+    } else if (!/^\d{12}$/.test(idcard)) {
+      newErrors.push({ field: 'idcard', message: 'Mã định danh phải gồm 12 chữ số' });
     }
 
     setErrors(newErrors);
@@ -157,18 +143,6 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
           />
           <TextField
             margin="dense"
-            label="Username"
-            fullWidth
-            variant="outlined"
-            name="username"
-            required
-            value={residentInput.username}
-            onChange={handleInputChange}
-            error={errors.some((e) => e.field === 'username')}
-            helperText={errors.find((e) => e.field === 'username')?.message}
-          />
-          <TextField
-            margin="dense"
             label="Mã định danh"
             fullWidth
             variant="outlined"
@@ -184,7 +158,7 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
             <Select
               labelId="apartment-select-label"
               id="apartment-select"
-              value={residentInput.apartment}
+              value={residentInput.apartmentId || 0} // Hiển thị 'None' nếu giá trị là null
               label="Mã căn hộ"
               onChange={handleSelectChange}
               name="apartment"
@@ -198,6 +172,7 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
                 </MenuItem>
               ))}
             </Select>
+
             {errors.some((e) => e.field === 'apartment') && (
               <Typography color="error" variant="caption" sx={{ ml: 2 }}>
                 {errors.find((e) => e.field === 'apartment')?.message}
@@ -206,8 +181,12 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
           </FormControl>
         </AccordionDetails>
         <AccordionActions>
-          <Button onClick={handleReset}>Hủy</Button>
-          <Button onClick={handleAdd}>Thêm</Button>
+          <Button onClick={handleReset} disabled={isLoading}>
+            Hủy
+          </Button>
+          <Button onClick={handleAdd} disabled={isLoading}>
+            {isLoading ? 'Đang thêm...' : 'Thêm'}
+          </Button>
         </AccordionActions>
       </Accordion>
     </Paper>
