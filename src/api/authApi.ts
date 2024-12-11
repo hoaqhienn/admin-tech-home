@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { AuthResponse, CurrentUserResponse } from 'interface/auth/authInterface';
+import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
+import { AuthResponse, CurrentUserResponse, LoginCredentials } from 'interface/auth/authInterface';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -17,7 +17,7 @@ export const authApi = createApi({
   tagTypes: ['Authorization'],
   endpoints: (builder) => ({
     // Auth endpoints
-    login: builder.mutation<AuthResponse, { email: string; password: string }>({
+    login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
         url: '/authentication',
         method: 'POST',
@@ -27,6 +27,20 @@ export const authApi = createApi({
 
     getCurrentUser: builder.query<CurrentUserResponse, void>({
       query: () => '/current',
+      providesTags: ['Authorization'],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          const fetchError = error as { error: FetchBaseQueryError };
+          if (fetchError.error.status === 401 || fetchError.error.status === 403) {
+            // Clear auth state on unauthorized
+            localStorage.removeItem('_email');
+            localStorage.removeItem('_token');
+            localStorage.removeItem('_longToken');
+          }
+        }
+      },
     }),
 
     changePassword: builder.mutation<void, { currentPassword: string; newPassword: string }>({

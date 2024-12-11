@@ -1,5 +1,4 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import IconifyIcon from 'components/base/IconifyIcon';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -10,39 +9,77 @@ import {
   Stack,
   TextField,
   Typography,
+  Alert,
 } from '@mui/material';
+import IconifyIcon from 'components/base/IconifyIcon';
 import { useAuth } from 'hooks/auth/useAuth';
+
+interface FormState {
+  email: string;
+  password: string;
+}
+
+interface FormError {
+  message: string;
+  field?: 'email' | 'password';
+}
 
 const Signin = () => {
   const navigate = useNavigate();
-  const { handleLogin } = useAuth();
-  const [user, setUser] = useState({ email: '', password: '' });
+  const { handleLogin, isLoading } = useAuth();
+
+  const [formData, setFormData] = useState<FormState>({
+    email: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<FormError | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+  const validateForm = (): boolean => {
+    if (!formData.email) {
+      setError({ message: 'Email là bắt buộc', field: 'email' });
+      return false;
+    }
+    if (!formData.password) {
+      setError({ message: 'Mật khẩu là bắt buộc', field: 'password' });
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError({ message: 'Email không hợp lệ', field: 'email' });
+      return false;
+    }
+    return true;
+  };
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null); // Clear error when user types
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-      if (!user.email || !user.password) {
-        throw new Error('Please fill in all required fields.');
-      }
-      if (await handleLogin({ email: user.email, password: user.password })) {
+      const success = await handleLogin(formData);
+      if (success) {
         navigate('/');
       } else {
-        throw new Error('Invalid credentials. Please try again.');
+        setShowErrorModal(true);
       }
-    } catch (error: any) {
+    } catch (err) {
       setShowErrorModal(true);
     }
   };
 
   const handleCloseModal = () => {
     setShowErrorModal(false);
+    setFormData((prev) => ({ ...prev, password: '' })); // Clear password on error
   };
 
   return (
@@ -54,12 +91,18 @@ const Signin = () => {
         Chào mừng trở lại!
       </Typography>
 
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error.message}
+        </Alert>
+      )}
+
       <Stack component="form" mt={3} onSubmit={handleSubmit} direction="column" gap={2}>
         <TextField
           id="email"
           name="email"
           type="email"
-          value={user.email}
+          value={formData.email}
           onChange={handleInputChange}
           variant="filled"
           placeholder="Email"
@@ -67,6 +110,7 @@ const Signin = () => {
           fullWidth
           autoFocus
           required
+          error={error?.field === 'email'}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -75,17 +119,19 @@ const Signin = () => {
             ),
           }}
         />
+
         <TextField
           id="password"
           name="password"
           type={showPassword ? 'text' : 'password'}
-          value={user.password}
+          value={formData.password}
           onChange={handleInputChange}
           variant="filled"
           placeholder="Mật khẩu"
           autoComplete="current-password"
           fullWidth
           required
+          error={error?.field === 'password'}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -96,8 +142,8 @@ const Signin = () => {
               <InputAdornment
                 position="end"
                 sx={{
-                  opacity: user.password ? 1 : 0,
-                  pointerEvents: user.password ? 'auto' : 'none',
+                  opacity: formData.password ? 1 : 0,
+                  pointerEvents: formData.password ? 'auto' : 'none',
                 }}
               >
                 <IconButton
@@ -116,13 +162,15 @@ const Signin = () => {
           }}
         />
 
-        <Button type="submit" variant="contained" size="medium" fullWidth>
-          Đăng nhập
+        <Button type="submit" variant="contained" size="medium" fullWidth disabled={isLoading}>
+          {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </Button>
-        <Button variant="text" size="small" fullWidth>
+
+        <Button variant="text" size="small" fullWidth disabled={isLoading}>
           Đặt lại mật khẩu
         </Button>
       </Stack>
+
       <Modal open={showErrorModal} onClose={handleCloseModal}>
         <Box
           sx={{
@@ -148,17 +196,17 @@ const Signin = () => {
           >
             Đăng nhập không thành công
           </Typography>
+
           <Typography>Thông tin đăng nhập không chính xác. Vui lòng thử lại!</Typography>
+
           <Button
             variant="text"
             onClick={handleCloseModal}
             size="medium"
             sx={{
-              // position center
               display: 'block',
               margin: 'auto',
               width: '100%',
-              // center text
               textAlign: 'center',
               color: 'primary.main',
               fontWeight: 'bold',
