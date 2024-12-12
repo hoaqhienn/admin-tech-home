@@ -87,6 +87,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       }
     });
 
+    socketInstance.on('messageDeleted', ({ messageId }: { messageId: number }) => {
+      console.log('Received confirmation of message deletion:', messageId);
+      // The actual message removal from state will be handled by the ChatMessages component
+    });
+
     return socketInstance;
   }, [currentUser?.user.userId, showNotification]);
 
@@ -145,8 +150,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const deleteMessage = useCallback(
     (chatId: number, messageId: number) => {
       if (socket && isConnected) {
-        console.log('Deleting message:', messageId, 'from chat:', chatId);
-        socket.emit('deleteMessage', chatId, messageId);
+        console.log('Initiating message deletion:', messageId, 'from chat:', chatId);
+        socket.emit('initiateDelete', { chatId, messageId });
       }
     },
     [socket, isConnected],

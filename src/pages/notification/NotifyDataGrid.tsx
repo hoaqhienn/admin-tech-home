@@ -41,7 +41,6 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
         onDelete(id);
         clearSelection();
         console.log('Delete notification');
-        
       }
     },
     [onDelete, clearSelection],
@@ -131,7 +130,7 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
           <IconButton
             size="small"
             onClick={(e) => {
-              e.stopPropagation();              
+              e.stopPropagation();
               handleDelete(params.row.notificationId);
             }}
             sx={{ color: 'error.main' }}

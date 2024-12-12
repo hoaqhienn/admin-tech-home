@@ -5,61 +5,83 @@ import { useCallback, useState } from 'react';
 import ResidentsDataGrid from 'pages/residents/ResidentsDataGrid';
 import { ResidentViaApartment } from 'interface/Residents';
 import { NewNotify, Notify } from 'interface/Utils';
-import { useAddNotificationMutation, useDeleteNotificationMutation, useUpdateNotificationMutation } from 'api/serviceApi';
+import {
+  useAddNotificationMutation,
+  useDeleteNotificationMutation,
+  useUpdateNotificationMutation,
+  useSendNotificationMutation,
+} from 'api/serviceApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import NotifyFormDialog from './NotifyFormDialog';
 
 const NotifyPage = () => {
+  // State for modal and notification handling
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedResidents, setSelectedResidents] = useState<ResidentViaApartment[]>([]);
   const [notify, setNotify] = useState<Notify | null>(null);
-
-  const handSendNoification = async () => {
-    const tokens = selectedResidents
-      .map((resident) => resident.fcmToken)
-      .filter((token): token is string => token !== undefined);
-
-    console.log(tokens);
-
-    if (tokens.length === 0 || tokens.length === 1) {
-      return;
-    }
-
-    // check notify not null
-    if (!notify) {
-      return;
-    }
-
-    console.log(selectedResidents);
-    try {
-      // const res = await sendNotifications({
-      //   tokens: tokens,
-      //   title: notify.notificationTitle,
-      //   body: notify.notificationBody,
-      // });
-      // console.log(res);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const [current, setCurrent] = useState<Notify | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [editingNotification, setEditingNotification] = useState<Notify | null>(null);
 
+  // Snackbar state
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     severity: 'success' as 'success' | 'error',
   });
 
+  // API mutations
   const [deleteNotify] = useDeleteNotificationMutation();
+  const [addNotification] = useAddNotificationMutation();
+  const [updateNotification] = useUpdateNotificationMutation();
+  const [sendNotification] = useSendNotificationMutation();
+
+  // Dialog handlers
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
 
-  // Handle single deletion
+  // Notification sending handler
+  const handleSendNotification = async () => {
+    const tokens = selectedResidents
+      .map((resident) => resident.fcmToken)
+      .filter((token): token is string => token !== undefined);
+
+    if (tokens.length === 0 || !notify) {
+      setSnackbar({
+        open: true,
+        message: 'Vui lòng chọn người nhận và nội dung thông báo',
+        severity: 'error',
+      });
+      return;
+    }
+
+    try {
+      await sendNotification({
+        tokens,
+        title: notify.notificationTitle,
+        body: notify.notificationBody,
+      }).unwrap();
+
+      setSnackbar({
+        open: true,
+        message: 'Gửi thông báo thành công',
+        severity: 'success',
+      });
+      setModalOpen(false);
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra khi gửi thông báo',
+        severity: 'error',
+      });
+      console.error(err);
+    }
+  };
+
+  // Single notification deletion handler
   const handleDelete = async () => {
     if (!current?.notificationId) return;
 
@@ -82,12 +104,10 @@ const NotifyPage = () => {
     }
   };
 
-  // Handle bulk deletion
+  // Bulk deletion handler
   const handleBulkDelete = async () => {
     try {
-      // Sequential deletion of all selected buildings
       await Promise.all(selectedIds.map((id) => deleteNotify(id).unwrap()));
-
       setSnackbar({
         open: true,
         message: 'Xóa các thông báo đã chọn thành công',
@@ -105,12 +125,7 @@ const NotifyPage = () => {
     }
   };
 
-  const [formDialogOpen, setFormDialogOpen] = useState(false);
-  const [editingNotification, setEditingNotification] = useState<Notify | null>(null);
-
-  const [addNotification] = useAddNotificationMutation();
-  const [updateNotification] = useUpdateNotificationMutation();
-
+  // Notification form submission handler
   const handleNotifySubmit = async (data: NewNotify) => {
     try {
       if (editingNotification) {
@@ -131,6 +146,8 @@ const NotifyPage = () => {
           severity: 'success',
         });
       }
+      setFormDialogOpen(false);
+      setEditingNotification(null);
     } catch (error) {
       setSnackbar({
         open: true,
@@ -142,6 +159,7 @@ const NotifyPage = () => {
 
   return (
     <>
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -154,6 +172,8 @@ const NotifyPage = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* Delete confirmation dialog */}
       <ConfirmDialog
         key="delete"
         open={openDialog}
@@ -163,7 +183,7 @@ const NotifyPage = () => {
         message="Bạn có chắc chắn muốn xóa không?"
       />
 
-      {/* Bulk Delete Confirmation */}
+      {/* Bulk delete confirmation dialog */}
       <ConfirmDialog
         key="bulk-delete"
         open={openBulkDeleteDialog}
@@ -172,6 +192,8 @@ const NotifyPage = () => {
         title="Xóa nhiều thông báo"
         message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} thông báo được chọn?`}
       />
+
+      {/* Notification form dialog */}
       <NotifyFormDialog
         open={formDialogOpen}
         onClose={() => {
@@ -182,6 +204,8 @@ const NotifyPage = () => {
         onSubmit={handleNotifySubmit}
         title={editingNotification ? 'Cập nhật thông báo' : 'Thêm thông báo'}
       />
+
+      {/* Main content */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -218,6 +242,8 @@ const NotifyPage = () => {
           />
         </Grid>
       </Grid>
+
+      {/* Recipient selection modal */}
       <Modal
         open={modalOpen}
         onClose={() => {
@@ -236,23 +262,13 @@ const NotifyPage = () => {
             borderRadius: 0,
           }}
         >
-          <div className="flex flex-row space-x-10 items-center">
+          <Stack direction="row" spacing={2} p={2}>
             <Typography variant="h3">Chọn người gửi</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                handSendNoification();
-              }}
-            >
+            <Button variant="contained" color="primary" onClick={handleSendNotification}>
               Gửi
             </Button>
-          </div>
-          <ResidentsDataGrid
-            onSelectionChange={(selectedResidents) => {
-              setSelectedResidents(selectedResidents);
-            }}
-          />
+          </Stack>
+          <ResidentsDataGrid onSelectionChange={setSelectedResidents} />
         </Paper>
       </Modal>
     </>
