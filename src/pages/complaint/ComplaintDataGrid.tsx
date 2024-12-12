@@ -2,32 +2,51 @@ import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useComplaints } from 'hooks/service/useComplaint';
 import { Complaint } from 'interface/Utils';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import ComplaintStatusDialog from './ComplaintStatusDialog';
 
 interface DataGridProps {
   onEdit?: (s: Complaint) => void;
   onDelete?: (id: number) => void;
   onBulkDelete?: (ids: number[]) => void;
+  onStatusUpdate?: (id: number, status: string) => void;
 }
 
-const ComplaintDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
+const ComplaintDataGrid: React.FC<DataGridProps> = ({
+  // onEdit,
+  onDelete,
+  onBulkDelete,
+  onStatusUpdate,
+}) => {
   const { complaints, isLoading } = useComplaints();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+
+  console.log('complaints', complaints);
+
+  const handleStatusUpdate = (status: string) => {
+    if (selectedComplaint && onStatusUpdate) {
+      onStatusUpdate(selectedComplaint.complaintId, status);
+    }
+    setStatusDialogOpen(false);
+    setSelectedComplaint(null);
+  };
 
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
   }, []);
 
-  const handleEdit = useCallback(
-    (s: Complaint) => {
-      if (onEdit) {
-        onEdit(s);
-        clearSelection();
-      }
-    },
-    [onEdit, clearSelection],
-  );
+  // const handleEdit = useCallback(
+  //   (s: Complaint) => {
+  //     if (onEdit) {
+  //       onEdit(s);
+  //       clearSelection();
+  //     }
+  //   },
+  //   [onEdit, clearSelection],
+  // );
 
   const handleDelete = useCallback(
     (id: number) => {
@@ -131,23 +150,23 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDe
       },
     },
     {
-      field: 'buildingName',
-      headerName: 'Tòa nhà',
+      field: 'buildingId',
+      headerName: 'Mã tòa nhà',
       flex: 1,
     },
     {
-      field: 'floorNumber',
-      headerName: 'Tầng',
+      field: 'floorId',
+      headerName: 'Mã tầng',
       flex: 1,
     },
     {
-      field: 'apartmentNumber',
-      headerName: 'Căn hộ',
+      field: 'apartmentId',
+      headerName: 'Mã căn hộ',
       flex: 1,
     },
     {
-      field: 'residentName',
-      headerName: 'Cư dân',
+      field: 'residentId',
+      headerName: 'Mã cư dân',
       flex: 1,
     },
     {
@@ -158,35 +177,17 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDe
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <Stack direction="row" spacing={1} sx={{ width: '100%', justifyContent: 'center' }}>
           <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(params.row as Complaint);
+              setSelectedComplaint(params.row as Complaint);
+              setStatusDialogOpen(true);
             }}
             sx={{ color: 'blue' }}
           >
             <Info fontSize="small" />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(params.row as Complaint);
-            }}
-            sx={{ color: 'warning.main' }}
-          >
-            <EditIcon fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
@@ -248,6 +249,12 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDe
           setSelectedRows(newSelection as number[]);
         }}
         rowSelectionModel={selectedRows}
+      />
+      <ComplaintStatusDialog
+        open={statusDialogOpen}
+        onClose={() => setStatusDialogOpen(false)}
+        onStatusUpdate={handleStatusUpdate}
+        currentStatus={selectedComplaint?.complaintStatus || ''}
       />
     </Paper>
   );

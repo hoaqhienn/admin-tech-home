@@ -43,6 +43,7 @@ export interface Facility {
   facilityName: string;
   facilityDescription: string;
   facilityLocation: string;
+  buildingId: number;
 }
 
 export interface NewBuilding {

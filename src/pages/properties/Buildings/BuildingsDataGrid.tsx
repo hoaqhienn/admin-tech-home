@@ -17,6 +17,7 @@ const BuildingsDataGrid: React.FC<BuildingsDataGridProps> = ({
   onBulkDelete,
 }) => {
   const { buildings, isLoading } = useBuildings();
+  console.log('Error:', buildings);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {

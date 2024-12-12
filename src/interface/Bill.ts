@@ -7,6 +7,8 @@ export interface Bill {
   billStatus: string;
   serviceBookingId: string | null;
   residentName: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 export interface Payment {
@@ -15,4 +17,6 @@ export interface Payment {
   paymentDate: string | null;
   paymentStatus: string;
   orderCode: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }

@@ -2,7 +2,7 @@ import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useBills } from 'hooks/payment/useBill';
 import { Bill } from 'interface/Bill';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -11,8 +11,9 @@ interface DataGridProps {
   onBulkDelete?: (ids: number[]) => void;
 }
 
-const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
+const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onBulkDelete }) => {
   const { bills, isLoading } = useBills();
+
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -29,15 +30,15 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
     [onEdit, clearSelection],
   );
 
-  const handleDelete = useCallback(
-    (id: number) => {
-      if (onDelete) {
-        onDelete(id);
-        clearSelection();
-      }
-    },
-    [onDelete, clearSelection],
-  );
+  // const handleDelete = useCallback(
+  //   (id: number) => {
+  //     if (onDelete) {
+  //       onDelete(id);
+  //       clearSelection();
+  //     }
+  //   },
+  //   [onDelete, clearSelection],
+  // );
 
   const handleDeleteSelected = useCallback(() => {
     if (onBulkDelete && selectedRows.length > 0) {
@@ -46,12 +47,11 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
     }
   }, [onBulkDelete, selectedRows, clearSelection]);
 
-  const formatDate = (dateValue: any): string => {
-    if (!dateValue) return '';
+  const formatDate = (dateString: string | null): string => {
+    if (!dateString) return '';
 
     try {
-      // If it's already a Date object or if it's a string, try to create a Date object
-      const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
+      const date = new Date(dateString);
 
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
@@ -69,10 +69,6 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
     }
   };
 
-  const randomDate = new Date(
-    new Date().getTime() - Math.floor(Math.random() * 10000000000),
-  ).toISOString();
-
   const columns: GridColDef[] = [
     {
       field: 'billId',
@@ -84,29 +80,22 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
       headerName: 'Tên hóa đơn',
       flex: 1,
     },
-    // {
-    //   field: 'serviceBookingId',
-    //   headerName: 'Mã dịch vụ',
-    //   flex: 0.5,
-    // },
     {
       field: 'residentId',
       headerName: 'Mã cư dân',
       flex: 0.5,
     },
     {
-      field: 'residentName',
-      headerName: 'Tên cư dân',
+      field: 'createdAt',
+      headerName: 'Ngày tạo',
       flex: 1,
+      renderCell: (params) => formatDate(params.value),
     },
     {
-      field: 'billDate',
-      headerName: 'Ngày lập',
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
       flex: 1,
-      renderCell: () => (
-        // random date
-        <Chip label={formatDate(randomDate)} />
-      ),
+      renderCell: (params) => formatDate(params.value),
     },
     {
       field: 'billStatus',
@@ -119,12 +108,12 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
 
         switch (status) {
           case 'PAID':
-            color = '#1B5E20'; // Dark green text
-            backgroundColor = '#E8F5E9'; // Light green background
+            color = '#1B5E20';
+            backgroundColor = '#E8F5E9';
             break;
           case 'UNPAID':
-            color = '#B71C1C'; // Dark red text
-            backgroundColor = '#FFEBEE'; // Light red background
+            color = '#B71C1C';
+            backgroundColor = '#FFEBEE';
             break;
           default:
             color = 'text.primary';
@@ -172,7 +161,7 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -186,12 +175,12 @@ const BillDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete 
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(params.row.serviceId);
+              handleDelete(params.row.billId);
             }}
             sx={{ color: 'error.main' }}
           >
             <DeleteIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       ),
     },

@@ -5,10 +5,13 @@ import { Facility } from 'interface/Properties';
 import { useDeleteFacilityMutation } from 'api/propertyApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import FacilityDataGrid from './FacilityDataGrid';
+import AddFacility from './AddFacility';
+import EditFacility from './EditFacility';
 
 const FacilityPage = () => {
   const [currentFacility, setCurrentFacility] = useState<Facility | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
@@ -23,8 +26,11 @@ const FacilityPage = () => {
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
+  const handleCloseEditDialog = useCallback(() => {
+    setOpenEditDialog(false);
+    setCurrentFacility(null);
+  }, []);
 
-  // Handle single deletion
   const handleDelete = async () => {
     if (!currentFacility?.facilityId) return;
 
@@ -47,21 +53,18 @@ const FacilityPage = () => {
     }
   };
 
-  // Handle bulk deletion
   const handleBulkDelete = async () => {
     try {
-      // Sequential deletion of all selected buildings
       await Promise.all(selectedIds.map((id) => deleteFacility(id).unwrap()));
-
       setSnackbar({
         open: true,
-        message: 'Xóa các tòa nhà đã chọn thành công',
+        message: 'Xóa các cơ sở vật chất đã chọn thành công',
         severity: 'success',
       });
     } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Có lỗi xảy ra khi xóa các tòa nhà',
+        message: 'Có lỗi xảy ra khi xóa các cơ sở vật chất',
         severity: 'error',
       });
     } finally {
@@ -84,31 +87,42 @@ const FacilityPage = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
       <ConfirmDialog
         key="delete"
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleDelete}
-        title={`Xóa cơ sở tiện ích - ID: ${currentFacility?.facilityId}`}
+        title={`Xóa cơ sở vật chất - ID: ${currentFacility?.facilityId}`}
         message="Bạn có chắc chắn muốn xóa không?"
       />
 
-      {/* Bulk Delete Confirmation */}
       <ConfirmDialog
         key="bulk-delete"
         open={openBulkDeleteDialog}
         onClose={handleCloseBulkDeleteDialog}
         onConfirm={handleBulkDelete}
-        title="Xóa nhiều cơ sở tiện ích"
-        message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} cơ sở tiện ích được chọn?`}
+        title="Xóa nhiều cơ sở vật chất"
+        message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} cơ sở vật chất được chọn?`}
       />
+
+      <EditFacility
+        open={openEditDialog}
+        facility={currentFacility}
+        onClose={handleCloseEditDialog}
+        setSnackbar={setSnackbar}
+      />
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant="h1">Danh sách cơ sở vật chất</Typography>
         </Grid>
         <Grid item xs={12}>
           <FacilityDataGrid
-            onEdit={() => {}}
+            onEdit={(facility) => {
+              setCurrentFacility(facility);
+              setOpenEditDialog(true);
+            }}
             onDelete={(facilityId) => {
               setCurrentFacility({ facilityId } as Facility);
               setOpenDialog(true);
@@ -118,6 +132,9 @@ const FacilityPage = () => {
               setOpenBulkDeleteDialog(true);
             }}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <AddFacility setSnackbar={setSnackbar} />
         </Grid>
       </Grid>
     </>

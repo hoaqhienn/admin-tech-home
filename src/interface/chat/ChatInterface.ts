@@ -13,6 +13,17 @@ export interface GroupChat {
   chatDate: string;
   createdAt: string;
   updatedAt: string;
+  members?: Member[];
+}
+
+export interface Member {
+  residentId: number;
+  userId: number;
+  phonenumber: number;
+  idcard: string;
+  fullname: string;
+  username: string;
+  avatar: string;
 }
 
 export interface Messages {

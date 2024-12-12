@@ -10,18 +10,27 @@ import { useCallback, useState } from 'react';
 import { Service } from 'interface/Service';
 import ServiceDataGrid from './ServiceDataGrid';
 import { Alert, Snackbar, Typography } from '@mui/material';
-import { useDeleteServiceMutation } from 'api/serviceApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
+import {
+  useAddServiceMutation,
+  useUpdateServiceMutation,
+  useDeleteServiceMutation,
+} from 'api/serviceApi';
 
 const Services = () => {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [addService] = useAddServiceMutation();
+  const [updateService] = useUpdateServiceMutation();
+  const [deleteService] = useDeleteServiceMutation();
 
   const [newService, setNewService] = useState({
     serviceName: '',
     servicePrice: '',
     createdAt: '',
     updatedAt: '',
+    buildingId: 1,
   });
 
   const handleClickOpen = (service?: Service) => {
@@ -31,6 +40,7 @@ const Services = () => {
         servicePrice: service.servicePrice.toString(),
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
+        buildingId: service.buildingId || 1,
       });
       setCurrent(service);
       setIsEditing(true);
@@ -40,6 +50,7 @@ const Services = () => {
         servicePrice: '',
         createdAt: '',
         updatedAt: '',
+        buildingId: 1,
       });
       setIsEditing(false);
     }
@@ -56,7 +67,65 @@ const Services = () => {
   };
 
   const handleSubmit = async () => {
+    // Validation
+    if (!newService.serviceName.trim()) {
+      setSnackbar({
+        open: true,
+        message: 'Vui lòng nhập tên dịch vụ',
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (!newService.servicePrice || Number(newService.servicePrice) <= 0) {
+      setSnackbar({
+        open: true,
+        message: 'Vui lòng nhập giá dịch vụ hợp lệ',
+        severity: 'error',
+      });
+      return;
+    }
+    try {
+      const serviceData = {
+        serviceName: newService.serviceName,
+        servicePrice: Number(newService.servicePrice),
+        buildingId: 1, // You'll need to provide the correct buildingId
+      };
+
+      if (isEditing && current?.serviceId) {
+        await updateService({
+          id: current.serviceId,
+          service: {
+            ...current,
+            ...serviceData,
+          },
+        }).unwrap();
+        setSnackbar({
+          open: true,
+          message: 'Cập nhật dịch vụ thành công!',
+          severity: 'success',
+        });
+      } else {
+        await addService(serviceData).unwrap();
+        setSnackbar({
+          open: true,
+          message: 'Thêm dịch vụ thành công!',
+          severity: 'success',
+        });
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra!',
+        severity: 'error',
+      });
+    }
     handleClose();
+  };
+
+  // Update the ServiceDataGrid component usage to handle edit
+  const handleEdit = (service: Service) => {
+    handleClickOpen(service);
   };
 
   const [current, setCurrent] = useState<Service | null>(null);
@@ -71,8 +140,6 @@ const Services = () => {
     severity: 'success' as 'success' | 'error',
   });
 
-  const [deleteVehicle] = useDeleteServiceMutation();
-
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
 
@@ -81,7 +148,7 @@ const Services = () => {
     if (!current?.serviceId) return;
 
     try {
-      await deleteVehicle(current.serviceId).unwrap();
+      await deleteService(current.serviceId).unwrap();
       setSnackbar({
         open: true,
         message: 'Xóa thành công!',
@@ -103,7 +170,7 @@ const Services = () => {
   const handleBulkDelete = async () => {
     try {
       // Sequential deletion of all selected buildings
-      await Promise.all(selectedIds.map((id) => deleteVehicle(id).unwrap()));
+      await Promise.all(selectedIds.map((id) => deleteService(id).unwrap()));
 
       setSnackbar({
         open: true,
@@ -160,7 +227,7 @@ const Services = () => {
         </Grid>
         <Grid item xs={12}>
           <ServiceDataGrid
-            onEdit={() => {}}
+            onEdit={handleEdit}
             onDelete={(serviceId) => {
               setCurrent({ serviceId } as Service);
               setOpenDialog(true);
@@ -207,6 +274,15 @@ const Services = () => {
               fullWidth
               variant="outlined"
               value={newService.servicePrice}
+              onChange={handleInputChange}
+            />
+            <TextField
+              margin="dense"
+              label="Building ID"
+              name="buildingId"
+              fullWidth
+              variant="outlined"
+              value={newService.buildingId}
               onChange={handleInputChange}
             />
           </DialogContent>

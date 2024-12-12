@@ -23,11 +23,12 @@ import {
   useGetApartmentByIdQuery,
   useJoinToApartmentMutation,
   useLeaveOutApartmentMutation,
+  useUpdateApartmentMutation,
 } from 'api/propertyApi';
 import { useResidents } from 'hooks/resident/useResident';
-import { ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, Edit, X } from 'lucide-react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ResidentSelector from './ResidentSelector';
 
 interface SnackbarState {
@@ -47,8 +48,12 @@ const ApartmentDetail = () => {
   const { residents } = useResidents();
 
   const { data: apartment, isLoading, error } = useGetApartmentByIdQuery(Number(id));
+  const [updateApartment] = useUpdateApartmentMutation();
   const [joinApartment] = useJoinToApartmentMutation();
   const [leaveApartment] = useLeaveOutApartmentMutation();
+
+  const [apartmentNumber, setApartmentNumber] = useState<string>('');
+  const [isEditing, setIsEditing] = useState(false);
 
   const [selectedResidentId, setSelectedResidentId] = useState<number | null>(null);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
@@ -61,6 +66,34 @@ const ApartmentDetail = () => {
     residentId: null,
     residentName: '',
   });
+
+  // Initialize apartment number when data is loaded
+  useEffect(() => {
+    if (apartment) {
+      setApartmentNumber(apartment.apartmentNumber);
+    }
+  }, [apartment]);
+
+  const handleApartmentNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApartmentNumber(event.target.value);
+  };
+
+  const handleUpdateApartmentNumber = async () => {
+    if (!apartment) return;
+
+    try {
+      await updateApartment({
+        ...apartment,
+        apartmentNumber: apartmentNumber,
+      }).unwrap();
+
+      setIsEditing(false);
+      showSnackbar('Cập nhật số căn hộ thành công', 'success');
+    } catch (err) {
+      console.error(err);
+      showSnackbar('Cập nhật số căn hộ thất bại', 'error');
+    }
+  };
 
   const handleSnackbarClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
@@ -179,11 +212,38 @@ const ApartmentDetail = () => {
           <Typography>Căn hộ số:</Typography>
           <TextField
             placeholder="Căn hộ số"
-            value={apartment.apartmentNumber}
+            value={apartmentNumber}
+            onChange={handleApartmentNumberChange}
             variant="outlined"
             fullWidth
             margin="dense"
             inputMode="numeric"
+            disabled={!isEditing}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {isEditing ? (
+                    <>
+                      <IconButton onClick={handleUpdateApartmentNumber} color="primary">
+                        <Check />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          setIsEditing(false);
+                          setApartmentNumber(apartment?.apartmentNumber || '');
+                        }}
+                      >
+                        <X />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <IconButton onClick={() => setIsEditing(true)}>
+                      <Edit />
+                    </IconButton>
+                  )}
+                </InputAdornment>
+              ),
+            }}
           />
           <Accordion>
             <AccordionSummary

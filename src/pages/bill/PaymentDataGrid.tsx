@@ -2,7 +2,7 @@ import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { usePayments } from 'hooks/payment/usePayment';
 import { Payment } from 'interface/Bill';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -11,7 +11,7 @@ interface DataGridProps {
   onBulkDelete?: (ids: number[]) => void;
 }
 
-const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
+const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onBulkDelete }) => {
   const { payments, isLoading } = usePayments();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
@@ -29,15 +29,15 @@ const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
     [onEdit, clearSelection],
   );
 
-  const handleDelete = useCallback(
-    (id: number) => {
-      if (onDelete) {
-        onDelete(id);
-        clearSelection();
-      }
-    },
-    [onDelete, clearSelection],
-  );
+  // const handleDelete = useCallback(
+  //   (id: number) => {
+  //     if (onDelete) {
+  //       onDelete(id);
+  //       clearSelection();
+  //     }
+  //   },
+  //   [onDelete, clearSelection],
+  // );
 
   const handleDeleteSelected = useCallback(() => {
     if (onBulkDelete && selectedRows.length > 0) {
@@ -158,7 +158,7 @@ const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -177,7 +177,7 @@ const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             sx={{ color: 'error.main' }}
           >
             <DeleteIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       ),
     },

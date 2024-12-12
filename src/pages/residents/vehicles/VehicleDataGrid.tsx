@@ -2,7 +2,7 @@ import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useVehicles } from 'hooks/resident/useVehicle';
 import { Vehicle } from 'interface/Vehicle';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, EditIcon } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -67,24 +67,24 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
       headerName: 'Mã cư dân',
       flex: 1,
     },
-    {
-      field: 'Resident.User.fullname',
-      headerName: 'Username',
-      flex: 1,
-      renderCell: (params) => params.row.Resident?.User?.fullname,
-    },
-    {
-      field: 'Resident.User.email',
-      headerName: 'Email',
-      flex: 1,
-      renderCell: (params) => params.row.Resident?.User?.email,
-    },
-    {
-      field: 'Resident.phonenumber',
-      headerName: 'Số điện thoại',
-      flex: 1,
-      renderCell: (params) => params.row.Resident?.phonenumber,
-    },
+    // {
+    //   field: 'Resident.fullname',
+    //   headerName: 'Username',
+    //   flex: 1,
+    //   // renderCell: (params) => params.row.Resident?.User?.fullname,
+    // },
+    // {
+    //   field: 'Resident.User.email',
+    //   headerName: 'Email',
+    //   flex: 1,
+    //   renderCell: (params) => params.row.Resident?.User?.email,
+    // },
+    // {
+    //   field: 'Resident.phonenumber',
+    //   headerName: 'Số điện thoại',
+    //   flex: 1,
+    //   renderCell: (params) => params.row.Resident?.phonenumber,
+    // },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -103,8 +103,7 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             alignItems: 'center',
           }}
         >
-          {' '}
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -113,7 +112,7 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             sx={{ color: 'blue' }}
           >
             <Info fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {
@@ -129,6 +128,7 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(params.row.vehicleId);
+              console.log(params.row);
             }}
             sx={{ color: 'error.main' }}
           >

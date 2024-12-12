@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Snackbar, Typography } from '@mui/material';
 import ResidentsDataGrid from './ResidentsDataGrid';
 import AddResident from './AddResident';
+import EditResident from './EditResident';
 import { Resident } from 'interface/Residents';
 import { useDeleteResidentMutation } from 'api/residentApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
@@ -11,21 +12,35 @@ import { SpeedDialActionType, SpeedDialCustom } from 'components/fab/SpeedDial';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: 'success' | 'error';
+}
+
 const ResidentPage = () => {
   const [currentResident, setCurrentResident] = useState<Resident | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  const [snackbar, setSnackbar] = useState({
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
     message: '',
-    severity: 'success' as 'success' | 'error',
+    severity: 'success',
   });
 
   const [deleteResident] = useDeleteResidentMutation();
+  const navigate = useNavigate();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
+  const handleCloseEdit = useCallback(() => setCurrentResident(null), []);
+  const handleCloseSnackbar = useCallback(
+    () => setSnackbar((prev) => ({ ...prev, open: false })),
+    [],
+  );
+
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   const handleDeleteResident = async () => {
     if (!currentResident?.residentId) return;
@@ -51,9 +66,7 @@ const ResidentPage = () => {
 
   const handleBulkDelete = async () => {
     try {
-      // Sequential deletion of all selected buildings
       await Promise.all(selectedIds.map((id) => deleteResident(id).unwrap()));
-
       setSnackbar({
         open: true,
         message: 'Xóa các cư dân đã chọn thành công',
@@ -71,35 +84,38 @@ const ResidentPage = () => {
     }
   };
 
-  const nav = useNavigate();
-
   const actions: SpeedDialActionType[] = [
     {
       icon: <Plus />,
       title: 'Add multi resident',
       onClick: () => {
-        nav('/resident/add');
+        navigate('/residents/add');
       },
     },
   ];
+
+  const handleEdit = useCallback((resident: Resident) => {
+    setCurrentResident(resident);
+    setIsEditMode(true);
+  }, []);
+
+  const handleDelete = useCallback((residentId: number) => {
+    setCurrentResident({ residentId } as Resident);
+    setOpenDialog(true);
+    setIsEditMode(false);
+  }, []);
 
   return (
     <>
       <ScrollToTop />
       <SpeedDialCustom actions={actions} />
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-      >
-        <Alert
-          severity={snackbar.severity}
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        >
+
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert severity={snackbar.severity} onClose={handleCloseSnackbar}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-      {/* Single Delete Confirmation */}
+
       <ConfirmDialog
         key="delete"
         open={openDialog}
@@ -109,7 +125,6 @@ const ResidentPage = () => {
         message="Bạn có chắc chắn muốn xóa cư dân này không?"
       />
 
-      {/* Bulk Delete Confirmation */}
       <ConfirmDialog
         key="bulk-delete"
         open={openBulkDeleteDialog}
@@ -118,26 +133,33 @@ const ResidentPage = () => {
         title="Xóa nhiều cư dân"
         message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} cư dân được chọn?`}
       />
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách cư dân</Typography>
+          <Typography variant="h4">Danh sách cư dân</Typography>
         </Grid>
+
         <Grid item xs={12}>
           <ResidentsDataGrid
-            onEdit={() => {}}
-            onDelete={(residentId) => {
-              setCurrentResident({ residentId } as Resident);
-              setOpenDialog(true);
-            }}
-            onBulkDelete={(buildingIds) => {
-              setSelectedIds(buildingIds);
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onBulkDelete={(ids: number[]) => {
+              setSelectedIds(ids);
               setOpenBulkDeleteDialog(true);
             }}
           />
         </Grid>
 
         <Grid item xs={12}>
-          <AddResident setSnackbar={setSnackbar} />
+          {currentResident && isEditMode ? (
+            <EditResident
+              resident={currentResident}
+              onClose={handleCloseEdit}
+              setSnackbar={setSnackbar}
+            />
+          ) : (
+            <AddResident setSnackbar={setSnackbar} />
+          )}
         </Grid>
       </Grid>
     </>

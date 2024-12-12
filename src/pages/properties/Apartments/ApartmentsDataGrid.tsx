@@ -124,7 +124,7 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              nav(`/apartment/${params.row.apartmentId}`);
+              nav(`/apartments/${params.row.apartmentId}`);
             }}
             sx={{ color: 'blue' }}
           >

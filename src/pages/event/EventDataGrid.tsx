@@ -1,12 +1,12 @@
 import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useEvents } from 'hooks/service/useEvent';
-import { Service } from 'interface/Service';
 import { DeleteIcon, EditIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { NewEvent } from 'interface/Utils'; // Import NewEvent type
 
 interface DataGridProps {
-  onEdit?: (s: Service) => void;
+  onEdit?: (event: NewEvent) => void; // Changed from Event to NewEvent
   onDelete?: (id: number) => void;
   onBulkDelete?: (ids: number[]) => void;
 }
@@ -20,9 +20,10 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
   }, []);
 
   const handleEdit = useCallback(
-    (s: Service) => {
+    (event: NewEvent) => {
+      // Changed from Event to NewEvent
       if (onEdit) {
-        onEdit(s);
+        onEdit(event);
         clearSelection();
       }
     },
@@ -50,14 +51,12 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
     if (!dateValue) return '';
 
     try {
-      // If it's already a Date object or if it's a string, try to create a Date object
       const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
 
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
 
-      // Format as DD/MM/YYYY
       const day = date.getDate().toString().padStart(2, '0');
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const year = date.getFullYear();
@@ -97,10 +96,9 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
       renderCell: (params) => formatDate(params.row.eventDate),
     },
     {
-      field: 'Building.buildingName',
+      field: 'buildingId',
       headerName: 'Tòa nhà',
-      flex: .5,
-      renderCell: (params) => params.row.Building?.buildingName,
+      flex: 0.5,
     },
     {
       field: 'actions',
@@ -124,7 +122,7 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(params.row as Service);
+              handleEdit(params.row as NewEvent); // Cast to NewEvent
             }}
             sx={{ color: 'blue' }}
           >
@@ -134,7 +132,7 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(params.row as Service);
+              handleEdit(params.row as NewEvent); // Cast to NewEvent
             }}
             sx={{ color: 'warning.main' }}
           >
@@ -144,7 +142,7 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(params.row.serviceId);
+              handleDelete(params.row.eventId);
             }}
             sx={{ color: 'error.main' }}
           >

@@ -51,3 +51,17 @@ export interface SendNotifyParams {
   title: string;
   body: string;
 }
+
+export interface NewNotify {
+  notificationTitle: string;
+  notificationBody: string;
+}
+
+export interface NewEvent {
+  eventId?: number;
+  eventName: string;
+  eventDate: string;
+  eventLocation: string;
+  eventDescription: string;
+  buildingId: number;
+}

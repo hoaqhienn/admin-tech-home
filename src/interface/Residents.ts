@@ -30,14 +30,16 @@ export interface AdminCreateRequest {
 }
 
 export interface Resident {
-  residentId: number;
+  residentId?: number;
+  fullname?: string;
+  email?: string;
   phonenumber: string;
   idcard: string;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  userId: number;
-  User: User;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  userId?: number;
+  User?: User;
 }
 
 export interface ResidentViaApartment {

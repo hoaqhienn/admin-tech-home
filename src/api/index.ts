@@ -12,3 +12,5 @@ export const combinedApi = {
   residentApi,
   serviceApi,
 };
+
+export const API_URL = 'https://169e-116-111-185-128.ngrok-free.app/';

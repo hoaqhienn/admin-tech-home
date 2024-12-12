@@ -6,15 +6,20 @@ export const useAuth = () => {
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const { data: user, isLoading: isUserLoading, error: userError } = useGetCurrentUserQuery();
+  // Chỉ fetch user data khi có token
+  const hasToken = !!localStorage.getItem('_token');
 
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    error: userError,
+  } = useGetCurrentUserQuery(undefined, {
+    skip: !hasToken,
+  });
+
+  // Đánh dấu đã khởi tạo ngay khi kiểm tra xong token
   useEffect(() => {
-    const token = localStorage.getItem('_token');
-    if (!token) {
-      setIsInitialized(true);
-    } else {
-      setIsInitialized(true);
-    }
+    setIsInitialized(true);
   }, []);
 
   const handleLogin = useCallback(
@@ -25,17 +30,16 @@ export const useAuth = () => {
           throw new Error('Invalid login response');
         }
 
-        console.log('Login successful:', res);
-
         // Set tokens
         localStorage.setItem('_email', email);
         localStorage.setItem('_token', res.token);
         localStorage.setItem('_longToken', res.longToken);
 
+        // RTK Query sẽ tự động fetch user data khi token thay đổi
         return true;
       } catch (error) {
         console.error('Login failed:', error);
-        // Clean up on error
+        // Cleanup nếu có lỗi
         localStorage.removeItem('_email');
         localStorage.removeItem('_token');
         localStorage.removeItem('_longToken');
@@ -51,10 +55,13 @@ export const useAuth = () => {
     localStorage.removeItem('_longToken');
   }, []);
 
+  // Xử lý loading state tốt hơn
+  const isLoading = !isInitialized || isLoginLoading || (hasToken && isUserLoading);
+
   return {
     user,
     isAuthenticated: !!user,
-    isLoading: !isInitialized || isLoginLoading || isUserLoading,
+    isLoading,
     error: userError,
     handleLogin,
     handleLogout,

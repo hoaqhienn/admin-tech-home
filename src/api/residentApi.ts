@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { NewResident, ResidentViaApartment } from 'interface/Residents';
-import { Vehicle } from 'interface/Vehicle';
+import { NewResident, Resident, ResidentViaApartment } from 'interface/Residents';
+import { NewVehicle, Vehicle } from 'interface/Vehicle';
 
 export const residentApi = createApi({
   reducerPath: 'residentApi',
@@ -56,10 +56,40 @@ export const residentApi = createApi({
       invalidatesTags: ['Resident'],
     }),
 
+    // update resident
+    updateResident: builder.mutation<void, { residentId: number; resident: Resident }>({
+      query: ({ residentId, resident }) => ({
+        url: `/resident/update/${residentId}`,
+        method: 'PUT',
+        body: resident,
+      }),
+      invalidatesTags: ['Resident'],
+    }),
+
     getVehicles: builder.query<Vehicle[], void>({
       query: () => '/vehicles/getAll',
       transformResponse: (response: { data: Vehicle[] }) => response.data,
       providesTags: ['Vehicle'],
+    }),
+
+    // add vehicle
+    addVehicle: builder.mutation<void, { vehicle: NewVehicle }>({
+      query: ({ vehicle }) => ({
+        url: '/vehicles',
+        method: 'POST',
+        body: vehicle,
+      }),
+      invalidatesTags: ['Vehicle'],
+    }),
+
+    // update vehicle
+    updateVehicle: builder.mutation<void, { vehicleId: number; vehicle: NewVehicle }>({
+      query: ({ vehicleId, vehicle }) => ({
+        url: `/vehicles/${vehicleId}`,
+        method: 'PUT',
+        body: vehicle,
+      }),
+      invalidatesTags: ['Vehicle'],
     }),
 
     deleteVehicle: builder.mutation<void, number>({
@@ -79,6 +109,10 @@ export const {
   useDeleteResidentMutation,
   useDeleteResidentByIdcardMutation,
   useActiveResidentMutation,
+  useUpdateResidentMutation,
+
   useGetVehiclesQuery,
+  useAddVehicleMutation,
+  useUpdateVehicleMutation,
   useDeleteVehicleMutation,
 } = residentApi;

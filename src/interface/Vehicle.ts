@@ -20,3 +20,9 @@ export interface Vehicle {
   residentId: number;
   Resident: ResidentProps;
 }
+
+export interface NewVehicle {
+  vehicleNumber: string;
+  vehicleType: string;
+  residentId: number;
+}

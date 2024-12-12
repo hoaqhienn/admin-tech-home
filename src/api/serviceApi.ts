@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Bill, Payment } from 'interface/Bill';
-import { Service } from 'interface/Service';
-import { Complaint } from 'interface/Utils';
+import { NewService, Service } from 'interface/Service';
+import { Complaint, NewEvent, NewNotify } from 'interface/Utils';
 
 export const serviceApi = createApi({
   reducerPath: 'serviceApi',
@@ -44,6 +44,16 @@ export const serviceApi = createApi({
       providesTags: ['Complaint'],
     }),
 
+    // update complaint status
+    updateComplaintStatus: builder.mutation<void, { id: number; status: string }>({
+      query: ({ id, status }) => ({
+        url: `/complaints/status/${id}`,
+        method: 'PUT',
+        body: { complaintStatus: status },
+      }),
+      invalidatesTags: ['Complaint'],
+    }),
+
     deleteComplaint: builder.mutation<void, number>({
       query: (id) => ({
         url: `/complaints/${id}`,
@@ -56,6 +66,26 @@ export const serviceApi = createApi({
       query: () => '/notifications/getAll',
       transformResponse: (response: { data: Notification[] }) => response.data,
       providesTags: ['Notification'],
+    }),
+
+    // add notify
+    addNotification: builder.mutation<void, NewNotify>({
+      query: (notification) => ({
+        url: '/notifications',
+        method: 'POST',
+        body: notification,
+      }),
+      invalidatesTags: ['Notification'],
+    }),
+
+    // update notify
+    updateNotification: builder.mutation<void, { id: number; notification: NewNotify }>({
+      query: ({ id, notification }) => ({
+        url: `/notifications/${id}`,
+        method: 'PUT',
+        body: notification,
+      }),
+      invalidatesTags: ['Notification'],
     }),
 
     // delete notify
@@ -73,6 +103,26 @@ export const serviceApi = createApi({
       providesTags: ['Service'],
     }),
 
+    // add service
+    addService: builder.mutation<void, NewService>({
+      query: (service) => ({
+        url: '/service',
+        method: 'POST',
+        body: service,
+      }),
+      invalidatesTags: ['Service'],
+    }),
+
+    // update service
+    updateService: builder.mutation<void, { id: number; service: Service }>({
+      query: ({ id, service }) => ({
+        url: `/service/${id}`,
+        method: 'PUT',
+        body: service,
+      }),
+      invalidatesTags: ['Service'],
+    }),
+
     deleteService: builder.mutation<void, number>({
       query: (id) => ({
         url: `/service/${id}`,
@@ -83,9 +133,40 @@ export const serviceApi = createApi({
 
     getEvents: builder.query<Event[], void>({
       query: () => '/event/getAll',
-      transformResponse: (response: { data: Event[] }) => response.data,
+      // transformResponse: (response: { data: Event[] }) => response.data,
       providesTags: ['Event'],
     }),
+
+    // add events
+    addEvent: builder.mutation<void, NewEvent>({
+      query: (event) => ({
+        url: '/event',
+        method: 'POST',
+        body: event,
+      }),
+      invalidatesTags: ['Event'],
+    }),
+
+    // update events
+    updateEvent: builder.mutation<void, { id: number; event: NewEvent }>({
+      query: ({ id, event }) => ({
+        url: `/event/${id}`,
+        method: 'PUT',
+        body: event,
+      }),
+      invalidatesTags: ['Event'],
+    }),
+
+    // delete events
+    deleteEvent: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/event/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Event'],
+    }),
+
+    // Other endpoints...
   }),
 });
 
@@ -97,12 +178,21 @@ export const {
   useDeletePaymentMutation,
 
   useGetComplaintsQuery,
+  useUpdateComplaintStatusMutation,
   useDeleteComplaintMutation,
+
   useGetNotificationsQuery,
+  useAddNotificationMutation,
+  useUpdateNotificationMutation,
   useDeleteNotificationMutation,
-  
+
   useGetServiceQuery,
+  useAddServiceMutation,
+  useUpdateServiceMutation,
   useDeleteServiceMutation,
 
   useGetEventsQuery,
+  useAddEventMutation,
+  useUpdateEventMutation,
+  useDeleteEventMutation,
 } = serviceApi;

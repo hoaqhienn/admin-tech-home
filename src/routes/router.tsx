@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import paths, { rootPaths } from './paths';
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 import { Outlet, createBrowserRouter, useNavigate } from 'react-router-dom';
 import MainLayout from 'layouts/main-layout/index';
 import Splash from 'components/loader/Splash';
@@ -9,7 +9,7 @@ import AuthLayout from 'layouts/auth-layout';
 import { Button, Typography } from '@mui/material';
 import { SocketProvider } from 'components/provider/SocketProvider';
 import { NotificationProvider } from 'components/provider/NotificationProvider';
-import { useAuth } from 'hooks/auth/useAuth';
+// import { useAuth } from 'hooks/auth/useAuth';
 
 // Lazy load components with error boundaries
 const lazyLoad = (importFunc: any) => {
@@ -58,25 +58,28 @@ const NotFound = () => {
 };
 
 const ProtectedLayout = () => {
-  const navigate = useNavigate();
-  const { isLoading, isAuthenticated } = useAuth();
+  // const navigate = useNavigate();
+  // const { isLoading, isAuthenticated } = useAuth();
+  // const location = useLocation();
 
-  useEffect(() => {
-    // Only redirect if we're not loading and the user isn't authenticated
-    if (!isLoading && !isAuthenticated) {
-      navigate(paths.signin, { replace: true });
-    }
-  }, [isAuthenticated, isLoading, navigate]);
+  // useEffect(() => {
+  //   if (!isLoading && !isAuthenticated) {
+  //     navigate(paths.signin, {
+  //       replace: true,
+  //       state: { from: location.pathname },
+  //     });
+  //   }
+  // }, [isAuthenticated, isLoading, navigate, location]);
 
-  // Show loading state while checking authentication
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  // // Show loading chỉ khi đang kiểm tra auth
+  // if (isLoading) {
+  //   return <PageLoader />;
+  // }
 
-  // Don't render protected content until we confirm authentication
-  if (!isAuthenticated) {
-    return null;
-  }
+  // // Không render protected content khi chưa auth
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   return (
     <NotificationProvider>
@@ -95,7 +98,16 @@ const router = createBrowserRouter(
   [
     {
       element: (
-        <Suspense fallback={<Splash />}>
+        <Suspense
+          fallback={
+            <Splash
+              logoSrc="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"
+              logoAlt="Company Logo"
+              minDuration={3000}
+              maxDuration={8000}
+            />
+          }
+        >
           <App />
         </Suspense>
       ),

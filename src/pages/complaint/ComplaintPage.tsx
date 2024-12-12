@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
 import { Alert, Snackbar } from '@mui/material';
 import ComplaintDataGrid from './ComplaintDataGrid';
-import { useDeleteComplaintMutation } from 'api/serviceApi';
+import { useDeleteComplaintMutation, useUpdateComplaintStatusMutation } from 'api/serviceApi';
 import { useState } from 'react';
 
 // Define types
@@ -21,6 +21,23 @@ interface ErrorResponse {
 const ComplaintPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [updateComplaintStatus] = useUpdateComplaintStatusMutation();
+
+  const handleStatusUpdate = async (id: number, status: string) => {
+    try {
+      const result = await updateComplaintStatus({ id, status });
+
+      if ('data' in result) {
+        setShowSuccess(true);
+      } else if ('error' in result) {
+        const errorMessage =
+          (result.error as ErrorResponse).data?.message || 'Có lỗi xảy ra khi cập nhật trạng thái';
+        setError(errorMessage);
+      }
+    } catch (err) {
+      setError('Có lỗi xảy ra khi cập nhật trạng thái');
+    }
+  };
 
   // Explicitly type the mutation response
   const [deleteComplaintMutation] = useDeleteComplaintMutation<{
@@ -62,7 +79,7 @@ const ComplaintPage = () => {
           <Typography variant="h3">Danh sách khiếu nại</Typography>
         </Grid>
         <Grid item xs={12}>
-          <ComplaintDataGrid onDelete={handleDelete} />
+          <ComplaintDataGrid onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />
         </Grid>
       </Grid>
 

@@ -9,16 +9,24 @@ import FloorResidentsChart from './FloorResidentsChart';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import { useDeleteFloorMutation } from 'api/propertyApi';
 import AddFloor from './AddFloor';
+import EditFloorDialog from './EditFloorDialog';
 
 const Floors = () => {
   // Form states
   const [currentFloor, setCurrentFloor] = useState<Floor | null>(null);
 
-  // Delete dialog states
+  // Dialog states
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+
+  // Selection states
   const [selectedFloorIds, setSelectedFloorIds] = useState<number[]>([]);
+
+  // API mutations
   const [deleteFloor] = useDeleteFloorMutation();
+
+  // Feedback states
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -51,9 +59,7 @@ const Floors = () => {
   // Handle bulk building deletion
   const handleBulkDelete = async () => {
     try {
-      // Sequential deletion of all selected buildings
       await Promise.all(selectedFloorIds.map((id) => deleteFloor(id).unwrap()));
-
       setSnackbar({
         open: true,
         message: 'Xóa các tòa nhà đã chọn thành công',
@@ -71,8 +77,22 @@ const Floors = () => {
     }
   };
 
+  // Dialog handlers
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
+  const handleCloseEditDialog = useCallback(() => {
+    setOpenEditDialog(false);
+    setCurrentFloor(null);
+  }, []);
+
+  // Edit success handler
+  const handleEditSuccess = useCallback(() => {
+    setSnackbar({
+      open: true,
+      message: 'Cập nhật tầng thành công',
+      severity: 'success',
+    });
+  }, []);
 
   const actions: SpeedDialActionType[] = [
     {
@@ -86,6 +106,8 @@ const Floors = () => {
     <>
       <ScrollToTop />
       <SpeedDialCustom actions={actions} />
+
+      {/* Snackbar notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -98,7 +120,16 @@ const Floors = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-      {/* Single Delete Confirmation */}
+
+      {/* Edit Dialog */}
+      <EditFloorDialog
+        open={openEditDialog}
+        floor={currentFloor}
+        onClose={handleCloseEditDialog}
+        onSuccess={handleEditSuccess}
+      />
+
+      {/* Delete Confirmation */}
       <ConfirmDialog
         key="delete"
         open={openDialog}
@@ -117,13 +148,17 @@ const Floors = () => {
         title="Delete Multiple Floors"
         message={`Are you sure you want to delete ${selectedFloorIds.length} selected floors?`}
       />
+
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h1">Danh sách tầng</Typography>
         </Grid>
         <Grid item xs={12}>
           <FloorsDataGrid
-            onEdit={() => {}}
+            onEdit={(floor) => {
+              setCurrentFloor(floor);
+              setOpenEditDialog(true);
+            }}
             onDelete={(floorId) => {
               setCurrentFloor({ floorId } as Floor);
               setOpenDialog(true);

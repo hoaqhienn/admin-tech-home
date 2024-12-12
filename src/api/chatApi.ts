@@ -20,6 +20,7 @@ export const chatApi = createApi({
     getAllChats: builder.query<GroupChat[], void>({
       query: () => '/getAllChats',
       transformResponse: (response: { data: GroupChat[] }) => response.data,
+      providesTags: ['Chat', 'Messages'],
     }),
 
     // Get messages by chat ID
@@ -32,7 +33,7 @@ export const chatApi = createApi({
         params: { offset, limit },
       }),
       transformResponse: (response: { messages: Messages[] }) => response.messages,
-      providesTags: ['Messages'],
+      providesTags: ['Messages', 'Chat'],
     }),
 
     // Send message
@@ -64,9 +65,84 @@ export const chatApi = createApi({
       },
       invalidatesTags: ['Messages'],
     }),
+
+    // create chat chatName : string; chatType: 'admin', 'resident'; residentIds: number[]
+    createChat: builder.mutation<
+      GroupChat,
+      { chatName: string; chatType: string; residentIds: number[] }
+    >({
+      query: ({ chatName, chatType, residentIds }) => ({
+        url: '/createChat',
+        method: 'POST',
+        body: { chatName, chatType, residentIds },
+      }),
+      transformResponse: (response: { data: GroupChat }) => response.data,
+      invalidatesTags: ['Chat'],
+    }),
+
+    // add one member to chat with /addMember/:chatId/ - body JSON object memberId: number
+    addMember: builder.mutation<GroupChat, { chatId: number; memberId: number }>({
+      query: ({ chatId, memberId }) => ({
+        url: `/addMember/${chatId}`,
+        method: 'POST',
+        body: { memberId },
+      }),
+      transformResponse: (response: { data: GroupChat }) => response.data,
+      invalidatesTags: ['Chat'],
+    }),
+
+    // remove one member from chat with /removeMember/:chatId/ - body JSON object memberId: number
+    removeMember: builder.mutation<GroupChat, { chatId: number; memberId: number }>({
+      query: ({ chatId, memberId }) => ({
+        url: `/removeMember/${chatId}`,
+        method: 'DELETE',
+        body: { memberId },
+      }),
+      transformResponse: (response: { data: GroupChat }) => response.data,
+      invalidatesTags: ['Chat'],
+    }),
+
+    // delete chat with /deleteChat/:chatId/
+    deleteChat: builder.mutation<GroupChat, { chatId: number }>({
+      query: ({ chatId }) => ({
+        url: `/deleteChat/${chatId}`,
+        method: 'DELETE',
+      }),
+      transformResponse: (response: { data: GroupChat }) => response.data,
+      invalidatesTags: ['Chat'],
+    }),
+
+    // delete message with /deleteMessage/:messageId/
+    deleteMessage: builder.mutation<Messages, { id: number }>({
+      query: ({ id }) => ({
+        url: `/deleteMessage/${id}`,
+        method: 'DELETE',
+      }),
+      transformResponse: (response: { data: Messages }) => response.data,
+      invalidatesTags: ['Messages'],
+    }),
+
+    // get all files by chat id with /getAllFilesByChatId/:id
+    getAllFilesByChatId: builder.query<string[], { chatId: number }>({
+      query: ({ chatId }) => `/getAllFilesByChatId/${chatId}`,
+      transformResponse: (response: { files: string[] }) => response.files,
+      providesTags: ['Messages'],
+    }),
   }),
 });
 
-export const { useGetAllChatsQuery, useGetMessagesByChatIdQuery, useSendMessageMutation } = chatApi;
+export const {
+  useCreateChatMutation,
+  useAddMemberMutation,
+  useRemoveMemberMutation,
+  useDeleteChatMutation,
+
+  useSendMessageMutation,
+  useDeleteMessageMutation,
+
+  useGetAllChatsQuery,
+  useGetMessagesByChatIdQuery,
+  useGetAllFilesByChatIdQuery,
+} = chatApi;
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB

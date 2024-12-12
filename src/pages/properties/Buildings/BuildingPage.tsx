@@ -8,10 +8,12 @@ import BuildingsDataGrid from './BuildingsDataGrid';
 import BuildingResidentsChart from './BuildingResidentsChart';
 import AddBuilding from './AddBuilding';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
-import { useDeleteBuildingMutation } from 'api/propertyApi';
+import { useDeleteBuildingMutation, useUpdateBuildingMutation } from 'api/propertyApi';
+import EditBuildingDialog from './EditBuildingDialog';
 
 const Buildings = () => {
   const [currentBuilding, setCurrentBuilding] = useState<Building | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedBuildingIds, setSelectedBuildingIds] = useState<number[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
@@ -24,10 +26,14 @@ const Buildings = () => {
 
   // Initialize delete mutation
   const [deleteBuilding] = useDeleteBuildingMutation();
+  const [updateBuilding] = useUpdateBuildingMutation();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
-
+  const handleCloseEditDialog = useCallback(() => {
+    setIsEditDialogOpen(false);
+    setCurrentBuilding(null);
+  }, []);
   // Handle single building deletion
   const handleDeleteBuilding = async () => {
     if (!currentBuilding?.buildingId) return;
@@ -48,6 +54,35 @@ const Buildings = () => {
     } finally {
       handleCloseDialog();
       setCurrentBuilding(null);
+    }
+  };
+
+  const handleUpdateBuilding = async (buildingId: number, newName: string) => {
+    if (!currentBuilding) return;
+
+    try {
+      // Create updated building object maintaining all existing properties
+      const updatedBuilding: Building = {
+        ...currentBuilding,
+        buildingId,
+        buildingName: newName,
+      };
+
+      // Call the update mutation with the complete building object
+      await updateBuilding(updatedBuilding).unwrap();
+
+      setSnackbar({
+        open: true,
+        message: 'Cập nhật tòa nhà thành công',
+        severity: 'success',
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra khi cập nhật tòa nhà',
+        severity: 'error',
+      });
+      throw new Error('Failed to update building');
     }
   };
 
@@ -120,14 +155,22 @@ const Buildings = () => {
         title="Xóa nhiều tòa nhà"
         message={`Bạn có chắc chắn muốn xóa ${selectedBuildingIds.length} tòa nhà được chọn?`}
       />
-
+      <EditBuildingDialog
+        building={currentBuilding}
+        open={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        onSave={handleUpdateBuilding}
+      />
       <Grid container spacing={2.5}>
         <Grid item xs={12}>
           <Typography variant="h1">Danh sách tòa nhà</Typography>
         </Grid>
         <Grid item xs={12}>
           <BuildingsDataGrid
-            onEdit={() => {}}
+            onEdit={(building) => {
+              setCurrentBuilding(building);
+              setIsEditDialogOpen(true);
+            }}
             onDelete={(buildingId) => {
               setCurrentBuilding({ buildingId } as Building);
               setOpenDialog(true);

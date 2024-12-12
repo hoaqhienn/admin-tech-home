@@ -3,7 +3,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useActiveResidentMutation } from 'api/residentApi';
 import { useResidents } from 'hooks/resident/useResident';
 import { Resident, ResidentViaApartment } from 'interface/Residents';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, EditIcon } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -139,7 +139,7 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
             alignItems: 'center',
           }}
         >
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -148,7 +148,7 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
             sx={{ color: 'blue' }}
           >
             <Info fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

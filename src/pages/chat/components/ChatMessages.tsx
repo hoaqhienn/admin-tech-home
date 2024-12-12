@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Paper, Typography } from '@mui/material';
-import { useGetMessagesByChatIdQuery } from 'api/chatApi';
+import { useDeleteMessageMutation, useGetMessagesByChatIdQuery } from 'api/chatApi';
 import { Messages } from 'interface/chat/ChatInterface';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MessageBubble from './MessageBubble';
@@ -48,10 +48,16 @@ const ChatMessages = React.memo(({ chatId }: { chatId: number | null }) => {
     });
   }, []);
 
-  // Handle message deletion with optimistic update
-  const handleDeleteMessage = useCallback((messageId: number) => {
-    setLocalMessages((prevMessages) => prevMessages.filter((msg) => msg.messageId !== messageId));
-  }, []);
+  const [deleteMessage] = useDeleteMessageMutation();
+
+  const handleDeleteMessage = async (id: number) => {
+    try {
+      await deleteMessage({ id });
+    } catch (error) {
+      // Handle error
+      console.error('Error deleting message:', error);
+    }
+  };
 
   // Update local messages when API messages change
   useEffect(() => {
@@ -60,6 +66,11 @@ const ChatMessages = React.memo(({ chatId }: { chatId: number | null }) => {
       setIsInitialLoad(false);
     }
   }, [messages, isInitialLoad]);
+
+  // Reset trạng thái tải lại khi `chatId` thay đổi
+  useEffect(() => {
+    setIsInitialLoad(true);
+  }, [chatId]);
 
   // Socket setup with better cleanup
   useEffect(() => {
@@ -140,6 +151,7 @@ const ChatMessages = React.memo(({ chatId }: { chatId: number | null }) => {
               key={message.messageId}
               message={message}
               currentUserId={user?.user.userId}
+              onDeleteMessage={handleDeleteMessage}
             />
           ))}
           <div ref={messagesEndRef} />

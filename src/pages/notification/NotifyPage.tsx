@@ -1,12 +1,13 @@
 import Grid from '@mui/material/Grid';
-import { Alert, Button, Modal, Paper, Snackbar, Typography } from '@mui/material';
+import { Alert, Button, Modal, Paper, Snackbar, Stack, Typography } from '@mui/material';
 import NotifyDataGrid from './NotifyDataGrid';
 import { useCallback, useState } from 'react';
 import ResidentsDataGrid from 'pages/residents/ResidentsDataGrid';
 import { ResidentViaApartment } from 'interface/Residents';
-import { Notify } from 'interface/Utils';
-import { useDeleteNotificationMutation } from 'api/serviceApi';
+import { NewNotify, Notify } from 'interface/Utils';
+import { useAddNotificationMutation, useDeleteNotificationMutation, useUpdateNotificationMutation } from 'api/serviceApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
+import NotifyFormDialog from './NotifyFormDialog';
 
 const NotifyPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -104,6 +105,41 @@ const NotifyPage = () => {
     }
   };
 
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [editingNotification, setEditingNotification] = useState<Notify | null>(null);
+
+  const [addNotification] = useAddNotificationMutation();
+  const [updateNotification] = useUpdateNotificationMutation();
+
+  const handleNotifySubmit = async (data: NewNotify) => {
+    try {
+      if (editingNotification) {
+        await updateNotification({
+          id: editingNotification.notificationId,
+          notification: data,
+        }).unwrap();
+        setSnackbar({
+          open: true,
+          message: 'Cập nhật thông báo thành công',
+          severity: 'success',
+        });
+      } else {
+        await addNotification(data).unwrap();
+        setSnackbar({
+          open: true,
+          message: 'Thêm thông báo thành công',
+          severity: 'success',
+        });
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Có lỗi xảy ra',
+        severity: 'error',
+      });
+    }
+  };
+
   return (
     <>
       <Snackbar
@@ -136,9 +172,30 @@ const NotifyPage = () => {
         title="Xóa nhiều thông báo"
         message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} thông báo được chọn?`}
       />
+      <NotifyFormDialog
+        open={formDialogOpen}
+        onClose={() => {
+          setFormDialogOpen(false);
+          setEditingNotification(null);
+        }}
+        notification={editingNotification}
+        onSubmit={handleNotifySubmit}
+        title={editingNotification ? 'Cập nhật thông báo' : 'Thêm thông báo'}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách thông báo</Typography>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h1">Danh sách thông báo</Typography>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setEditingNotification(null);
+                setFormDialogOpen(true);
+              }}
+            >
+              Thêm thông báo
+            </Button>
+          </Stack>
         </Grid>
         <Grid item xs={12}>
           <NotifyDataGrid
@@ -146,11 +203,13 @@ const NotifyPage = () => {
               setNotify(notify);
               setModalOpen(true);
             }}
-            onEdit={() => {}}
+            onEdit={(notify) => {
+              setEditingNotification(notify);
+              setFormDialogOpen(true);
+            }}
             onDelete={(notificationId) => {
               setCurrent({ notificationId } as Notify);
               setOpenDialog(true);
-              console.log(notificationId);
             }}
             onBulkDelete={(ids) => {
               setSelectedIds(ids);
