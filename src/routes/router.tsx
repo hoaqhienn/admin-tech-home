@@ -101,7 +101,7 @@ const router = createBrowserRouter(
         <Suspense
           fallback={
             <Splash
-              logoSrc="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"
+              logoSrc="https://i.imgur.com/szoyJve.jpeg"
               logoAlt="Company Logo"
               minDuration={3000}
               maxDuration={8000}

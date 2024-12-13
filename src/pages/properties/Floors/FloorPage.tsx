@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Alert, Grid, Snackbar, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import ScrollToTop from 'components/fab/ScrollToTop';
@@ -14,6 +14,9 @@ import EditFloorDialog from './EditFloorDialog';
 const Floors = () => {
   // Form states
   const [currentFloor, setCurrentFloor] = useState<Floor | null>(null);
+
+  // useRef add floor
+  const addRef = useRef<HTMLDivElement>(null);
 
   // Dialog states
   const [openDialog, setOpenDialog] = useState(false);
@@ -98,7 +101,7 @@ const Floors = () => {
     {
       icon: <IconifyIcon icon="ic:round-add" />,
       title: 'Add floor',
-      onClick: () => {},
+      onClick: () => addRef.current?.scrollIntoView({ behavior: 'smooth' }),
     },
   ];
 
@@ -173,6 +176,7 @@ const Floors = () => {
           <FloorResidentsChart />
         </Grid>
         <Grid item xs={12}>
+          <div ref={addRef} />
           <AddFloor setSnackbar={setSnackbar} />
         </Grid>
       </Grid>

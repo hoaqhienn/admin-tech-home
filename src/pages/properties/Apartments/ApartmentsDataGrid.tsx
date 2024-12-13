@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack, Typography } from '@mui/material';
+import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useApartments } from 'hooks/properties/useApartment';
 import { Apartment } from 'interface/Properties';
@@ -68,25 +68,25 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
     //   headerName: 'Loại căn hộ',
     //   flex: 1,
     // },
-    {
-      field: 'apartmentSize',
-      headerName: 'Diện tích',
-      flex: 1,
-      renderCell: () => (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <Typography>
-            70m<sup>2</sup>
-          </Typography>
-        </div>
-      ),
-    },
+    // {
+    //   field: 'apartmentSize',
+    //   headerName: 'Diện tích',
+    //   flex: 1,
+    //   renderCell: () => (
+    //     <div
+    //       style={{
+    //         width: '100%',
+    //         height: '100%',
+    //         display: 'flex',
+    //         alignItems: 'center',
+    //       }}
+    //     >
+    //       <Typography>
+    //         70m<sup>2</sup>
+    //       </Typography>
+    //     </div>
+    //   ),
+    // },
     {
       field: 'floorNumber',
       headerName: 'Tầng',

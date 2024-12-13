@@ -217,7 +217,7 @@ const ApartmentDetail = () => {
             variant="outlined"
             fullWidth
             margin="dense"
-            inputMode="numeric"
+            type="number"
             disabled={!isEditing}
             InputProps={{
               endAdornment: (

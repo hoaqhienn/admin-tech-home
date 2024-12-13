@@ -7,7 +7,6 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  IconButton,
   Divider,
   Button,
   Dialog,
@@ -19,10 +18,11 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { UserMinus, UserPlus, Users, Search } from 'lucide-react';
+import { UserPlus, Users, Search, X } from 'lucide-react';
 import { GroupChat } from 'interface/chat/ChatInterface';
 import { useRemoveMemberMutation, useAddMemberMutation } from 'api/chatApi';
 import { useResidents } from 'hooks/resident/useResident';
+import { useChats } from 'hooks/chat/useChat';
 
 interface ChatInfoProps {
   selectedChat: GroupChat | null;
@@ -49,6 +49,10 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
     message: '',
     severity: 'success',
   });
+
+  // Always call useChatDetail hook, even if selectedChat is null
+  const { useChatDetail } = useChats();
+  const { chatDetail } = useChatDetail(selectedChat ? selectedChat.chatId : -1); // Provide a default value if selectedChat is null
 
   if (!selectedChat) {
     return (
@@ -79,12 +83,6 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
         }).unwrap();
 
         console.log(result);
-
-        // // Emit socket event for member removal
-        // emitMemberRemoved(selectedChat.chatId, {
-        //   ...result,
-        //   removedMemberId: selectedMemberId,
-        // });
 
         setSnackbar({
           open: true,
@@ -143,16 +141,17 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
       }
     }
   };
+
   const handleToggleResident = (residentId: number) => {
     setSelectedResidents((prev) =>
       prev.includes(residentId) ? prev.filter((id) => id !== residentId) : [...prev, residentId],
     );
   };
 
-  const openRemoveDialog = (memberId: number) => {
-    setSelectedMemberId(memberId);
-    setOpenConfirmDialog(true);
-  };
+  // const openRemoveDialog = (memberId: number) => {
+  //   setSelectedMemberId(memberId);
+  //   setOpenConfirmDialog(true);
+  // };
 
   return (
     <Box className="h-full flex flex-col p-4">
@@ -188,34 +187,58 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
             size="small"
             onClick={() => setOpenAddMemberDialog(true)}
           >
-            Add Member
+            Thêm cư dân
           </Button>
         </Box>
 
-        <List>
-          {selectedChat.members?.map((member) => (
-            <ListItem
-              key={member.userId}
-              secondaryAction={
-                selectedChat.chatType === 'admin' && (
-                  <IconButton
-                    edge="end"
-                    onClick={() => openRemoveDialog(member.userId)}
-                    className="text-gray-500 hover:text-red-500"
-                    disabled={isRemoving}
-                  >
-                    <UserMinus size={18} />
-                  </IconButton>
-                )
-              }
-            >
-              <ListItemAvatar>
-                <Avatar>{member.fullname.charAt(0).toUpperCase()}</Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={member.fullname} />
-            </ListItem>
-          ))}
-        </List>
+        {/* Residents List */}
+        {chatDetail?.Residents && (
+          <List className="max-h-96 overflow-y-auto">
+            {chatDetail.Residents.map((resident) => (
+              <ListItem
+                key={resident.residentId}
+                dense
+                button
+                // onClick={() => handleToggleResident(resident.residentId)}
+              >
+                {/* <Checkbox
+                  edge="start"
+                  checked={selectedResidents.includes(resident.residentId)}
+                  tabIndex={-1}
+                  disableRipple
+                /> */}
+                <ListItemAvatar>
+                  <Avatar src={resident.User.avatar || undefined}>
+                    {resident.User.fullname.charAt(0).toUpperCase()}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={resident.User.fullname}
+                  secondary={
+                    <React.Fragment>
+                      <Typography component="span" variant="body2">
+                        {resident.User.email}
+                      </Typography>
+                      <br />
+                      <Typography component="span" variant="body2" color="text.secondary">
+                        Phone: {resident.phonenumber}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+                <Button
+                  onClick={() => {
+                    setSelectedMemberId(resident.residentId);
+                    setOpenConfirmDialog(true);
+                    console.log('Remove member', resident.residentId);
+                  }}
+                >
+                  <X color="red" />
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Box>
 
       {/* Remove Member Dialog */}

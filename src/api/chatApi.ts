@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { GroupChat, Messages } from 'interface/chat/ChatInterface';
+import { ChatDetail, GroupChat, Messages } from 'interface/chat/ChatInterface';
 
 export const chatApi = createApi({
   reducerPath: 'chatApi',
@@ -22,6 +22,13 @@ export const chatApi = createApi({
       transformResponse: (response: { data: GroupChat[] }) =>
         response.data.filter((chat) => chat.chatType !== 'bot'),
       providesTags: ['Chat', 'Messages'],
+    }),
+
+    // Get chat details by chatId
+    getChatDetails: builder.query<ChatDetail, { chatId: number }>({
+      query: ({ chatId }) => `/getChatById/${chatId}`,
+      transformResponse: (response: { data: ChatDetail }) => response.data,
+      providesTags: ['Chat'],
     }),
 
     // Get messages by chat ID
@@ -142,6 +149,7 @@ export const {
   useDeleteMessageMutation,
 
   useGetAllChatsQuery,
+  useGetChatDetailsQuery,
   useGetMessagesByChatIdQuery,
   useGetAllFilesByChatIdQuery,
 } = chatApi;

@@ -16,8 +16,7 @@ const MyInfo = () => {
         alt="Remy Sharp"
         src={user?.user.avatar}
       />
-      <Typography variant="body1">Xin chào, {user?.user.fullname}</Typography>
-      <Typography variant="body1">Your id, {user?.user.userId}</Typography>
+      <Typography variant="h6">Xin chào, {user?.user.fullname}</Typography>
       <Divider />
     </Paper>
   );

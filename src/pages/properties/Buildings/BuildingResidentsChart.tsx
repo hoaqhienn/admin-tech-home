@@ -13,14 +13,14 @@ const CHART_CONFIG = {
 
 const AXIS_CONFIG = {
   xAxis: {
-    angle: -45,
+    angle: -30,
     textAnchor: 'end' as const,
     height: 100,
     interval: 0,
   },
   yAxis: {
     label: {
-      value: 'Number of Residents',
+      value: 'Số cư dân',
       angle: -90,
       position: 'insideLeft' as const,
       style: { textAnchor: 'middle' },

@@ -109,3 +109,29 @@ export interface FileUploadData {
 }
 
 export type FileType = 'image' | 'video' | 'document';
+
+export interface ChatDetail {
+  chatId: number;
+  chatName: string;
+  chatType: string;
+  Residents: ChatResidentDetail[];
+}
+
+export interface ChatResidentDetail {
+  ChatResident: {
+    createdAt: string;
+    updatedAt: string;
+    chatId: number;
+    residentId: number;
+  };
+  User: {
+    userId: number;
+    username: string;
+    fullname: string;
+    email: string;
+    avatar: string;
+  };
+  idcard: string;
+  phonenumber: string;
+  residentId: number;
+}

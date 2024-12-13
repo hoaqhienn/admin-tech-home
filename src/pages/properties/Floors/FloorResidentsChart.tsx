@@ -94,7 +94,7 @@ const FloorResidentsChart = memo(() => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="buildingName"
-              angle={-45}
+              angle={-30}
               textAnchor="end"
               height={100}
               interval={0}
@@ -102,7 +102,7 @@ const FloorResidentsChart = memo(() => {
             />
             <YAxis
               label={{
-                value: 'Number of Residents',
+                value: 'Số cư dân',
                 angle: -90,
                 position: 'insideLeft',
                 style: { textAnchor: 'middle' },
