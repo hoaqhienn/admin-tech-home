@@ -4,13 +4,91 @@ import { propertyApi } from './propertyApi';
 import { residentApi } from './residentApi';
 import { serviceApi } from './serviceApi';
 
-// Define the combined API
-export const combinedApi = {
+export const apis = {
   authApi,
   chatApi,
   propertyApi,
   residentApi,
   serviceApi,
-};
+} as const;
 
-export const API_URL = 'https://169e-116-111-185-128.ngrok-free.app/';
+// Export individual APIs for direct usage
+export { authApi, chatApi, propertyApi, residentApi, serviceApi };
+
+// Export hooks
+export { useLoginMutation, useGetCurrentUserQuery, useChangePasswordMutation } from './authApi';
+
+export {
+  useGetAllChatsQuery,
+  useSendMessageMutation,
+  useAddMemberMutation,
+  useCreateChatMutation,
+  useDeleteChatMutation,
+  useDeleteMessageMutation,
+  useGetChatDetailsQuery,
+  useGetMessagesByChatIdQuery,
+  useGetAllFilesByChatIdQuery,
+  useRemoveMemberMutation,
+} from './chatApi';
+
+export {
+  useGetBuildingsQuery,
+  useAddBuildingMutation,
+  useNewBuildingMutation,
+  useUpdateBuildingMutation,
+  useDeleteBuildingMutation,
+  useGetFloorsQuery,
+  useGetFloorsByBuildingQuery,
+  useAddFloorMutation,
+  useUpdateFloorMutation,
+  useDeleteFloorMutation,
+  useGetApartmentsQuery,
+  useGetApartmentByIdQuery,
+  useGetApartmentsByFloorQuery,
+  useSearchApartmentsMutation,
+  useUpdateApartmentMutation,
+  useJoinToApartmentMutation,
+  useLeaveOutApartmentMutation,
+  useDeleteApartmentMutation,
+  useGetFacilitiesQuery,
+  useAddFacilityMutation,
+  useUpdateFacilityMutation,
+  useDeleteFacilityMutation,
+} from './propertyApi';
+
+export {
+  useGetResidentsQuery,
+  useAddResidentMutation,
+  useDeleteResidentMutation,
+  useDeleteResidentByIdcardMutation,
+  useActiveResidentMutation,
+  useUpdateResidentMutation,
+  useGetVehiclesQuery,
+  useAddVehicleMutation,
+  useUpdateVehicleMutation,
+  useDeleteVehicleMutation,
+} from './residentApi';
+
+export {
+  useAddServiceMutation,
+  useUpdateServiceMutation,
+  useDeleteServiceMutation,
+  useAddEventMutation,
+  useUpdateEventMutation,
+  useDeleteEventMutation,
+  useGetEventsQuery,
+  useGetBillsQuery,
+  useGetPaymentsQuery,
+  useAddNotificationMutation,
+  useDeleteComplaintMutation,
+  useDeleteNotificationMutation,
+  useDeletePaymentMutation,
+  useGetComplaintsQuery,
+  useGetNotificationsQuery,
+  useSendNotificationMutation,
+  useDeleteServiceBookingMutation,
+  useGetServiceBookingsQuery,
+  useGetServiceQuery,
+  useUpdateComplaintStatusMutation,
+  useUpdateNotificationMutation,
+} from './serviceApi';

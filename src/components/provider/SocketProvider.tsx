@@ -4,6 +4,7 @@ import { useGetCurrentUserQuery } from 'api/authApi';
 import { Messages } from 'interface/chat/ChatInterface';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { useNotification } from 'components/provider/NotificationProvider';
+import { getSocketConfig } from 'config/apiConfig';
 
 export interface SocketNotificationData {}
 
@@ -48,14 +49,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     if (!currentUser?.user.userId) return null;
 
     const token = localStorage.getItem('_token');
-    const socketInstance = io('http://localhost:3000', {
+    const socketConfig = getSocketConfig();
+    const socketInstance = io(socketConfig.url, {
       auth: { token },
-      withCredentials: false,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 20000,
+      ...socketConfig.options,
     });
 
     socketInstance.on('connect', () => {

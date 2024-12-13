@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { Messages } from 'interface/chat/ChatInterface';
+import { getSocketConfig } from 'config/apiConfig';
 
 class SocketService {
   private socket: Socket | null = null;
@@ -7,9 +8,8 @@ class SocketService {
 
   connect(userId: number) {
     this.userId = userId;
-    this.socket = io('http://localhost:3000', {
-      withCredentials: true,
-    });
+    const socketConfig = getSocketConfig();
+    this.socket = io(socketConfig.url, socketConfig.options);
 
     this.socket.on('connect', () => {
       console.log('Connected to socket server');

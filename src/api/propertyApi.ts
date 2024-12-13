@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { createBaseApi } from 'config/apiConfig';
 import type {
   Apartment,
   Building,
@@ -9,23 +10,16 @@ import type {
 } from 'interface/Properties';
 
 export const propertyApi = createApi({
+  ...createBaseApi('admin'),
   reducerPath: 'propertyApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/admin',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('_token');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
   tagTypes: ['Apartment', 'Building', 'Floor', 'Facility', 'joinApartment'],
-
   endpoints: (builder) => ({
     // Building endpoints
     getBuildings: builder.query<Building[], void>({
-      query: () => '/building/getAll',
+      query: () => ({
+        url: '/building/getAll',
+        method: 'GET',
+      }),
       transformResponse: (response: { data: Building[] }) => response.data,
       providesTags: ['Building'],
     }),

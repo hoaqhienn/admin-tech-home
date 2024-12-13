@@ -1,20 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { createBaseApi } from 'config/apiConfig';
 import type { Bill, Payment } from 'interface/Bill';
 import { NewService, Service, ServiceBooking } from 'interface/Service';
 import { Complaint, NewEvent, NewNotify } from 'interface/Utils';
 
 export const serviceApi = createApi({
-  reducerPath: 'serviceApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/admin',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('_token');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  ...createBaseApi('admin'),
   tagTypes: ['Bill', 'Payment', 'Service', 'Event', 'Complaint', 'Notification'],
   endpoints: (builder) => ({
     // Other endpoints following similar patterns...

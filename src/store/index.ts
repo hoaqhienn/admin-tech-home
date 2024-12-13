@@ -1,30 +1,33 @@
-// src/store/store.ts
-import { configureStore } from '@reduxjs/toolkit';
-import { combinedApi } from '../api/index';
+// store/index.ts
+import { configureStore, Middleware } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { apis } from '../api';
+
+// Create middleware array with proper typing
+const apiMiddlewares = Object.values(apis)
+  .filter((api): api is (typeof apis)[keyof typeof apis] => Boolean(api?.middleware))
+  .map((api) => api.middleware);
+
+// Create reducer object
+const apiReducers = Object.entries(apis).reduce(
+  (acc, [, api]) => ({
+    ...acc,
+    [api.reducerPath]: api.reducer,
+  }),
+  {},
+);
 
 export const store = configureStore({
-  reducer: {
-    [combinedApi.authApi.reducerPath]: combinedApi.authApi.reducer,
-    [combinedApi.chatApi.reducerPath]: combinedApi.chatApi.reducer,
-    [combinedApi.propertyApi.reducerPath]: combinedApi.propertyApi.reducer,
-    [combinedApi.residentApi.reducerPath]: combinedApi.residentApi.reducer,
-    [combinedApi.serviceApi.reducerPath]: combinedApi.serviceApi.reducer,
-  },
+  reducer: apiReducers,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(combinedApi.authApi.middleware)
-      .concat(combinedApi.chatApi.middleware)
-      .concat(combinedApi.propertyApi.middleware)
-      .concat(combinedApi.residentApi.middleware)
-      .concat(combinedApi.serviceApi.middleware),
-  devTools: process.env.NODE_ENV !== 'production', // Optional: disable devtools in production
+    getDefaultMiddleware().concat(apiMiddlewares as Middleware[]),
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// Infer types from store
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Optional: Export hooks for typing
+// Export typed hooks
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

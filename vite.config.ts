@@ -4,7 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tsconfigPaths(),
@@ -18,9 +18,20 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8000,
+    proxy: {
+      '/api': {
+        target: mode === 'development' ? 'http://localhost:3000' : 'https://api.example.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        secure: false,
+      },
+    },
   },
   preview: {
     port: 5000,
   },
   base: '/',
-});
+  define: {
+    __APP_ENV__: JSON.stringify(mode),
+  },
+}));

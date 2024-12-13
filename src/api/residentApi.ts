@@ -1,23 +1,18 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { createBaseApi } from 'config/apiConfig';
 import { NewResident, Resident, ResidentViaApartment } from 'interface/Residents';
 import { NewVehicle, Vehicle } from 'interface/Vehicle';
 
 export const residentApi = createApi({
+  ...createBaseApi('admin'),
   reducerPath: 'residentApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/admin',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('_token');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
   tagTypes: ['Resident', 'Vehicle'],
   endpoints: (builder) => ({
     getResidents: builder.query<ResidentViaApartment[], void>({
-      query: () => '/resident/getAll',
+      query: () => ({
+        url: '/resident/getAll',
+        method: 'GET',
+      }),
       transformResponse: (response: { data: ResidentViaApartment[] }) => response.data,
       providesTags: ['Resident'],
     }),

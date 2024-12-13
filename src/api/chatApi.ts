@@ -1,27 +1,15 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { createBaseApi } from 'config/apiConfig';
 import { ChatDetail, GroupChat, Messages } from 'interface/chat/ChatInterface';
 
 export const chatApi = createApi({
-  reducerPath: 'chatApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/chat',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('_token');
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  ...createBaseApi('chat'),
   tagTypes: ['Chat', 'Messages'],
-
   endpoints: (builder) => ({
-    // Get all chats
     getAllChats: builder.query<GroupChat[], void>({
       query: () => '/getAllChats',
       transformResponse: (response: { data: GroupChat[] }) =>
         response.data.filter((chat) => chat.chatType !== 'bot'),
-      providesTags: ['Chat', 'Messages'],
     }),
 
     // Get chat details by chatId
