@@ -125,7 +125,7 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
 
         setSnackbar({
           open: true,
-          message: `Successfully added ${selectedResidents.length} member(s)`,
+          message: `Thành công thêm ${selectedResidents.length} thành viên`,
           severity: 'success',
         });
 
@@ -133,9 +133,12 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
         setSelectedResidents([]);
         setSearchTerm('');
       } catch (error) {
+        setOpenAddMemberDialog(false);
+        setSelectedResidents([]);
+        setSearchTerm('');
         setSnackbar({
           open: true,
-          message: 'Failed to add members',
+          message: 'Không thể thêm thành viên',
           severity: 'error',
         });
       }
@@ -173,7 +176,7 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
           size="small"
           onClick={() => setOpenAddMemberDialog(true)}
         >
-          Thêm cư dân
+          Thêm thành viên
         </Button>
       </Box>
       <Divider />
@@ -283,15 +286,21 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddMemberDialog(false)} disabled={isAdding}>
-            Cancel
+          <Button
+            onClick={() => {
+              setOpenAddMemberDialog(false);
+              setSelectedResidents([]);
+            }}
+            disabled={isAdding}
+          >
+            Hủy
           </Button>
           <Button
             onClick={handleAddMembers}
             variant="contained"
             disabled={selectedResidents.length === 0 || isAdding}
           >
-            {isAdding ? `Adding Members...` : `Add Selected (${selectedResidents.length})`}
+            {isAdding ? `Đang thêm...` : `Thêm thành viên (${selectedResidents.length})`}
           </Button>
         </DialogActions>
       </Dialog>
