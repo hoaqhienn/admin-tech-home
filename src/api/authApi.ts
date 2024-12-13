@@ -4,7 +4,7 @@ import { AuthResponse, CurrentUserResponse, LoginCredentials } from 'interface/a
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/admin',
+    baseUrl: 'https://cb2a-116-111-185-128.ngrok-free.app/admin',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('_token');
 
@@ -23,6 +23,10 @@ export const authApi = createApi({
         method: 'POST',
         body: credentials,
       }),
+      // transformResponse: (response : any) => {
+      //   console.log('API Response:', response);
+      //   return response.data;
+      // },
     }),
 
     getCurrentUser: builder.query<CurrentUserResponse, void>({

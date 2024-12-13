@@ -4,7 +4,7 @@ import { ChatDetail, GroupChat, Messages } from 'interface/chat/ChatInterface';
 export const chatApi = createApi({
   reducerPath: 'chatApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/chat',
+    baseUrl: 'https://cb2a-116-111-185-128.ngrok-free.app/chat',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('_token');
       if (token) {
