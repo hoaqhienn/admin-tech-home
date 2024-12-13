@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Bill, Payment } from 'interface/Bill';
-import { NewService, Service } from 'interface/Service';
+import { NewService, Service, ServiceBooking } from 'interface/Service';
 import { Complaint, NewEvent, NewNotify } from 'interface/Utils';
 
 export const serviceApi = createApi({
@@ -174,6 +174,18 @@ export const serviceApi = createApi({
       }),
       invalidatesTags: ['Notification'],
     }),
+
+    getServiceBookings: builder.query<ServiceBooking[], void>({
+      query: () => '/servicebooking/getAllServiceBookings',
+      transformResponse: (response: { data: ServiceBooking[] }) => response.data,
+    }),
+
+    deleteServiceBooking: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/servicebooking/deleteServiceBooking/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -203,4 +215,7 @@ export const {
   useAddEventMutation,
   useUpdateEventMutation,
   useDeleteEventMutation,
+
+  useGetServiceBookingsQuery,
+  useDeleteServiceBookingMutation,
 } = serviceApi;

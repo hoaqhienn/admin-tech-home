@@ -16,6 +16,7 @@ import {
   useUpdateServiceMutation,
   useDeleteServiceMutation,
 } from 'api/serviceApi';
+import ServiceBookingDataGrid from './ServiceBookingDataGrid';
 
 const Services = () => {
   const [open, setOpen] = useState(false);
@@ -242,6 +243,12 @@ const Services = () => {
               setOpenBulkDeleteDialog(true);
             }}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="h1">Danh sách đặt dịch vụ</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <ServiceBookingDataGrid />
         </Grid>
 
         <Dialog open={open} onClose={handleClose}>

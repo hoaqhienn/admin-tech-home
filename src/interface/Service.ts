@@ -13,3 +13,13 @@ export interface NewService {
   servicePrice: number;
   buildingId: number;
 }
+
+export interface ServiceBooking {
+  serviceBookingId?: number;
+  serviceId?: number;
+  residentId?: number;
+  bookingDate?: string;
+  bookingStatus?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
