@@ -91,6 +91,7 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
           }}
         >
           <IconButton
+            disabled={true}
             size="small"
             onClick={(e) => {
               e.stopPropagation();

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Avatar,
   Box,
   CircularProgress,
   List,
@@ -71,7 +70,13 @@ const ListChat = React.memo(
 
     return (
       <>
-        <List className="h-full overflow-y-auto">
+        <List
+          className="h-full overflow-y-auto"
+          sx={{
+            maxHeight: '100%',
+            overflowY: 'auto',
+          }}
+        >
           {chatsList.length === 0 ? (
             <Box className="p-4">
               <Typography className="text-center text-gray-500">No chats available yet</Typography>
@@ -91,18 +96,10 @@ const ListChat = React.memo(
                 }
               `}
               >
-                <Avatar
-                  className="mr-3"
-                  sx={{
-                    bgcolor: selectedChat?.chatId === chat.chatId ? 'primary.main' : 'grey.400',
-                  }}
-                >
-                  {chat.chatName.charAt(0).toUpperCase()}
-                </Avatar>
                 <ListItemText
                   primary={
                     <Box className="flex items-center justify-between">
-                      <Typography variant="subtitle1" className="font-medium">
+                      <Typography variant="subtitle2" className="font-medium">
                         {chat.chatName}
                       </Typography>
                       <IconButton
@@ -131,21 +128,21 @@ const ListChat = React.memo(
         </List>
 
         <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>Delete Chat</DialogTitle>
+          <DialogTitle>Xóa Chat</DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to delete this chat? This action cannot be undone.
+              Bạn có chắc chắn muốn xóa cuộc trò chuyện này không? Hành động này không thể hoàn tác.
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Hủy</Button>
             <Button
               onClick={handleConfirmDelete}
               color="error"
               variant="contained"
               disabled={isDeleting}
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Đang xóa...' : 'Xóa'}
             </Button>
           </DialogActions>
         </Dialog>

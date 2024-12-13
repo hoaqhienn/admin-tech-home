@@ -19,7 +19,8 @@ export const chatApi = createApi({
     // Get all chats
     getAllChats: builder.query<GroupChat[], void>({
       query: () => '/getAllChats',
-      transformResponse: (response: { data: GroupChat[] }) => response.data,
+      transformResponse: (response: { data: GroupChat[] }) =>
+        response.data.filter((chat) => chat.chatType !== 'bot'),
       providesTags: ['Chat', 'Messages'],
     }),
 

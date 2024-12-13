@@ -157,8 +157,8 @@ const ChatMessages = React.memo(({ chatId }: { chatId: number | null }) => {
   }
 
   return (
-    <Box className="flex flex-col h-[calc(100vh-100px)]">
-      <Paper className="flex-1 p-4 overflow-y-auto">
+    <Box className="flex flex-col h-full">
+      <Paper className="flex-1 overflow-y-auto">
         <Box className="flex flex-col gap-4">
           {localMessages?.map((message: Messages) => (
             <MessageBubble

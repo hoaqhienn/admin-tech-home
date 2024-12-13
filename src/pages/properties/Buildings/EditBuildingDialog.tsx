@@ -47,14 +47,14 @@ const EditBuildingDialog = ({ building, open, onClose, onSave }: EditBuildingDia
   };
 
   return (
-    <Dialog open={open}>
-      <DialogTitle>Edit Building Name</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Cập nhật tên tòa nhà</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <div className="space-y-4">
             <TextField
               autoFocus
-              label="Building Name"
+              label="Tên tòa nhà"
               value={buildingName}
               onChange={(e) => setBuildingName(e.target.value)}
               fullWidth
@@ -67,10 +67,10 @@ const EditBuildingDialog = ({ building, open, onClose, onSave }: EditBuildingDia
         </DialogContent>
         <DialogActions>
           <Button type="button" onClick={onClose} disabled={isLoading}>
-            Cancel
+            Hủy
           </Button>
           <Button type="submit" disabled={isLoading || !buildingName.trim()}>
-            {isLoading ? 'Saving...' : 'Save'}
+            {isLoading ? 'Lưu...' : 'Lưu'}
           </Button>
         </DialogActions>
       </form>

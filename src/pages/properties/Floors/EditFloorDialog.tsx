@@ -52,12 +52,12 @@ const EditFloorDialog = ({ open, floor, onClose, onSuccess }: EditFloorDialogPro
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Floor</DialogTitle>
+      <DialogTitle>Cập nhật số tầng</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
-          label="Floor Number"
+          label="Số tầng"
           type="number"
           fullWidth
           value={floorData.floorNumber || ''}
@@ -67,10 +67,10 @@ const EditFloorDialog = ({ open, floor, onClose, onSuccess }: EditFloorDialogPro
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="inherit">
-          Cancel
+          Hủy
         </Button>
         <Button onClick={handleSubmit} variant="contained" disabled={!floorData.floorNumber}>
-          Save Changes
+          Lưu
         </Button>
       </DialogActions>
     </Dialog>
