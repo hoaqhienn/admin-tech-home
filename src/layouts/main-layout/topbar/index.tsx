@@ -1,16 +1,12 @@
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Badge from '@mui/material/Badge';
 import Toolbar from '@mui/material/Toolbar';
-import TextField from '@mui/material/TextField';
 import ButtonBase from '@mui/material/ButtonBase';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import IconifyIcon from 'components/base/IconifyIcon';
 import ProfileMenu from './ProfileMenu';
 import Image from 'components/base/Image';
 import LogoImg from 'assets/images/logo.png';
-import { Bell, Search } from 'lucide-react';
 import MessageMenu from './MessageMenu';
 
 interface TopbarProps {
@@ -56,13 +52,13 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
           </IconButton>
         </Toolbar>
 
-        <Toolbar sx={{ ml: -1.5, display: { xm: 'block', md: 'none' } }}>
+        {/* <Toolbar sx={{ ml: -1.5, display: { xm: 'block', md: 'none' } }}>
           <IconButton size="large" edge="start" color="inherit" aria-label="search">
             <IconifyIcon icon="eva:search-fill" />
           </IconButton>
-        </Toolbar>
+        </Toolbar> */}
 
-        <TextField
+        {/* <TextField
           variant="filled"
           placeholder="Search"
           sx={{ width: 340, display: { xs: 'none', md: 'flex' } }}
@@ -73,16 +69,16 @@ const Topbar = ({ isClosing, mobileOpen, setMobileOpen }: TopbarProps) => {
               </InputAdornment>
             ),
           }}
-        />
+        /> */}
       </Stack>
 
       <Stack spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <MessageMenu />
-        <IconButton size="large">
+        {/* <IconButton size="large">
           <Badge badgeContent={2} color="error">
             <Bell />
           </Badge>
-        </IconButton>
+        </IconButton> */}
         <ProfileMenu />
       </Stack>
     </Stack>

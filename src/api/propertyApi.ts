@@ -45,14 +45,23 @@ export const propertyApi = createApi({
         method: 'POST',
         body: building,
       }),
-      invalidatesTags: ['Building'],
+      invalidatesTags: ['Building', 'Floor', 'Apartment'],
     }),
 
-    updateBuilding: builder.mutation<void, Building>({
-      query: (building) => ({
-        url: `/building/${building.buildingId}`,
+    // updateBuilding: builder.mutation<void, Building>({
+    //   query: (building) => ({
+    //     url: `/building/${building.buildingId}`,
+    //     method: 'PUT',
+    //     body: building,
+    //   }),
+    //   invalidatesTags: ['Building'],
+    // }),
+
+    updateBuilding: builder.mutation<void, { buildingId: number; buildingName: string }>({
+      query: ({ buildingId, buildingName }) => ({
+        url: `/building/${buildingId}`,
         method: 'PUT',
-        body: building,
+        body: { buildingName },
       }),
       invalidatesTags: ['Building'],
     }),
@@ -62,7 +71,7 @@ export const propertyApi = createApi({
         url: `/building/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Building'],
+      invalidatesTags: ['Building', 'Floor', 'Apartment'],
     }),
 
     // Floor endpoints

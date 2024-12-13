@@ -222,8 +222,13 @@ const Services = () => {
         message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} cơ sở tiện ích được chọn?`}
       />
       <Grid container spacing={2.5}>
-        <Grid item xs={12}>
+        <Grid item xs={10}>
           <Typography variant="h1">Danh sách dịch vụ</Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Button type="submit" variant="contained" size="medium" onClick={() => handleClickOpen()}>
+            Thêm dịch vụ
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <ServiceDataGrid
@@ -238,21 +243,6 @@ const Services = () => {
             }}
           />
         </Grid>
-
-        <Button
-          type="submit"
-          variant="contained"
-          size="medium"
-          onClick={() => handleClickOpen()}
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 1000,
-          }}
-        >
-          Add Service
-        </Button>
 
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>{isEditing ? 'Update Service' : 'Add New Service'}</DialogTitle>

@@ -37,7 +37,8 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
     const { name, value } = event.target;
 
     // Convert building name to uppercase automatically
-    const processedValue = name === 'buildingName' ? value.toUpperCase() : value;
+    // const processedValue = name === 'buildingName' ? value.toUpperCase() : value;
+    const processedValue = name === 'buildingName' ? value : value;
 
     setInput((prev) => ({
       ...prev,
@@ -70,12 +71,25 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
 
         // Optionally reset the form after successful submission
         handleReset();
-      } catch (error) {
-        setSnackbar({
-          open: true,
-          message: 'Có lỗi xảy ra khi thêm tòa nhà',
-          severity: 'error',
-        });
+      } catch (error: any) {
+        // Check if it's a conflict error (status 409)
+        if (error?.status === 409) {
+          setErrors((prev) => [
+            ...prev,
+            { field: 'buildingName', message: 'Tên tòa nhà đã tồn tại' },
+          ]);
+          setSnackbar({
+            open: true,
+            message: 'Tên tòa nhà đã tồn tại. Vui lòng nhập tên khác.',
+            severity: 'error',
+          });
+        } else {
+          setSnackbar({
+            open: true,
+            message: 'Có lỗi xảy ra khi thêm tòa nhà',
+            severity: 'error',
+          });
+        }
       }
     }
   };
@@ -89,11 +103,6 @@ const AddBuilding: React.FC<Props> = ({ setSnackbar }) => {
       newErrors.push({ field: 'buildingName', message: 'Tên tòa nhà không được để trống' });
     } else if (buildingName.length < 1) {
       newErrors.push({ field: 'buildingName', message: 'Tên tòa nhà phải có ít nhất 1 ký tự' });
-    } else if (!/^[A-Z]+$/.test(buildingName)) {
-      newErrors.push({
-        field: 'buildingName',
-        message: 'Tên tòa nhà chỉ được chứa các chữ cái in hoa từ A-Z',
-      });
     }
 
     if (numOfFloor === null) {

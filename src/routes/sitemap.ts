@@ -112,11 +112,11 @@ const sitemap: MenuItem[] = [
         pathName: 'settings',
         path: paths.settings,
       },
-      {
-        name: 'Báo cáo và phân tích',
-        pathName: 'reports',
-        path: paths.reports,
-      },
+      // {
+      //   name: 'Báo cáo và phân tích',
+      //   pathName: 'reports',
+      //   path: paths.reports,
+      // },
     ],
   },
 ];

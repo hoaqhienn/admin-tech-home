@@ -187,7 +187,7 @@ const ApartmentDetail = () => {
           >
             Trang chủ
           </Link>
-          <Link component={RouterLink} to="/apartment/all" color="inherit">
+          <Link component={RouterLink} to="/apartments" color="inherit">
             Danh sách căn hộ
           </Link>
           <Typography className="font-bold" color="text.primary">

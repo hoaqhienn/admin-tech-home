@@ -36,6 +36,8 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
     fullname: '',
     idcard: '',
     apartmentId: null,
+    phonenumber: '', // Add phone field
+    email: '', // Add email field
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +63,8 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
       fullname: '',
       idcard: '',
       apartmentId: 0,
+      phonenumber: '',
+      email: '',
     });
     setErrors([]);
   };
@@ -89,7 +93,7 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
 
   const validateInput = (): boolean => {
     const newErrors: ValidationError[] = [];
-    const { fullname, idcard } = residentInput;
+    const { fullname, idcard, phonenumber, email } = residentInput;
 
     if (!fullname.trim()) {
       newErrors.push({ field: 'fullname', message: 'Họ và tên không được để trống' });
@@ -101,6 +105,14 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
       newErrors.push({ field: 'idcard', message: 'Mã định danh không được để trống' });
     } else if (!/^\d{12}$/.test(idcard)) {
       newErrors.push({ field: 'idcard', message: 'Mã định danh phải gồm 12 chữ số' });
+    }
+
+    if (phonenumber && !/^\d{10}$/.test(phonenumber)) {
+      newErrors.push({ field: 'phonenumber', message: 'Số điện thoại phải gồm 10 chữ số' });
+    }
+
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
+      newErrors.push({ field: 'email', message: 'Địa chỉ email không hợp lệ' });
     }
 
     setErrors(newErrors);
@@ -152,6 +164,29 @@ const AddResident: React.FC<Props> = ({ setSnackbar }) => {
             onChange={handleInputChange}
             error={errors.some((e) => e.field === 'idcard')}
             helperText={errors.find((e) => e.field === 'idcard')?.message}
+          />
+          <TextField
+            margin="dense"
+            label="Số điện thoại"
+            type="number"
+            fullWidth
+            variant="outlined"
+            name="phonenumber"
+            value={residentInput.phonenumber}
+            onChange={handleInputChange}
+            error={errors.some((e) => e.field === 'phonenumber')}
+            helperText={errors.find((e) => e.field === 'phonenumber')?.message}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            fullWidth
+            variant="outlined"
+            name="email"
+            value={residentInput.email}
+            onChange={handleInputChange}
+            error={errors.some((e) => e.field === 'email')}
+            helperText={errors.find((e) => e.field === 'email')?.message}
           />
           <FormControl fullWidth margin="dense" error={errors.some((e) => e.field === 'apartment')}>
             <InputLabel id="apartment-select-label">Mã căn hộ</InputLabel>

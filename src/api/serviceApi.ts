@@ -166,19 +166,11 @@ export const serviceApi = createApi({
       invalidatesTags: ['Event'],
     }),
 
-    // send notifications to listeners
-    // {
-    //   "tokens": [
-    //     "ffxCUX4RQd-ovo8i7H-HV3:APA91bH7A4ruwK1fQXg4mBibqYlbTE3lPcIkhPIlqJjDmlEE_Qi7_WwiT4vmeOw875l0xOeECnNwjCL_PtZhAcYQj-eluw4v5zKfld9tP4hMj24vsvMBfuA"
-    //   ],
-    //   "title": "Notify",
-    //   "body": "Notify content"
-    // }
-    sendNotification: builder.mutation<void, { tokens: string[]; title: string; body: string }>({
-      query: ({ tokens, title, body }) => ({
-        url: '/notify',
+    sendNotification: builder.mutation<void, { notificationId: number; residentIds: number[] }>({
+      query: ({ notificationId, residentIds }) => ({
+        url: '/notifications/send',
         method: 'POST',
-        body: { tokens, title, body },
+        body: { notificationId, residentIds },
       }),
       invalidatesTags: ['Notification'],
     }),

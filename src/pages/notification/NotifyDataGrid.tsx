@@ -56,7 +56,7 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
   const handleSendNotification = useCallback(
     (s: Notify) => {
       if (onSendNotification) {
-        onSendNotification(s);
+        onSendNotification(s); // Trigger onSendNotification when the user clicks "Send"
         clearSelection();
       }
     },

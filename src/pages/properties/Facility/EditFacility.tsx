@@ -5,15 +5,10 @@ import {
   DialogActions,
   Button,
   TextField,
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
 } from '@mui/material';
 import { Facility } from 'interface/Properties';
 import { useState, useEffect } from 'react';
 import { useUpdateFacilityMutation } from 'api/propertyApi';
-import { useBuildings } from 'hooks/properties/useBuilding';
 
 interface Props {
   open: boolean;
@@ -28,7 +23,7 @@ interface ValidationError {
 }
 
 const EditFacility: React.FC<Props> = ({ open, facility, onClose, setSnackbar }) => {
-  const { buildings } = useBuildings();
+  // const { buildings } = useBuildings();
   const [updateFacility, { isLoading }] = useUpdateFacilityMutation();
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [input, setInput] = useState<Partial<Facility>>({
@@ -60,17 +55,17 @@ const EditFacility: React.FC<Props> = ({ open, facility, onClose, setSnackbar })
     setErrors((prev) => prev.filter((error) => error.field !== name));
   };
 
-  const handleSelectChange = (event: any) => {
-    setInput((prev) => ({
-      ...prev,
-      buildingId: event.target.value,
-    }));
-    setErrors((prev) => prev.filter((error) => error.field !== 'buildingId'));
-  };
+  // const handleSelectChange = (event: any) => {
+  //   setInput((prev) => ({
+  //     ...prev,
+  //     buildingId: event.target.value,
+  //   }));
+  //   setErrors((prev) => prev.filter((error) => error.field !== 'buildingId'));
+  // };
 
   const validateInput = (): boolean => {
     const newErrors: ValidationError[] = [];
-    const { facilityName, facilityDescription, facilityLocation, buildingId } = input;
+    const { facilityName, facilityDescription, facilityLocation } = input;
 
     if (!facilityName?.trim()) {
       newErrors.push({ field: 'facilityName', message: 'Tên cơ sở vật chất không được để trống' });
@@ -84,9 +79,9 @@ const EditFacility: React.FC<Props> = ({ open, facility, onClose, setSnackbar })
       newErrors.push({ field: 'facilityLocation', message: 'Vị trí không được để trống' });
     }
 
-    if (!buildingId || buildingId === 0) {
-      newErrors.push({ field: 'buildingId', message: 'Vui lòng chọn tòa nhà' });
-    }
+    // if (!buildingId || buildingId === 0) {
+    //   newErrors.push({ field: 'buildingId', message: 'Vui lòng chọn tòa nhà' });
+    // }
 
     setErrors(newErrors);
 
@@ -160,7 +155,7 @@ const EditFacility: React.FC<Props> = ({ open, facility, onClose, setSnackbar })
           error={errors.some((e) => e.field === 'facilityLocation')}
           helperText={errors.find((e) => e.field === 'facilityLocation')?.message}
         />
-        <FormControl fullWidth margin="dense" error={errors.some((e) => e.field === 'buildingId')}>
+        {/* <FormControl fullWidth margin="dense" error={errors.some((e) => e.field === 'buildingId')}>
           <Select value={input.buildingId} onChange={handleSelectChange} name="buildingId">
             <MenuItem value={0}>
               <em>Chọn tòa nhà</em>
@@ -176,7 +171,7 @@ const EditFacility: React.FC<Props> = ({ open, facility, onClose, setSnackbar })
               {errors.find((e) => e.field === 'buildingId')?.message}
             </Typography>
           )}
-        </FormControl>
+        </FormControl> */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={isLoading}>

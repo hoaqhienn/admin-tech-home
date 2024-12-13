@@ -12,11 +12,14 @@ import { useDeleteBuildingMutation, useUpdateBuildingMutation } from 'api/proper
 import EditBuildingDialog from './EditBuildingDialog';
 
 const Buildings = () => {
+  const [buildingToEdit, setBuildingToEdit] = useState<Building | null>(null);
   const [currentBuilding, setCurrentBuilding] = useState<Building | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedBuildingIds, setSelectedBuildingIds] = useState<number[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+  const [dialogs, setDialogs] = useState({
+    delete: false,
+    bulkDelete: false,
+    edit: false,
+  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -24,87 +27,57 @@ const Buildings = () => {
   });
   const addRef = useRef<HTMLDivElement>(null);
 
-  // Initialize delete mutation
   const [deleteBuilding] = useDeleteBuildingMutation();
   const [updateBuilding] = useUpdateBuildingMutation();
 
-  const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
-  const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
-  const handleCloseEditDialog = useCallback(() => {
-    setIsEditDialogOpen(false);
-    setCurrentBuilding(null);
+  const showSnackbar = useCallback((message: string, severity: 'success' | 'error') => {
+    setSnackbar({ open: true, message, severity });
   }, []);
-  // Handle single building deletion
+
+  const handleCloseSnackbar = () => setSnackbar((prev) => ({ ...prev, open: false }));
+
+  const toggleDialog = useCallback((type: keyof typeof dialogs, value: boolean) => {
+    setDialogs((prev) => ({ ...prev, [type]: value }));
+  }, []);
+
   const handleDeleteBuilding = async () => {
     if (!currentBuilding?.buildingId) return;
 
     try {
       await deleteBuilding(currentBuilding.buildingId).unwrap();
-      setSnackbar({
-        open: true,
-        message: 'Xóa tòa nhà thành công',
-        severity: 'success',
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Tòa nhà này đang được sử dụng',
-        severity: 'error',
-      });
+      showSnackbar('Xóa tòa nhà thành công', 'success');
+    } catch {
+      showSnackbar('Tòa nhà này đang được sử dụng', 'error');
     } finally {
-      handleCloseDialog();
+      toggleDialog('delete', false);
       setCurrentBuilding(null);
     }
   };
 
   const handleUpdateBuilding = async (buildingId: number, newName: string) => {
-    if (!currentBuilding) return;
-
     try {
-      // Create updated building object maintaining all existing properties
-      const updatedBuilding: Building = {
-        ...currentBuilding,
-        buildingId,
-        buildingName: newName,
-      };
-
-      // Call the update mutation with the complete building object
-      await updateBuilding(updatedBuilding).unwrap();
-
-      setSnackbar({
-        open: true,
-        message: 'Cập nhật tòa nhà thành công',
-        severity: 'success',
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Có lỗi xảy ra khi cập nhật tòa nhà',
-        severity: 'error',
-      });
-      throw new Error('Failed to update building');
+      await updateBuilding({ buildingId, buildingName: newName }).unwrap();
+      showSnackbar('Cập nhật tòa nhà thành công', 'success');
+    } catch (error: any) {
+      if (error.status === 409) {
+        showSnackbar('Tên tòa nhà đã tồn tại. Vui lòng chọn tên khác.', 'error');
+      } else {
+        showSnackbar('Có lỗi xảy ra khi cập nhật tòa nhà', 'error');
+      }
+    } finally {
+      toggleDialog('edit', false);
+      setBuildingToEdit(null);
     }
   };
 
-  // Handle bulk building deletion
   const handleBulkDeleteBuildings = async () => {
     try {
-      // Sequential deletion of all selected buildings
       await Promise.all(selectedBuildingIds.map((id) => deleteBuilding(id).unwrap()));
-
-      setSnackbar({
-        open: true,
-        message: 'Xóa các tòa nhà đã chọn thành công',
-        severity: 'success',
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Có lỗi xảy ra khi xóa các tòa nhà',
-        severity: 'error',
-      });
+      showSnackbar('Xóa các tòa nhà đã chọn thành công', 'success');
+    } catch {
+      showSnackbar('Có lỗi xảy ra khi xóa các tòa nhà', 'error');
     } finally {
-      handleCloseBulkDeleteDialog();
+      toggleDialog('bulkDelete', false);
       setSelectedBuildingIds([]);
     }
   };
@@ -113,34 +86,25 @@ const Buildings = () => {
     {
       icon: <IconifyIcon icon="ic:add" />,
       title: 'Building',
-      onClick: () => {
-        addRef.current?.scrollIntoView({ behavior: 'smooth' });
-      },
+      onClick: () => addRef.current?.scrollIntoView({ behavior: 'smooth' }),
     },
   ];
 
   return (
     <>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-      >
-        <Alert
-          severity={snackbar.severity}
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        >
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert severity={snackbar.severity} onClose={handleCloseSnackbar}>
           {snackbar.message}
         </Alert>
       </Snackbar>
+
       <ScrollToTop />
       <SpeedDialCustom actions={actions} />
 
       {/* Single Delete Confirmation */}
       <ConfirmDialog
-        key="delete"
-        open={openDialog}
-        onClose={handleCloseDialog}
+        open={dialogs.delete}
+        onClose={() => toggleDialog('delete', false)}
         onConfirm={handleDeleteBuilding}
         title={`Xóa tòa nhà - ID: ${currentBuilding?.buildingId}`}
         message="Bạn có chắc chắn muốn xóa tòa nhà này không?"
@@ -148,19 +112,20 @@ const Buildings = () => {
 
       {/* Bulk Delete Confirmation */}
       <ConfirmDialog
-        key="bulk-delete"
-        open={openBulkDeleteDialog}
-        onClose={handleCloseBulkDeleteDialog}
+        open={dialogs.bulkDelete}
+        onClose={() => toggleDialog('bulkDelete', false)}
         onConfirm={handleBulkDeleteBuildings}
         title="Xóa nhiều tòa nhà"
         message={`Bạn có chắc chắn muốn xóa ${selectedBuildingIds.length} tòa nhà được chọn?`}
       />
+
       <EditBuildingDialog
-        building={currentBuilding}
-        open={isEditDialogOpen}
-        onClose={handleCloseEditDialog}
+        building={buildingToEdit}
+        open={dialogs.edit}
+        onClose={() => toggleDialog('edit', false)}
         onSave={handleUpdateBuilding}
       />
+
       <Grid container spacing={2.5}>
         <Grid item xs={12}>
           <Typography variant="h1">Danh sách tòa nhà</Typography>
@@ -168,16 +133,16 @@ const Buildings = () => {
         <Grid item xs={12}>
           <BuildingsDataGrid
             onEdit={(building) => {
-              setCurrentBuilding(building);
-              setIsEditDialogOpen(true);
+              setBuildingToEdit(building);
+              toggleDialog('edit', true);
             }}
             onDelete={(buildingId) => {
               setCurrentBuilding({ buildingId } as Building);
-              setOpenDialog(true);
+              toggleDialog('delete', true);
             }}
             onBulkDelete={(buildingIds) => {
               setSelectedBuildingIds(buildingIds);
-              setOpenBulkDeleteDialog(true);
+              toggleDialog('bulkDelete', true);
             }}
           />
         </Grid>
@@ -185,7 +150,7 @@ const Buildings = () => {
           <BuildingResidentsChart />
         </Grid>
         <Grid item xs={12} ref={addRef}>
-          <AddBuilding setSnackbar={setSnackbar} />
+          <AddBuilding setSnackbar={(value) => showSnackbar(value.message, value.severity)} />
         </Grid>
       </Grid>
     </>

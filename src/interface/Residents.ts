@@ -58,4 +58,6 @@ export interface NewResident {
   fullname: string;
   idcard: string;
   apartmentId?: number | null;
+  phonenumber?: string;
+  email?: string;
 }

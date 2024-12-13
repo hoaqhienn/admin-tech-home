@@ -2,7 +2,7 @@ import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useBuildings } from 'hooks/properties/useBuilding';
 import { Building } from 'interface/Properties';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, EditIcon } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface BuildingsDataGridProps {
@@ -17,7 +17,6 @@ const BuildingsDataGrid: React.FC<BuildingsDataGridProps> = ({
   onBulkDelete,
 }) => {
   const { buildings, isLoading } = useBuildings();
-  console.log('Error:', buildings);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -95,7 +94,7 @@ const BuildingsDataGrid: React.FC<BuildingsDataGridProps> = ({
             alignItems: 'center',
           }}
         >
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -104,7 +103,7 @@ const BuildingsDataGrid: React.FC<BuildingsDataGridProps> = ({
             sx={{ color: 'blue' }}
           >
             <Info fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

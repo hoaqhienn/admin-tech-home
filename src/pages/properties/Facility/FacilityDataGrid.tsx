@@ -2,7 +2,7 @@ import { Button, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useFacilities } from 'hooks/properties/useFacility';
 import { Facility } from 'interface/Properties';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, EditIcon } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -90,6 +90,7 @@ const FacilityDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDel
       headerName: 'Địa điểm',
       flex: 1,
     },
+
     {
       field: 'actions',
       headerName: 'Actions',
@@ -108,7 +109,7 @@ const FacilityDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDel
             alignItems: 'center',
           }}
         >
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -117,7 +118,7 @@ const FacilityDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDel
             sx={{ color: 'blue' }}
           >
             <Info fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

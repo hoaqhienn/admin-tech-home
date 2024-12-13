@@ -31,7 +31,7 @@ type FormInputs = {
   residentId: number;
 };
 
-const vehicleTypes = ['Car', 'Motorcycle', 'Bicycle'];
+const vehicleTypes = ['Ô tô', 'Xe máy', 'Xe đạp'];
 
 const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, residentId }) => {
   const [addVehicle] = useAddVehicleMutation();
@@ -44,6 +44,7 @@ const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, r
     reset,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<FormInputs>({
     defaultValues: {
       vehicleNumber: '',
@@ -51,6 +52,16 @@ const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, r
       residentId: 0,
     },
   });
+
+  // Watch for vehicle type changes
+  const vehicleType = watch('vehicleType');
+
+  // Set vehicleNumber to "N/A" when vehicle type is "Xe đạp"
+  useEffect(() => {
+    if (vehicleType === 'Xe đạp') {
+      setValue('vehicleNumber', 'N/A');
+    }
+  }, [vehicleType, setValue]);
 
   // Load data when editing or when residentId is provided
   useEffect(() => {
@@ -64,6 +75,11 @@ const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, r
   }, [vehicle, residentId, setValue]);
 
   const onSubmit = async (data: FormInputs) => {
+    // Check if residentId is selected (validation step)
+    if (!data.residentId) {
+      return; // Optionally display an error if no resident is selected
+    }
+
     try {
       if (vehicle?.vehicleId) {
         await updateVehicle({
@@ -87,58 +103,18 @@ const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, r
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{vehicle ? 'Edit Vehicle' : 'Add New Vehicle'}</DialogTitle>
+      <DialogTitle>{vehicle ? 'Cập nhật phương tiện' : 'Thêm phương tiện'}</DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Controller
-                name="vehicleNumber"
-                control={control}
-                rules={{ required: 'Vehicle number is required' }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Vehicle Number"
-                    fullWidth
-                    error={!!errors.vehicleNumber}
-                    helperText={errors.vehicleNumber?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="vehicleType"
-                control={control}
-                rules={{ required: 'Vehicle type is required' }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    select
-                    label="Vehicle Type"
-                    fullWidth
-                    error={!!errors.vehicleType}
-                    helperText={errors.vehicleType?.message}
-                  >
-                    {vehicleTypes.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {type}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              {' '}
               <Controller
                 name="residentId"
                 control={control}
                 rules={{ required: 'Resident is required' }}
                 render={({ field }) => (
                   <FormControl fullWidth error={!!errors.residentId}>
-                    <InputLabel>Resident</InputLabel>
+                    <InputLabel>Cư dân</InputLabel>
                     <Select {...field} label="Resident" disabled={isLoadingResidents}>
                       {residents?.map((resident) => (
                         <MenuItem key={resident.residentId} value={resident.residentId}>
@@ -153,11 +129,52 @@ const VehicleDialog: React.FC<VehicleDialogProps> = ({ open, onClose, vehicle, r
                 )}
               />
             </Grid>
+
+            <Grid item xs={12}>
+              <Controller
+                name="vehicleType"
+                control={control}
+                rules={{ required: 'Vehicle type is required' }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    select
+                    label="Loại xe"
+                    fullWidth
+                    error={!!errors.vehicleType}
+                    helperText={errors.vehicleType?.message}
+                  >
+                    {vehicleTypes.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="vehicleNumber"
+                control={control}
+                rules={{ required: 'Vehicle number is required' }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Biển số"
+                    fullWidth
+                    error={!!errors.vehicleNumber}
+                    helperText={errors.vehicleNumber?.message}
+                    disabled={vehicleType === 'Xe đạp'} // Disable if vehicleType is "Xe đạp"
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" disabled={!!errors.residentId}>
             {vehicle ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
