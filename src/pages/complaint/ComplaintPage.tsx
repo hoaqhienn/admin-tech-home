@@ -4,6 +4,7 @@ import { Alert, Snackbar } from '@mui/material';
 import ComplaintDataGrid from './ComplaintDataGrid';
 import { useDeleteComplaintMutation, useUpdateComplaintStatusMutation } from 'api/serviceApi';
 import { useState } from 'react';
+import { useSocket } from 'components/provider/SocketProvider';
 
 // Define types
 interface DeleteResponse {
@@ -23,12 +24,26 @@ const ComplaintPage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [updateComplaintStatus] = useUpdateComplaintStatusMutation();
 
+  const { socket } = useSocket();
+
   const handleStatusUpdate = async (id: number, status: string) => {
     try {
-      const result = await updateComplaintStatus({ id, status });
+      const result: any = await updateComplaintStatus({ id, status });
+      console.log('result', result.data.data);
 
       if ('data' in result) {
-        setShowSuccess(true);
+        // setShowSuccess(true);
+
+        if (socket) {
+          // Gửi `userId` và `complaint` dưới dạng hai tham số riêng biệt
+          socket.emit(
+            'sendNotificationComplaint',
+            result.data.data.residentId, // userId
+            result.data.data, // complaint
+          );
+        } else {
+          console.error('Socket is not initialized');
+        }
       } else if ('error' in result) {
         const errorMessage =
           (result.error as ErrorResponse).data?.message || 'Có lỗi xảy ra khi cập nhật trạng thái';

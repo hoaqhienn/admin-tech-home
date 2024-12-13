@@ -5,6 +5,8 @@ import { Messages } from 'interface/chat/ChatInterface';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { useNotification } from 'components/provider/NotificationProvider';
 
+export interface SocketNotificationData {}
+
 interface SocketContextType {
   socket: Socket | null;
   isConnected: boolean;
@@ -12,6 +14,9 @@ interface SocketContextType {
   leaveChat: (chatId: number) => void;
   sendMessage: (message: Messages, chatId: number) => void;
   deleteMessage: (chatId: number, messageId: number) => void;
+  sendNotification: (notification: SocketNotificationData, userIds: number[]) => void;
+  sendComplaintNotification: (userId: number, complaint: string) => void;
+  sendEventNotification: (userId: number, event: string) => void;
 }
 
 const SocketContext = createContext<SocketContextType>({
@@ -21,6 +26,9 @@ const SocketContext = createContext<SocketContextType>({
   leaveChat: () => {},
   sendMessage: () => {},
   deleteMessage: () => {},
+  sendNotification: () => {},
+  sendComplaintNotification: () => {},
+  sendEventNotification: () => {},
 });
 
 export const useSocket = () => useContext(SocketContext);
@@ -156,6 +164,35 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     },
     [socket, isConnected],
   );
+  const sendNotification = useCallback(
+    (notification: SocketNotificationData, userIds: number[]) => {
+      if (socket && isConnected) {
+        console.log('Sending notification:', notification, userIds);
+        socket.emit('sendNotificationNotification', notification, userIds);
+      }
+    },
+    [socket, isConnected],
+  );
+
+  const sendComplaintNotification = useCallback(
+    (userId: number, complaint: string) => {
+      if (socket && isConnected) {
+        console.log('Sending complaint notification:', complaint, userId);
+        socket.emit('sendNotificationComplaint', userId, complaint);
+      }
+    },
+    [socket, isConnected],
+  );
+
+  const sendEventNotification = useCallback(
+    (userId: number, event: string) => {
+      if (socket && isConnected) {
+        console.log('Sending event notification:', event, userId);
+        socket.emit('sendNotificationEvent', userId, event);
+      }
+    },
+    [socket, isConnected],
+  );
 
   return (
     <SocketContext.Provider
@@ -166,6 +203,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         leaveChat,
         sendMessage,
         deleteMessage,
+        sendNotification,
+        sendComplaintNotification,
+        sendEventNotification,
       }}
     >
       {children}

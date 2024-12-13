@@ -14,6 +14,7 @@ import {
   useUpdateEventMutation,
 } from 'api/serviceApi';
 import { NewEvent } from 'interface/Utils';
+import { useSocket } from 'components/provider/SocketProvider';
 
 const Events = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -55,13 +56,23 @@ const Events = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const { socket } = useSocket();
+
   const handleSubmit = async (event: NewEvent) => {
     try {
       if (selectedEvent) {
         await updateEvent({ id: selectedEvent.eventId!, event }).unwrap();
+
         showSnackbar('Event updated successfully', 'success');
       } else {
         await addEvent(event).unwrap();
+
+        if (socket) {
+          socket.emit('sendNotificationEvent', event);
+        } else {
+          console.error('Socket is not initialized');
+        }
+
         showSnackbar('Event added successfully', 'success');
       }
       handleCloseDialog();

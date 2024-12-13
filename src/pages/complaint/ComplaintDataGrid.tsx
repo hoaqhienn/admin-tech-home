@@ -24,7 +24,7 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
 
-  console.log('complaints', complaints);
+  // console.log('complaints', complaints);
 
   const handleStatusUpdate = (status: string) => {
     if (selectedComplaint && onStatusUpdate) {

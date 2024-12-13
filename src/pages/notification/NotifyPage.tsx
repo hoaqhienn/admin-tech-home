@@ -14,6 +14,7 @@ import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import NotifyFormDialog from './NotifyFormDialog';
 import ResidentSelectionDialog from './ResidentSelectionDialog ';
 import { useResidents } from 'hooks/resident/useResident';
+import { useSocket } from 'components/provider/SocketProvider';
 
 const NotifyPage = () => {
   const [notify, setNotify] = useState<Notify | null>(null);
@@ -34,12 +35,14 @@ const NotifyPage = () => {
   const [deleteNotify] = useDeleteNotificationMutation();
   const [addNotification] = useAddNotificationMutation();
   const [updateNotification] = useUpdateNotificationMutation();
-  const [sendNotification] = useSendNotificationMutation();
+  const [sendNotificationx] = useSendNotificationMutation();
 
   const handleCloseDialog = useCallback(() => setOpenDialog(false), []);
   const handleCloseBulkDeleteDialog = useCallback(() => setOpenBulkDeleteDialog(false), []);
 
   const { residents } = useResidents();
+
+  const { socket } = useSocket();
 
   const handleSelectResidents = async (selectedResidents: ResidentViaApartment[]) => {
     const selectedResidentIds = selectedResidents.map((resident) => resident.residentId);
@@ -49,12 +52,18 @@ const NotifyPage = () => {
       try {
         console.log('Sending notification to residents: ', selectedResidentIds);
         console.log('Notification ID: ', notify.notificationId);
-        
-        
-        await sendNotification({
+
+        const res: any = await sendNotificationx({
           notificationId: notify.notificationId,
           residentIds: selectedResidentIds,
         }).unwrap();
+
+        if (socket) {
+          socket.emit('sendNotificationNotification', selectedResidentIds, res.data);
+        } else {
+          console.error('Socket is not initialized');
+        }
+
         setSnackbar({
           open: true,
           message: 'Thông báo đã được gửi thành công!',
@@ -68,8 +77,8 @@ const NotifyPage = () => {
         });
       }
     }
-
-    setResidentSelectionDialogOpen(false); 
+    setSelectedIds([]);
+    setResidentSelectionDialogOpen(false);
   };
 
   const handleDelete = async () => {

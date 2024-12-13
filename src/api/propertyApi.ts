@@ -11,7 +11,7 @@ import type {
 export const propertyApi = createApi({
   reducerPath: 'propertyApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://cb2a-116-111-185-128.ngrok-free.app/admin',
+    baseUrl: 'http://localhost:3000/admin',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('_token');
       if (token) {
