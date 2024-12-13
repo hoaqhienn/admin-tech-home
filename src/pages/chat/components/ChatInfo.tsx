@@ -18,7 +18,7 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { UserPlus, Users, Search, X } from 'lucide-react';
+import { UserPlus, Search, X } from 'lucide-react';
 import { GroupChat } from 'interface/chat/ChatInterface';
 import { useRemoveMemberMutation, useAddMemberMutation } from 'api/chatApi';
 import { useResidents } from 'hooks/resident/useResident';
@@ -148,11 +148,6 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
     );
   };
 
-  // const openRemoveDialog = (memberId: number) => {
-  //   setSelectedMemberId(memberId);
-  //   setOpenConfirmDialog(true);
-  // };
-
   return (
     <Box className="h-full flex flex-col p-4">
       {/* Chat Information Section */}
@@ -171,61 +166,31 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
           </Box>
         </Box>
       </Box>
-
+      <Box className="flex items-center justify-between mb-4">
+        <Button
+          startIcon={<UserPlus size={18} />}
+          variant="text"
+          size="small"
+          onClick={() => setOpenAddMemberDialog(true)}
+        >
+          Thêm cư dân
+        </Button>
+      </Box>
       <Divider />
 
       {/* Members Section */}
       <Box className="mt-4 flex-1 overflow-auto">
-        <Box className="flex items-center justify-between mb-4">
-          <Box className="flex items-center gap-2">
-            <Users size={20} />
-            <Typography variant="h6">Members ({selectedChat.members?.length || 0})</Typography>
-          </Box>
-          <Button
-            startIcon={<UserPlus size={18} />}
-            variant="text"
-            size="small"
-            onClick={() => setOpenAddMemberDialog(true)}
-          >
-            Thêm cư dân
-          </Button>
-        </Box>
-
         {/* Residents List */}
         {chatDetail?.Residents && (
-          <List className="max-h-96 overflow-y-auto">
+          <List className="max-h overflow-y-auto">
             {chatDetail.Residents.map((resident) => (
-              <ListItem
-                key={resident.residentId}
-                dense
-                button
-                // onClick={() => handleToggleResident(resident.residentId)}
-              >
-                {/* <Checkbox
-                  edge="start"
-                  checked={selectedResidents.includes(resident.residentId)}
-                  tabIndex={-1}
-                  disableRipple
-                /> */}
+              <ListItem key={resident.residentId} dense button>
                 <ListItemAvatar>
                   <Avatar src={resident.User.avatar || undefined}>
                     {resident.User.fullname.charAt(0).toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText
-                  primary={resident.User.fullname}
-                  secondary={
-                    <React.Fragment>
-                      <Typography component="span" variant="body2">
-                        {resident.User.email}
-                      </Typography>
-                      <br />
-                      <Typography component="span" variant="body2" color="text.secondary">
-                        Phone: {resident.phonenumber}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
+                <ListItemText primary={resident.User.fullname} />
                 <Button
                   onClick={() => {
                     setSelectedMemberId(resident.residentId);
@@ -269,7 +234,7 @@ const ChatInfo = ({ selectedChat }: ChatInfoProps) => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add Members</DialogTitle>
+        <DialogTitle>Thêm thành viên</DialogTitle>
         <DialogContent>
           {/* Search Box */}
           <Box className="mb-4 mt-2">
