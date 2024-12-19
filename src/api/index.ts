@@ -3,6 +3,7 @@ import { chatApi } from './chatApi';
 import { propertyApi } from './propertyApi';
 import { residentApi } from './residentApi';
 import { serviceApi } from './serviceApi';
+import { adApi } from './adApi';
 
 export const apis = {
   authApi,
@@ -10,10 +11,20 @@ export const apis = {
   propertyApi,
   residentApi,
   serviceApi,
+  adApi,
 } as const;
 
 // Export individual APIs for direct usage
-export { authApi, chatApi, propertyApi, residentApi, serviceApi };
+export { authApi, chatApi, propertyApi, residentApi, serviceApi, adApi };
+
+export {
+  useGetAdvertisementsQuery,
+  useUpdateAdvertisementMutation,
+  useDeleteAdvertisementMutation,
+  useGetOutsourcingServicesQuery,
+  useUpdateOutsourcingServiceMutation,
+  useDeleteOutsourcingServiceMutation,
+} from './adApi';
 
 // Export hooks
 export { useLoginMutation, useGetCurrentUserQuery, useChangePasswordMutation } from './authApi';

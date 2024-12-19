@@ -52,6 +52,7 @@ export interface ResidentViaApartment {
   email: string;
   fcmToken?: string;
   status: boolean;
+  role: string;
 }
 
 export interface NewResident {
@@ -60,4 +61,12 @@ export interface NewResident {
   apartmentId?: number | null;
   phonenumber?: string;
   email?: string;
+  role?: string;
+}
+
+export interface NewProvider {
+  fullname: string;
+  username?: string;
+  idcard: string;
+  phonenumber?: string;
 }

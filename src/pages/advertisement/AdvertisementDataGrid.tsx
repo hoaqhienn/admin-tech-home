@@ -1,38 +1,39 @@
 import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import { useFloors } from 'hooks/properties/useFloor';
-import { Floor } from 'interface/Properties';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import { useAds } from 'hooks/advertisement/useAds';
+import { Ad } from 'interface/Ad';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { formatDate } from 'utils/dateUtils';
 
-interface FloorsDataGridProps {
-  onEdit?: (floor: Floor) => void;
-  onDelete?: (floorId: number) => void;
-  onBulkDelete?: (floorIds: number[]) => void;
+interface DataGridProps {
+  onEdit?: (s: Ad) => void;
+  onDelete?: (id: number) => void;
+  onBulkDelete?: (ids: number[]) => void;
 }
 
-const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { floors, isLoading } = useFloors();
+const AdvertisementDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
+  const { ads, isLoading } = useAds();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
   }, []);
 
-  const handleEditFloor = useCallback(
-    (floor: Floor) => {
+  const handleEdit = useCallback(
+    (s: Ad) => {
       if (onEdit) {
-        onEdit(floor);
+        onEdit(s);
         clearSelection();
       }
     },
     [onEdit, clearSelection],
   );
 
-  const handleDeleteFloor = useCallback(
-    (floorId: number) => {
+  const handleDelete = useCallback(
+    (id: number) => {
       if (onDelete) {
-        onDelete(floorId);
+        onDelete(id);
         clearSelection();
       }
     },
@@ -48,8 +49,8 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
 
   const columns: GridColDef[] = [
     {
-      field: 'floorId',
-      headerName: 'Mã tầng',
+      field: 'advertisementId',
+      headerName: 'Mã quảng cáo',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -58,8 +59,8 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
       },
     },
     {
-      field: 'floorNumber',
-      headerName: 'Số tầng',
+      field: 'advertisementName',
+      headerName: 'Tiêu đề',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -68,38 +69,36 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
       },
     },
     {
-      field: 'buildingId',
-      headerName: 'Mã tòa nhà',
+      field: 'advertisementStatus',
+      headerName: 'Trạng thái',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
+        return (
+          <Chip
+            label={params.value === 'ACTIVE' ? 'Hoạt động' : 'Ngưng hoạt động'}
+            color={params.value === 'ACTIVE' ? 'success' : 'error'}
+            size="small"
+          />
+        );
       },
     },
     {
-      field: 'buildingName',
-      headerName: 'Tên tòa nhà',
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
+      // renderCell: (params) => formatDate(params.row.updatedAt),
       renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
-      },
-    },
-    {
-      field: 'totalResidents',
-      headerName: 'Số cư dân',
-      flex: 1,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
       },
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Hành động',
       flex: 1,
       sortable: false,
       headerAlign: 'center',
@@ -119,17 +118,18 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEditFloor(params.row as Floor);
+              handleEdit(params.row as Ad);
             }}
-            sx={{ color: 'warning.main' }}
+            sx={{ color: 'blue' }}
           >
-            <EditIcon fontSize="small" />
+            <Info fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
+            disabled={true}
             onClick={(e) => {
               e.stopPropagation();
-              handleDeleteFloor(params.row.floorId);
+              handleDelete(params.row.advertisementId);
             }}
             sx={{ color: 'error.main' }}
           >
@@ -160,9 +160,9 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
     <Paper sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         loading={isLoading}
-        rows={floors}
+        rows={ads}
         columns={columns}
-        getRowId={(row) => row.floorId}
+        getRowId={(row) => row.advertisementId}
         slots={{
           toolbar: CustomToolbar,
         }}
@@ -190,4 +190,4 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
   );
 };
 
-export default FloorsDataGrid;
+export default AdvertisementDataGrid;

@@ -13,6 +13,7 @@ interface ApiConfig {
     admin: string;
     chat: string;
     socket: string;
+    advertisement: string;
   };
 }
 
@@ -24,6 +25,7 @@ const apiConfigs: Record<string, ApiConfig> = {
       auth: '/admin',
       admin: '/admin',
       chat: '/chat',
+      advertisement: '/advertisement',
       socket: '', 
     },
   },
@@ -33,6 +35,7 @@ const apiConfigs: Record<string, ApiConfig> = {
       auth: '/admin',
       admin: '/admin',
       chat: '/chat',
+      advertisement: '/advertisement',
       socket: '',
     },
   },
@@ -42,6 +45,7 @@ const apiConfigs: Record<string, ApiConfig> = {
       auth: '/admin',
       admin: '/admin',
       chat: '/chat',
+      advertisement: '/advertisement',
       socket: '',
     },
   },

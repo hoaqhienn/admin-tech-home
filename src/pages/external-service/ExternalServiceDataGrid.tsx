@@ -1,38 +1,39 @@
 import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import { useFloors } from 'hooks/properties/useFloor';
-import { Floor } from 'interface/Properties';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import { useExternalServices } from 'hooks/service/useExternalService';
+import { OutsourcingService } from 'interface/Ad';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { formatDate } from 'utils/dateUtils';
 
-interface FloorsDataGridProps {
-  onEdit?: (floor: Floor) => void;
-  onDelete?: (floorId: number) => void;
-  onBulkDelete?: (floorIds: number[]) => void;
+interface DataGridProps {
+  onEdit?: (s: OutsourcingService) => void;
+  onDelete?: (id: number) => void;
+  onBulkDelete?: (ids: number[]) => void;
 }
 
-const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { floors, isLoading } = useFloors();
+const ExternalServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
+  const { eServices, isLoading } = useExternalServices();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
   }, []);
 
-  const handleEditFloor = useCallback(
-    (floor: Floor) => {
+  const handleEdit = useCallback(
+    (s: OutsourcingService) => {
       if (onEdit) {
-        onEdit(floor);
+        onEdit(s);
         clearSelection();
       }
     },
     [onEdit, clearSelection],
   );
 
-  const handleDeleteFloor = useCallback(
-    (floorId: number) => {
+  const handleDelete = useCallback(
+    (id: number) => {
       if (onDelete) {
-        onDelete(floorId);
+        onDelete(id);
         clearSelection();
       }
     },
@@ -48,8 +49,8 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
 
   const columns: GridColDef[] = [
     {
-      field: 'floorId',
-      headerName: 'Mã tầng',
+      field: 'outsourcingServiceId',
+      headerName: 'Mã dịch vụ',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -58,8 +59,8 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
       },
     },
     {
-      field: 'floorNumber',
-      headerName: 'Số tầng',
+      field: 'outsourcingServiceName',
+      headerName: 'Tên dịch vụ',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -68,8 +69,8 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
       },
     },
     {
-      field: 'buildingId',
-      headerName: 'Mã tòa nhà',
+      field: 'outsourcingServiceType',
+      headerName: 'Danh mục',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
@@ -78,28 +79,37 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
       },
     },
     {
-      field: 'buildingName',
-      headerName: 'Tên tòa nhà',
+      field: 'outsourcingServiceStatus',
+      headerName: 'Trạng thái', // ACTIVE | INACTIVE
       flex: 1,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
+        // render chip
+        return (
+          <Chip
+            label={params.value === 'ACTIVE' ? 'Hoạt động' : 'Ngưng hoạt động'}
+            color={params.value === 'ACTIVE' ? 'success' : 'error'}
+            size="small"
+          />
+        );
       },
     },
+
     {
-      field: 'totalResidents',
-      headerName: 'Số cư dân',
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
       },
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Hành động',
       flex: 1,
       sortable: false,
       headerAlign: 'center',
@@ -119,17 +129,17 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleEditFloor(params.row as Floor);
+              handleEdit(params.row as OutsourcingService);
             }}
-            sx={{ color: 'warning.main' }}
+            sx={{ color: 'blue' }}
           >
-            <EditIcon fontSize="small" />
+            <Info fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
-              handleDeleteFloor(params.row.floorId);
+              handleDelete(params.row.outsourcingServiceId);
             }}
             sx={{ color: 'error.main' }}
           >
@@ -160,9 +170,9 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
     <Paper sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         loading={isLoading}
-        rows={floors}
+        rows={eServices}
         columns={columns}
-        getRowId={(row) => row.floorId}
+        getRowId={(row) => row.outsourcingServiceId}
         slots={{
           toolbar: CustomToolbar,
         }}
@@ -190,4 +200,4 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
   );
 };
 
-export default FloorsDataGrid;
+export default ExternalServiceDataGrid;

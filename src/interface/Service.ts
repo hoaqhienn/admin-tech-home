@@ -23,3 +23,4 @@ export interface ServiceBooking {
   createdAt?: string;
   updatedAt?: string;
 }
+

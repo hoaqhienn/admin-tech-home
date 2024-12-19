@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseApi } from 'config/apiConfig';
+import { Ad } from 'interface/Ad';
 import type { Bill, Payment } from 'interface/Bill';
 import { NewService, Service, ServiceBooking } from 'interface/Service';
 import { Complaint, NewEvent, NewNotify } from 'interface/Utils';
@@ -176,6 +177,11 @@ export const serviceApi = createApi({
         url: `/servicebooking/deleteServiceBooking/${id}`,
         method: 'DELETE',
       }),
+    }),
+
+    getAllAd: builder.query<Ad[], void>({
+      query: () => '/advertisement/getAll',
+      transformResponse: (response: { data: Ad[] }) => response.data,
     }),
   }),
 });

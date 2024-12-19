@@ -1,8 +1,8 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useApartments } from 'hooks/properties/useApartment';
 import { Apartment } from 'interface/Properties';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,11 +12,7 @@ interface ApartmentsDataGridProps {
   onBulkDelete?: (ids: number[]) => void;
 }
 
-const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
-  onEdit,
-  onDelete,
-  onBulkDelete,
-}) => {
+const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({ onDelete, onBulkDelete }) => {
   const { apartments, isLoading } = useApartments();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const nav = useNavigate();
@@ -25,15 +21,15 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
     setSelectedRows([]);
   }, []);
 
-  const handleEdit = useCallback(
-    (a: Apartment) => {
-      if (onEdit) {
-        onEdit(a);
-        clearSelection();
-      }
-    },
-    [onEdit, clearSelection],
-  );
+  // const handleEdit = useCallback(
+  //   (a: Apartment) => {
+  //     if (onEdit) {
+  //       onEdit(a);
+  //       clearSelection();
+  //     }
+  //   },
+  //   [onEdit, clearSelection],
+  // );
 
   const handleDelete = useCallback(
     (id: number) => {
@@ -57,11 +53,21 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
       field: 'apartmentId',
       headerName: 'Mã căn hộ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'apartmentNumber',
       headerName: 'Số căn hộ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     // {
     //   field: 'apartmentType',
@@ -91,16 +97,31 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
       field: 'floorNumber',
       headerName: 'Tầng',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'buildingName',
       headerName: 'Tòa nhà',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'totalResidents',
       headerName: 'Số cư dân',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'actions',
@@ -130,7 +151,7 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -139,7 +160,7 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({
             sx={{ color: 'warning.main' }}
           >
             <EditIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

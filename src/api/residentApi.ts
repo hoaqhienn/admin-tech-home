@@ -2,19 +2,30 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseApi } from 'config/apiConfig';
 import { NewResident, Resident, ResidentViaApartment } from 'interface/Residents';
 import { NewVehicle, Vehicle } from 'interface/Vehicle';
+import { adApi } from './adApi';
 
 export const residentApi = createApi({
   ...createBaseApi('admin'),
   reducerPath: 'residentApi',
-  tagTypes: ['Resident', 'Vehicle'],
+  tagTypes: ['Resident', 'Vehicle', 'ServiceProvider'],
   endpoints: (builder) => ({
     getResidents: builder.query<ResidentViaApartment[], void>({
       query: () => ({
         url: '/resident/getAll',
         method: 'GET',
       }),
-      transformResponse: (response: { data: ResidentViaApartment[] }) => response.data,
+      transformResponse: (response: { data: ResidentViaApartment[] }) =>
+        response.data.filter((resident) => resident.role === 'RESIDENT'),
       providesTags: ['Resident'],
+    }),
+    getProvider: builder.query<ResidentViaApartment[], void>({
+      query: () => ({
+        url: '/resident/getAll',
+        method: 'GET',
+      }),
+      transformResponse: (response: { data: ResidentViaApartment[] }) =>
+        response.data.filter((resident) => resident.role === 'SERVICEPROVIDER'),
+      providesTags: ['ServiceProvider'],
     }),
 
     addResident: builder.mutation<void, NewResident>({
@@ -31,7 +42,15 @@ export const residentApi = createApi({
         url: `/resident/${residentId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Resident'],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(adApi.util.invalidateTags(['ServiceProvider']));
+        } catch (error) {
+          console.error('Error deleting resident:', error);
+        }
+      },
+      invalidatesTags: ['Resident', 'ServiceProvider'],
     }),
 
     // delete resident by idcard
@@ -40,7 +59,15 @@ export const residentApi = createApi({
         url: `/resident/idcard/${idcard}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Resident'],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(adApi.util.invalidateTags(['ServiceProvider']));
+        } catch (error) {
+          console.error('Error deleting resident:', error);
+        }
+      },
+      invalidatesTags: ['Resident', 'ServiceProvider'],
     }),
 
     activeResident: builder.mutation<void, { residentId: number }>({
@@ -48,7 +75,15 @@ export const residentApi = createApi({
         url: `/resident/${residentId}`,
         method: 'PUT',
       }),
-      invalidatesTags: ['Resident'],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(adApi.util.invalidateTags(['ServiceProvider']));
+        } catch (error) {
+          console.error('Error deleting resident:', error);
+        }
+      },
+      invalidatesTags: ['Resident', 'ServiceProvider'],
     }),
 
     // update resident
@@ -58,7 +93,15 @@ export const residentApi = createApi({
         method: 'PUT',
         body: resident,
       }),
-      invalidatesTags: ['Resident'],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(adApi.util.invalidateTags(['ServiceProvider']));
+        } catch (error) {
+          console.error('Error updating resident:', error);
+        }
+      },
+      invalidatesTags: ['Resident', 'ServiceProvider'],
     }),
 
     getVehicles: builder.query<Vehicle[], void>({
@@ -99,6 +142,8 @@ export const residentApi = createApi({
 
 // Export hooks for usage in components
 export const {
+  useGetProviderQuery,
+
   useGetResidentsQuery,
   useAddResidentMutation,
   useDeleteResidentMutation,

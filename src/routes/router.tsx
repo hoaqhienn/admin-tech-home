@@ -39,8 +39,10 @@ const FacilityPage = lazyLoad(() => import('pages/properties/Facility/FacilityPa
 const NotifyPage = lazyLoad(() => import('pages/notification/NotifyPage'));
 const ApartmentDetailPage = lazyLoad(() => import('pages/properties/Apartments/ApartmentDetail'));
 const AddMultiResidentPage = lazyLoad(() => import('pages/residents/AddResidentPage'));
-
 const ChatPage = lazyLoad(() => import('pages/chat/ChatPage'));
+const AdvertisementPage = lazyLoad(() => import('pages/advertisement/AdvertisementPage'));
+const ExternalServicePage = lazyLoad(() => import('pages/external-service/ExternalServicePage'));
+const ServiceProviderPage = lazyLoad(() => import('pages/service-provider/ServiceProviderPage'));
 const NotFound = () => {
   const nav = useNavigate();
   return (
@@ -190,6 +192,18 @@ const router = createBrowserRouter(
               path: paths.addResident,
               element: <AddMultiResidentPage />,
             },
+            {
+              path: paths.advertisements,
+              element: <AdvertisementPage />,
+            },
+            {
+              path: paths.externalServices,
+              element: <ExternalServicePage />,
+            },
+            {
+              path: paths.serviceProviders,
+              element: <ServiceProviderPage />,
+            }
           ],
         },
         {

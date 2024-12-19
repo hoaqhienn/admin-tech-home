@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useFacilities } from 'hooks/properties/useFacility';
 import { Facility } from 'interface/Properties';
@@ -74,21 +74,41 @@ const FacilityDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDel
       field: 'facilityId',
       headerName: 'ID',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'facilityName',
       headerName: 'Tên cơ sở vật chất',
-      flex: 2,
+      flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'facilityDescription',
       headerName: 'Mô tả',
       flex: 2,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'facilityLocation',
       headerName: 'Địa điểm',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
 
     {

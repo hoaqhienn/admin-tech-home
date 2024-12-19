@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useVehicles } from 'hooks/resident/useVehicle';
 import { Vehicle } from 'interface/Vehicle';
@@ -51,11 +51,21 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
       field: 'vehicleId',
       headerName: 'Mã phương tiện',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'vehicleNumber',
       headerName: 'Biển số',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'vehicleType',

@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useActiveResidentMutation } from 'api/residentApi';
 import { useResidents } from 'hooks/resident/useResident';
@@ -82,26 +82,61 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
       field: 'residentId',
       headerName: 'ID',
       flex: 0.5,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
+    },
+    {
+      field: 'role',
+      headerName: 'ROLE',
+      flex: 0.5,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'idcard',
       headerName: 'Mã định danh',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'fullname',
       headerName: 'Họ và tên',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'phonenumber',
       headerName: 'Số điện thoại',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'email',
       headerName: 'Email',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'status',

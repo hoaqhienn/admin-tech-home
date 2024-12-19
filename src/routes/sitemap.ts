@@ -85,6 +85,36 @@ const sitemap: MenuItem[] = [
       },
     ],
   },
+
+  {
+    id: 'adsAndServices',
+    subheader: 'Quảng cáo và dịch vụ',
+    icon: 'ic:round-gradient',
+    path: '/',
+    active: true,
+    items: [
+      {
+        name: 'Quảng Cáo',
+        pathName: 'advertisement',
+        path: paths.advertisements,
+      },
+      {
+        name: 'Dịch vụ chung cư',
+        pathName: 'services',
+        path: paths.services,
+      },
+      {
+        name: 'Dịch vụ bên ngoài',
+        pathName: 'external-services',
+        path: paths.externalServices,
+      },
+      {
+        name: 'Nhà cung cấp dịch vụ',
+        pathName: 'service-provider',
+        path: paths.serviceProviders,
+      },
+    ],
+  },
   {
     id: 'more',
     subheader: 'Khác',
@@ -101,11 +131,6 @@ const sitemap: MenuItem[] = [
         name: 'Sự kiện',
         pathName: 'events',
         path: paths.events,
-      },
-      {
-        name: 'Dịch vụ',
-        pathName: 'services',
-        path: paths.services,
       },
       {
         name: 'Cài đặt',

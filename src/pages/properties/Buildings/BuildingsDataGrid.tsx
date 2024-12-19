@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useBuildings } from 'hooks/properties/useBuilding';
 import { Building } from 'interface/Properties';
@@ -55,26 +55,51 @@ const BuildingsDataGrid: React.FC<BuildingsDataGridProps> = ({
       field: 'buildingId',
       headerName: 'Mã tòa nhà',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'buildingName',
       headerName: 'Tòa nhà',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'totalFloors',
       headerName: 'Số tầng',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'totalApartments',
       headerName: 'Số căn hộ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'totalResidents',
       headerName: 'Số cư dân',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'actions',
