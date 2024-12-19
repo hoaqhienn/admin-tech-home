@@ -11,7 +11,7 @@ import {
 import { useAddProviderMutation } from 'api/adApi';
 import { NewProvider } from 'interface/Residents';
 import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ValidationError {
   field: string;
@@ -29,7 +29,7 @@ const AddServiceProvider: React.FC<Props> = ({ setSnackbar }) => {
   const [residentInput, setResidentInput] = useState<NewProvider>({
     fullname: '',
     // set username with get date now
-    username: new Date().toUTCString(),
+    username: '',
     idcard: '',
     phonenumber: '',
   });
@@ -46,12 +46,23 @@ const AddServiceProvider: React.FC<Props> = ({ setSnackbar }) => {
   const handleReset = () => {
     setResidentInput({
       fullname: '',
-      username: 'lehoanghien',
+      username: '',
       idcard: '',
       phonenumber: '',
     });
     setErrors([]);
   };
+
+  useEffect(() => {
+    // Update username based on idcard
+    if (residentInput.idcard.length === 12) {
+      const username = `user${residentInput.idcard.substring(0, 5)}`;
+      setResidentInput((prev) => ({
+        ...prev,
+        username,
+      }));
+    }
+  }, [residentInput.idcard]);
 
   const handleAdd = async () => {
     if (validateInput()) {

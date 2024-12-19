@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { usePayments } from 'hooks/payment/usePayment';
 import { Payment } from 'interface/Bill';
-import { DeleteIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -12,7 +12,7 @@ interface DataGridProps {
 }
 
 const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onBulkDelete }) => {
-  const { payments, isLoading } = usePayments();
+  const { payments, isLoading, refetch } = usePayments();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -196,6 +196,11 @@ const PaymentDataGrid: React.FC<DataGridProps> = ({ onEdit, onBulkDelete }) => {
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

@@ -108,6 +108,7 @@ const EventDialog: React.FC<EventDialogProps> = ({ open, onClose, onSubmit, even
                     label="Ngày tổ chức"
                     value={field.value ? dayjs(field.value) : null}
                     onChange={(newValue) => field.onChange(newValue)}
+                    minDate={dayjs().add(1, 'day')} // Disable dates before tomorrow
                     slotProps={{
                       textField: {
                         fullWidth: true,
