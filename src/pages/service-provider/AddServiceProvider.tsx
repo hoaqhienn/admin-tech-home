@@ -46,7 +46,7 @@ const AddServiceProvider: React.FC<Props> = ({ setSnackbar }) => {
   const handleReset = () => {
     setResidentInput({
       fullname: '',
-      username: new Date().toISOString().slice(0, 10),
+      username: 'lehoanghien',
       idcard: '',
       phonenumber: '',
     });

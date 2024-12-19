@@ -20,7 +20,7 @@ interface ApiConfig {
 // API configurations for different environments
 const apiConfigs: Record<string, ApiConfig> = {
   development: {
-    baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+    baseUrl: import.meta.env.VITE_API_URL || 'https://api.techhomeapt.site/api',
     endpoints: {
       auth: '/admin',
       admin: '/admin',
@@ -122,7 +122,7 @@ export const getSocketConfig = () => {
   return {
     url: config.baseUrl,
     options: {
-      withCredentials: false,
+      withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

@@ -130,7 +130,7 @@ export const serviceApi = createApi({
 
     getEvents: builder.query<Event[], void>({
       query: () => '/event/getAll',
-      // transformResponse: (response: { data: Event[] }) => response.data,
+      // sort events by eventDate in descending order
       providesTags: ['Event'],
     }),
 
