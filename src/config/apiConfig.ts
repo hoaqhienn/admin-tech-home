@@ -30,7 +30,7 @@ const apiConfigs: Record<string, ApiConfig> = {
     },
   },
   production: {
-    baseUrl: import.meta.env.VITE_API_URL || 'https://api.example.com',
+    baseUrl: import.meta.env.VITE_API_URL || 'https://api.techhomeapt.site/api',
     endpoints: {
       auth: '/admin',
       admin: '/admin',
@@ -40,7 +40,7 @@ const apiConfigs: Record<string, ApiConfig> = {
     },
   },
   staging: {
-    baseUrl: import.meta.env.VITE_API_URL || 'https://staging-api.example.com',
+    baseUrl: import.meta.env.VITE_API_URL || 'https://api.techhomeapt.site/api',
     endpoints: {
       auth: '/admin',
       admin: '/admin',

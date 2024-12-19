@@ -89,16 +89,6 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
       },
     },
     {
-      field: 'role',
-      headerName: 'ROLE',
-      flex: 0.5,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
-      },
-    },
-    {
       field: 'idcard',
       headerName: 'Mã định danh',
       flex: 1,

@@ -8,6 +8,7 @@ import { useCallback, useState } from 'react';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import { Apartment } from 'interface/Properties';
 import { useDeleteApartmentMutation } from 'api/propertyApi';
+import ApartmentPieChart from './ApartmentPieChart';
 
 const Apartments = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -133,6 +134,9 @@ const Apartments = () => {
               setOpenBulkDeleteDialog(true);
             }}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <ApartmentPieChart />
         </Grid>
       </Grid>
     </>

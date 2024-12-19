@@ -1,34 +1,41 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useComplaints } from 'hooks/service/useComplaint';
 import { Complaint } from 'interface/Utils';
-import { DeleteIcon, Info } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { DeleteIcon, Info, RefreshCcw } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
 import ComplaintStatusDialog from './ComplaintStatusDialog';
+import { formatDate } from 'utils/dateUtils';
 
 interface DataGridProps {
   onEdit?: (s: Complaint) => void;
   onDelete?: (id: number) => void;
   onBulkDelete?: (ids: number[]) => void;
-  onStatusUpdate?: (id: number, status: string) => void;
+  onStatusUpdate?: (id: number, status: string) => Promise<void>;
 }
 
-const ComplaintDataGrid: React.FC<DataGridProps> = ({
-  // onEdit,
-  onDelete,
-  onBulkDelete,
-  onStatusUpdate,
-}) => {
-  const { complaints, isLoading } = useComplaints();
+const ComplaintDataGrid: React.FC<DataGridProps> = ({ onDelete, onBulkDelete, onStatusUpdate }) => {
+  const { complaints, isLoading, refetch: refetchComplaints } = useComplaints();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
-  // console.log('complaints', complaints);
+  useEffect(() => {
+    // Load trạng thái hiện tại của khiếu nại khi dialog mở
+    if (statusDialogOpen && selectedComplaint) {
+      setSelectedComplaint(selectedComplaint);
+    }
+  }, [statusDialogOpen, selectedComplaint]);
 
-  const handleStatusUpdate = (status: string) => {
+  const handleStatusUpdate = async (status: string) => {
     if (selectedComplaint && onStatusUpdate) {
-      onStatusUpdate(selectedComplaint.complaintId, status);
+      try {
+        await onStatusUpdate(selectedComplaint.complaintId, status);
+        setUpdateError(null); // Clear any previous error
+      } catch (error) {
+        setUpdateError('Failed to update the status. Please try again later.');
+      }
     }
     setStatusDialogOpen(false);
     setSelectedComplaint(null);
@@ -37,16 +44,6 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
   }, []);
-
-  // const handleEdit = useCallback(
-  //   (s: Complaint) => {
-  //     if (onEdit) {
-  //       onEdit(s);
-  //       clearSelection();
-  //     }
-  //   },
-  //   [onEdit, clearSelection],
-  // );
 
   const handleDelete = useCallback(
     (id: number) => {
@@ -65,50 +62,58 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
     }
   }, [onBulkDelete, selectedRows, clearSelection]);
 
-  const formatDate = (dateValue: any): string => {
-    if (!dateValue) return '';
-
-    try {
-      // If it's already a Date object or if it's a string, try to create a Date object
-      const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
-
-      if (isNaN(date.getTime())) {
-        return 'Invalid Date';
-      }
-
-      // Format as DD/MM/YYYY
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-
-      return `${day}/${month}/${year}`;
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return 'Invalid Date';
-    }
+  const getNonEmptyValue = (value: any, defaultValue: string = 'N/A') => {
+    return value || defaultValue;
   };
 
   const columns: GridColDef[] = [
     {
       field: 'complaintId',
       headerName: 'ID',
-      flex: 1,
+      flex: .5,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'complaintTitle',
       headerName: 'Tiêu đề',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'complaintDescription',
       headerName: 'Mô tả',
-      flex: 1.5,
+      flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'complaintDate',
       headerName: 'Ngày tạo',
       flex: 1,
-      renderCell: (params) => formatDate(params.row.complaintDate),
+      renderCell: (params) => {
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
+      },
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
+      flex: 1,
+      renderCell: (params) => {
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
+      },
     },
     {
       field: 'complaintStatus',
@@ -120,12 +125,12 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
         let backgroundColor;
         switch (status) {
           case 'Resolved':
-            color = '#1B5E20'; // Dark green text
-            backgroundColor = '#E8F5E9'; // Light green background
+            color = '#1B5E20';
+            backgroundColor = '#E8F5E9';
             break;
           case 'Rejected':
-            color = '#B71C1C'; // Dark red text
-            backgroundColor = '#FFEBEE'; // Light red background
+            color = '#B71C1C';
+            backgroundColor = '#FFEBEE';
             break;
           case 'Pending':
             color = 'orange';
@@ -153,21 +158,41 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
       field: 'buildingId',
       headerName: 'Mã tòa nhà',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={getNonEmptyValue(params.value)} color="primary" size="small" />;
+      },
     },
     {
       field: 'floorId',
       headerName: 'Mã tầng',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={getNonEmptyValue(params.value)} color="primary" size="small" />;
+      },
     },
     {
       field: 'apartmentId',
       headerName: 'Mã căn hộ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={getNonEmptyValue(params.value)} color="primary" size="small" />;
+      },
     },
     {
       field: 'residentId',
       headerName: 'Mã cư dân',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={getNonEmptyValue(params.value)} color="primary" size="small" />;
+      },
     },
     {
       field: 'actions',
@@ -217,6 +242,11 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetchComplaints()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 
@@ -255,7 +285,22 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({
         onClose={() => setStatusDialogOpen(false)}
         onStatusUpdate={handleStatusUpdate}
         currentStatus={selectedComplaint?.complaintStatus || ''}
+        complaint={
+          selectedComplaint
+            ? {
+                title: selectedComplaint.complaintTitle,
+                description: selectedComplaint.complaintDescription,
+                date: formatDate(selectedComplaint.complaintDate),
+                status: selectedComplaint.complaintStatus,
+              }
+            : { title: '', description: '', date: '', status: '' }
+        } // Ensure default values
       />
+      {updateError && (
+        <Paper sx={{ p: 2, mt: 2, backgroundColor: 'error.light', color: 'error.contrastText' }}>
+          {updateError}
+        </Paper>
+      )}
     </Paper>
   );
 };

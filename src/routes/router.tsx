@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import paths, { rootPaths } from './paths';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Outlet, createBrowserRouter, useNavigate } from 'react-router-dom';
 import MainLayout from 'layouts/main-layout/index';
 import Splash from 'components/loader/Splash';
@@ -9,6 +9,7 @@ import AuthLayout from 'layouts/auth-layout';
 import { Button, Typography } from '@mui/material';
 import { SocketProvider } from 'components/provider/SocketProvider';
 import { NotificationProvider } from 'components/provider/NotificationProvider';
+import { useGetCurrentUserQuery } from 'api';
 // import { useAuth } from 'hooks/auth/useAuth';
 
 // Lazy load components with error boundaries
@@ -60,28 +61,18 @@ const NotFound = () => {
 };
 
 const ProtectedLayout = () => {
-  // const navigate = useNavigate();
-  // const { isLoading, isAuthenticated } = useAuth();
-  // const location = useLocation();
+  const navigate = useNavigate();
+  const { data, error, isLoading } = useGetCurrentUserQuery();
 
-  // useEffect(() => {
-  //   if (!isLoading && !isAuthenticated) {
-  //     navigate(paths.signin, {
-  //       replace: true,
-  //       state: { from: location.pathname },
-  //     });
-  //   }
-  // }, [isAuthenticated, isLoading, navigate, location]);
+  useEffect(() => {
+    if (!isLoading && (!data || error)) {
+      navigate('/auth/signin'); // Đường dẫn đến trang đăng nhập
+    }
+  }, [data, error, isLoading, navigate]);
 
-  // // Show loading chỉ khi đang kiểm tra auth
-  // if (isLoading) {
-  //   return <PageLoader />;
-  // }
-
-  // // Không render protected content khi chưa auth
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <NotificationProvider>
@@ -203,7 +194,7 @@ const router = createBrowserRouter(
             {
               path: paths.serviceProviders,
               element: <ServiceProviderPage />,
-            }
+            },
           ],
         },
         {

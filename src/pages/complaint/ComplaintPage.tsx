@@ -91,7 +91,7 @@ const ComplaintPage = () => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h3">Danh sách khiếu nại</Typography>
+          <Typography variant="h1">Danh sách khiếu nại</Typography>
         </Grid>
         <Grid item xs={12}>
           <ComplaintDataGrid onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />

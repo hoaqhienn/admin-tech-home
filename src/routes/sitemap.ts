@@ -50,7 +50,7 @@ const sitemap: MenuItem[] = [
         path: paths.apartments,
       },
       {
-        name: 'Tiện ích',
+        name: 'Cơ sở vật chất',
         pathName: 'facilities',
         path: paths.facilities,
       },

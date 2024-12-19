@@ -245,19 +245,19 @@ const Services = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="h1">Danh sách đặt dịch vụ</Typography>
+          <Typography variant="h1">Lịch sử đặt dịch vụ</Typography>
         </Grid>
         <Grid item xs={12}>
           <ServiceBookingDataGrid />
         </Grid>
 
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>{isEditing ? 'Update Service' : 'Add New Service'}</DialogTitle>
+          <DialogTitle>{isEditing ? 'Thông tin dịch vụ' : 'Thêm dịch vụ'}</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              label="Service Name"
+              label="Tên dịch vụ"
               name="serviceName"
               fullWidth
               variant="outlined"
@@ -266,7 +266,7 @@ const Services = () => {
             />
             <TextField
               margin="dense"
-              label="Service Price"
+              label="Giá dịch vụ"
               name="servicePrice"
               fullWidth
               variant="outlined"
@@ -275,7 +275,7 @@ const Services = () => {
             />
             <TextField
               margin="dense"
-              label="Building ID"
+              label="Tòa nhà"
               name="buildingId"
               fullWidth
               variant="outlined"
@@ -285,10 +285,10 @@ const Services = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="secondary">
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSubmit} color="primary">
-              {isEditing ? 'Update' : 'Add'}
+              {isEditing ? 'Cập nhật' : 'Thêm'}
             </Button>
           </DialogActions>
         </Dialog>

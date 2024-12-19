@@ -151,7 +151,7 @@ const AddFloor: React.FC<Props> = ({ setSnackbar }) => {
               variant="outlined"
             >
               <MenuItem value={0}>
-                <em>Chọn tầng</em>
+                <em>Chọn tòa nhà</em>
               </MenuItem>
               {buildings?.map((a) => (
                 <MenuItem key={a.buildingId} value={a.buildingId}>

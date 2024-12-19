@@ -1,4 +1,4 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useDeleteServiceBookingMutation, useGetServiceBookingsQuery } from 'api/serviceApi';
 import { ServiceBooking } from 'interface/Service';
@@ -63,21 +63,41 @@ const ServiceBookingDataGrid: React.FC<DataGridProps> = () => {
       field: 'serviceBookingId',
       headerName: 'Mã đặt dịch vụ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'serviceId',
       headerName: 'Mã dịch vụ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'residentId',
       headerName: 'Mã cư dân',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'bookingStatus',
       headerName: 'Trạng thái',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'bookingDate',

@@ -11,6 +11,7 @@ import ScrollToTop from 'components/fab/ScrollToTop';
 import { SpeedDialActionType, SpeedDialCustom } from 'components/fab/SpeedDial';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ResidentsPieChart from './ResidentsPieChart';
 
 interface SnackbarState {
   open: boolean;
@@ -136,7 +137,7 @@ const ResidentPage = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h4">Danh sách cư dân</Typography>
+          <Typography variant="h1">Danh sách cư dân</Typography>
         </Grid>
 
         <Grid item xs={12}>
@@ -149,7 +150,9 @@ const ResidentPage = () => {
             }}
           />
         </Grid>
-
+        <Grid item xs={12} md={12}>
+          <ResidentsPieChart/>
+        </Grid>
         <Grid item xs={12}>
           {currentResident && isEditMode ? (
             <EditResident

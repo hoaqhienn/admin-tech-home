@@ -119,7 +119,7 @@ const AddFacility: React.FC<Props> = ({ setSnackbar }) => {
 
   return (
     <Paper>
-      <Accordion defaultExpanded>
+      <Accordion>
         <AccordionSummary
           expandIcon={<ChevronDown />}
           aria-controls="panel3-content"

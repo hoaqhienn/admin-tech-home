@@ -2,8 +2,9 @@ import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useServices } from 'hooks/service/useService';
 import { Service } from 'interface/Service';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { formatDate } from 'utils/dateUtils';
 
 interface DataGridProps {
   onEdit?: (s: Service) => void;
@@ -51,17 +52,42 @@ const ServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
       field: 'serviceId',
       headerName: 'Mã dịch vụ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'serviceName',
       headerName: 'Tên dịch vụ',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'servicePrice',
-      headerName: 'Giá',
+      headerName: 'Giá (nghìn đồng)',
       flex: 1,
-      renderCell: (params) => <Chip label={params.value + ',000.00 vnđ'} />,
+      headerAlign: 'center',
+      align: 'right',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
+      },
     },
     {
       field: 'actions',
@@ -91,7 +117,7 @@ const ServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -100,7 +126,7 @@ const ServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
             sx={{ color: 'warning.main' }}
           >
             <EditIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

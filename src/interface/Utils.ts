@@ -12,12 +12,14 @@ export interface Complaint {
   floorNumber: number;
   apartmentNumber: number;
   residentName: string;
+  updatedAt: string;
 }
 
 export interface Notify {
   notificationId: number;
   notificationTitle: string;
   notificationBody: string;
+  updatedAt: string;
 }
 
 export interface NotifyResponse {

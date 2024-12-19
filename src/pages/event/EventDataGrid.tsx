@@ -1,9 +1,10 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useEvents } from 'hooks/service/useEvent';
-import { DeleteIcon, EditIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { NewEvent } from 'interface/Utils'; // Import NewEvent type
+import { formatDate } from 'utils/dateUtils';
 
 interface DataGridProps {
   onEdit?: (event: NewEvent) => void; // Changed from Event to NewEvent
@@ -47,58 +48,80 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
     }
   }, [onBulkDelete, selectedRows, clearSelection]);
 
-  const formatDate = (dateValue: any): string => {
-    if (!dateValue) return '';
-
-    try {
-      const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
-
-      if (isNaN(date.getTime())) {
-        return 'Invalid Date';
-      }
-
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-
-      return `${day}/${month}/${year}`;
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return 'Invalid Date';
-    }
-  };
-
   const columns: GridColDef[] = [
     {
       field: 'eventId',
       headerName: 'Mã sự kiện',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'eventName',
       headerName: 'Tên sự kiện',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'eventDescription',
       headerName: 'Mô tả',
       flex: 1.5,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'eventLocation',
       headerName: 'Địa điểm',
       flex: 1,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'eventDate',
       headerName: 'Ngày tổ chức',
       flex: 1,
-      renderCell: (params) => formatDate(params.row.eventDate),
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        const eventDate = new Date(params.row.eventDate);
+        const currentDate = new Date();
+        const isFutureEvent = eventDate > currentDate;
+
+        return (
+          <Chip
+            label={formatDate(params.row.eventDate)}
+            color={isFutureEvent ? 'success' : 'default'}
+            sx={{
+              backgroundColor: isFutureEvent ? 'green' : 'gray',
+              color: 'white',
+            }}
+            size="small"
+          />
+        );
+      },
     },
     {
       field: 'buildingId',
       headerName: 'Tòa nhà',
       flex: 0.5,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="medium" />;
+      },
     },
     {
       field: 'actions',
@@ -128,7 +151,7 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -137,7 +160,7 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
             sx={{ color: 'warning.main' }}
           >
             <EditIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

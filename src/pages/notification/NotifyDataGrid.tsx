@@ -1,9 +1,10 @@
-import { Button, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useNotifications } from 'hooks/service/useNotify';
 import { Notify } from 'interface/Utils';
-import { DeleteIcon, EditIcon, Info, Send } from 'lucide-react';
+import { DeleteIcon, Info, Send } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { formatDate } from 'utils/dateUtils';
 
 interface DataGridProps {
   onEdit?: (notify: Notify) => void;
@@ -68,16 +69,42 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
       field: 'notificationId',
       headerName: 'ID',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'notificationTitle',
       headerName: 'Tiêu đề',
       flex: 1.5,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'notificationBody',
       headerName: 'Mô tả',
       flex: 2,
+      headerAlign: 'center',
+      align: 'left',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
+      },
     },
     {
       field: 'actions',
@@ -117,7 +144,7 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
           >
             <Info fontSize="small" />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
@@ -126,7 +153,7 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
             sx={{ color: 'warning.main' }}
           >
             <EditIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={(e) => {

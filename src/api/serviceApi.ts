@@ -32,7 +32,12 @@ export const serviceApi = createApi({
 
     getComplaints: builder.query<Complaint[], void>({
       query: () => '/complaints/getAll',
-      transformResponse: (response: { data: Complaint[] }) => response.data,
+      transformResponse: (response: { data: Complaint[] }) => {
+        return response.data.sort((a, b) => {
+          // Sort by updatedAt in descending order (most recent first)
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        });
+      },
       providesTags: ['Complaint'],
     }),
 

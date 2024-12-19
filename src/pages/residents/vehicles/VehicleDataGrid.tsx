@@ -4,6 +4,7 @@ import { useVehicles } from 'hooks/resident/useVehicle';
 import { Vehicle } from 'interface/Vehicle';
 import { DeleteIcon, EditIcon } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { formatDate } from 'utils/dateUtils';
 
 interface DataGridProps {
   onEdit?: (v: Vehicle) => void;
@@ -64,18 +65,39 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => {
-        return <Chip label={params.value} color="primary" size="medium" />;
+        return <Chip label={params.value} color="primary" size="small" />;
       },
     },
     {
       field: 'vehicleType',
       headerName: 'Loại',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
     },
     {
       field: 'residentId',
       headerName: 'Mã cư dân',
       flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        return <Chip label={params.value} color="primary" size="small" />;
+      },
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Cập nhật lần cuối',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => {
+        const date = formatDate(params.value);
+        return <Chip label={date} color="primary" size="medium" />;
+      },
     },
     // {
     //   field: 'Resident.fullname',

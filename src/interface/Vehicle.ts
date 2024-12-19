@@ -19,6 +19,7 @@ export interface Vehicle {
   vehicleType: string;
   residentId: number;
   Resident: ResidentProps;
+  updatedAt?: string;
 }
 
 export interface NewVehicle {
