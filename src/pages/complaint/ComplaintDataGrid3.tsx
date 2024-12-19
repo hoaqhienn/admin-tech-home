@@ -14,7 +14,7 @@ interface DataGridProps {
   onStatusUpdate?: (id: number, status: string) => Promise<void>;
 }
 
-const ComplaintDataGrid: React.FC<DataGridProps> = ({ onDelete, onBulkDelete, onStatusUpdate }) => {
+const ComplaintDataGrid3: React.FC<DataGridProps> = ({ onDelete, onBulkDelete, onStatusUpdate }) => {
   const { complaints, isLoading, refetch: refetchComplaints } = useComplaints();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -254,7 +254,7 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onDelete, onBulkDelete, on
     <Paper sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         loading={isLoading}
-        rows={complaints.filter((complaint) => complaint.complaintStatus === 'Pending')}
+        rows={complaints.filter(complaint => complaint.complaintStatus === 'Resolved')}
         columns={columns}
         getRowId={(row) => row.complaintId}
         slots={{
@@ -305,4 +305,4 @@ const ComplaintDataGrid: React.FC<DataGridProps> = ({ onDelete, onBulkDelete, on
   );
 };
 
-export default ComplaintDataGrid;
+export default ComplaintDataGrid3;

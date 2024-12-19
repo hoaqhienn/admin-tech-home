@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useFloors } from 'hooks/properties/useFloor';
 import { Floor } from 'interface/Properties';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import { DeleteIcon, EditIcon, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface FloorsDataGridProps {
@@ -12,7 +12,7 @@ interface FloorsDataGridProps {
 }
 
 const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { floors, isLoading } = useFloors();
+  const { floors, isLoading, refetch } = useFloors();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -153,6 +153,11 @@ const FloorsDataGrid: React.FC<FloorsDataGridProps> = ({ onEdit, onDelete, onBul
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

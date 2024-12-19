@@ -116,7 +116,7 @@ const ResidentSelector: React.FC<ResidentSelectorProps> = ({
         </MenuItem>
         {filteredResidents.map((resident) => (
           <MenuItem key={resident.residentId} value={resident.residentId}>
-            {resident.fullname} ({resident.idcard})
+            ({resident.idcard}) {resident.fullname}
           </MenuItem>
         ))}
         {filteredResidents.length === 0 && <MenuItem disabled>Không tìm thấy cư dân</MenuItem>}

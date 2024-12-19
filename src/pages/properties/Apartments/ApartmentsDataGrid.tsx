@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useApartments } from 'hooks/properties/useApartment';
 import { Apartment } from 'interface/Properties';
-import { DeleteIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ interface ApartmentsDataGridProps {
 }
 
 const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({ onDelete, onBulkDelete }) => {
-  const { apartments, isLoading } = useApartments();
+  const { apartments, isLoading, refetch } = useApartments();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const nav = useNavigate();
 
@@ -189,6 +189,11 @@ const ApartmentsDataGrid: React.FC<ApartmentsDataGridProps> = ({ onDelete, onBul
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

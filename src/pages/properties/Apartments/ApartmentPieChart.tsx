@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import { Paper } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { useGetApartmentsQuery } from 'api'; // Giả sử API này trả danh sách căn hộ.
 
 const ApartmentPieChart: React.FC = () => {
@@ -26,6 +26,9 @@ const ApartmentPieChart: React.FC = () => {
         padding: 2,
       }}
     >
+      <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+        Biểu đồ trạng thái sử dụng căn hộ
+      </Typography>
       <PieChart width={900} height={400}>
         <Pie
           data={data}

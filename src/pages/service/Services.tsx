@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react';
 
 import { Service } from 'interface/Service';
 import ServiceDataGrid from './ServiceDataGrid';
-import { Alert, Snackbar, Typography } from '@mui/material';
+import { Alert, Snackbar, Stack, Typography } from '@mui/material';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
 import {
   useAddServiceMutation,
@@ -209,7 +209,7 @@ const Services = () => {
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleDelete}
-        title={`Xóa cơ sở tiện ích - ID: ${current?.serviceId}`}
+        title={`Xóa cơ dịch vụ - ID: ${current?.serviceId}`}
         message="Bạn có chắc chắn muốn xóa không?"
       />
 
@@ -219,18 +219,24 @@ const Services = () => {
         open={openBulkDeleteDialog}
         onClose={handleCloseBulkDeleteDialog}
         onConfirm={handleBulkDelete}
-        title="Xóa nhiều cơ sở tiện ích"
-        message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} cơ sở tiện ích được chọn?`}
+        title="Xóa nhiều dịch vụ"
+        message={`Bạn có chắc chắn muốn xóa ${selectedIds.length} dịch vụ được chọn?`}
       />
       <Grid container spacing={2.5}>
-        <Grid item xs={10}>
-          <Typography variant="h1">Danh sách dịch vụ</Typography>
+        <Grid item xs={12}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h1">Danh sách dịch vụ</Typography>
+            <Button
+              type="submit"
+              variant="contained"
+              size="medium"
+              onClick={() => handleClickOpen()}
+            >
+              Thêm dịch vụ
+            </Button>
+          </Stack>
         </Grid>
-        <Grid item xs={2}>
-          <Button type="submit" variant="contained" size="medium" onClick={() => handleClickOpen()}>
-            Thêm dịch vụ
-          </Button>
-        </Grid>
+
         <Grid item xs={12}>
           <ServiceDataGrid
             onEdit={handleEdit}

@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Card, Typography } from '@mui/material';
 import { useFloors } from 'hooks/properties/useFloor';
 import { memo, useMemo } from 'react';
 import {
@@ -45,7 +45,7 @@ const FloorResidentsChart = memo(() => {
           buildingName: floor.buildingName,
         };
       }
-      acc[floor.buildingId][`Floor ${floor.floorNumber}`] = floor.totalResidents;
+      acc[floor.buildingId][`Tầng ${floor.floorNumber}`] = floor.totalResidents;
       return acc;
     }, {});
 
@@ -88,6 +88,9 @@ const FloorResidentsChart = memo(() => {
 
   return (
     <Card className="w-full h-[600px] p-4">
+      <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+        Biểu đồ số lượng cư dân theo tầng
+      </Typography>
       <div className="w-full h-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
@@ -125,7 +128,7 @@ const FloorResidentsChart = memo(() => {
             {floorNumbers.map((floorNum, index) => (
               <Bar
                 key={floorNum}
-                dataKey={`Floor ${floorNum}`}
+                dataKey={`Tầng ${floorNum}`}
                 stackId="residents"
                 fill={CHART_COLORS[index % CHART_COLORS.length]}
                 radius={index === floorNumbers.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}

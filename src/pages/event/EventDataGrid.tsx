@@ -1,7 +1,7 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useEvents } from 'hooks/service/useEvent';
-import { DeleteIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { NewEvent } from 'interface/Utils'; // Import NewEvent type
 import { formatDate } from 'utils/dateUtils';
@@ -13,7 +13,7 @@ interface DataGridProps {
 }
 
 const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { events, isLoading } = useEvents();
+  const { events, isLoading, refetch } = useEvents();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -189,6 +189,11 @@ const EventDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw />
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

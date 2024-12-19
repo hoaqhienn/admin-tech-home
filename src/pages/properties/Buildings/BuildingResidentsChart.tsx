@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useBuildings } from 'hooks/properties/useBuilding';
-import { CardContent, Paper, Skeleton, Stack } from '@mui/material';
+import { CardContent, Paper, Skeleton, Stack, Typography } from '@mui/material';
 
 const CHART_CONFIG = {
   margin: { top: 20, right: 30, left: 20, bottom: 60 },
@@ -35,7 +35,7 @@ const ChartSkeleton = () => (
       <Skeleton variant="text" width={100} height={20} />
       <Skeleton variant="text" width={80} height={20} />
     </Stack>
-    
+
     {/* Chart bars skeleton */}
     <Stack direction="row" spacing={2} alignItems="flex-end" sx={{ height: 300, px: 2 }}>
       {[...Array(6)].map((_, index) => (
@@ -48,7 +48,7 @@ const ChartSkeleton = () => (
         />
       ))}
     </Stack>
-    
+
     {/* X-axis labels skeleton */}
     <Stack direction="row" spacing={2} sx={{ px: 2, pb: 2 }}>
       {[...Array(6)].map((_, index) => (
@@ -81,20 +81,16 @@ const BuildingResidentsChart = memo(() => {
   return (
     <Paper elevation={2} sx={{ height: '100%', width: '100%', p: 2 }}>
       <CardContent>
+        <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+          Biểu đồ số lượng cư dân theo tòa nhà
+        </Typography>
         <div style={{ height: CHART_CONFIG.height, width: '100%' }}>
           <ResponsiveContainer>
             <BarChart data={chartData} margin={CHART_CONFIG.margin}>
               <CartesianGrid strokeDasharray={CHART_CONFIG.gridDash} />
-              <XAxis 
-                dataKey="buildingName"
-                {...AXIS_CONFIG.xAxis}
-              />
-              <YAxis
-                label={AXIS_CONFIG.yAxis.label}
-              />
-              <Tooltip 
-                cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
-              />
+              <XAxis dataKey="buildingName" {...AXIS_CONFIG.xAxis} />
+              <YAxis label={AXIS_CONFIG.yAxis.label} />
+              <Tooltip cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }} />
               <Bar
                 dataKey="totalResidents"
                 fill={CHART_CONFIG.barColor}

@@ -228,7 +228,7 @@ const ExternalServicePage = () => {
       />
       <Grid container spacing={2.5}>
         <Grid item xs={10}>
-          <Typography variant="h1">Danh sách dịch vụ</Typography>
+          <Typography variant="h1">Danh sách dịch vụ ngoài</Typography>
         </Grid>
         <Grid item xs={12}>
           <ServiceDataGrid

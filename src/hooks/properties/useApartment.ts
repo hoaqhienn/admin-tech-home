@@ -1,7 +1,7 @@
 import { useGetApartmentByIdQuery, useGetApartmentsQuery } from 'api/propertyApi';
 
 export const useApartments = () => {
-  const { data: apartments = [], isLoading, error } = useGetApartmentsQuery();
+  const { data: apartments = [], isLoading, error, refetch } = useGetApartmentsQuery();
   // get apartment by id query
 
   const getApartmentById = (id: number) => {
@@ -14,5 +14,6 @@ export const useApartments = () => {
     getApartmentById,
     isLoading,
     error,
+    refetch,
   };
 };

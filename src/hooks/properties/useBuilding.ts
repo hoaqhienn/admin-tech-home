@@ -6,7 +6,7 @@ import {
 } from 'api/propertyApi';
 
 export const useBuildings = () => {
-  const { data: buildings = [], isLoading, error } = useGetBuildingsQuery();
+  const { data: buildings = [], isLoading, error, refetch } = useGetBuildingsQuery();
   const [addBuilding] = useAddBuildingMutation();
   const [updateBuilding] = useUpdateBuildingMutation();
   const [deleteBuilding] = useDeleteBuildingMutation();
@@ -18,6 +18,7 @@ export const useBuildings = () => {
     buildingIds,
     isLoading,
     error,
+    refetch,
     addBuilding,
     updateBuilding,
     deleteBuilding,

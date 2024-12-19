@@ -1,10 +1,14 @@
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import { Alert, Snackbar } from '@mui/material';
 import ComplaintDataGrid from './ComplaintDataGrid';
 import { useDeleteComplaintMutation, useUpdateComplaintStatusMutation } from 'api/serviceApi';
 import { useState } from 'react';
 import { useSocket } from 'components/provider/SocketProvider';
+import ComplaintDataGrid4 from './ComplaintDataGrid4';
+import ComplaintDataGrid2 from './ComplaintDataGrid2';
+import ComplaintDataGrid3 from './ComplaintDataGrid3';
+import ComplaintPieChart from './ComplaintPieChart';
 
 // Define types
 interface DeleteResponse {
@@ -94,7 +98,63 @@ const ComplaintPage = () => {
           <Typography variant="h1">Danh sách khiếu nại</Typography>
         </Grid>
         <Grid item xs={12}>
+          <Divider />
+          <Typography
+            variant="h4"
+            sx={{
+              marginTop: 1,
+            }}
+          >
+            Chờ xử lý
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
           <ComplaintDataGrid onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+          <Typography
+            variant="h4"
+            sx={{
+              marginTop: 1,
+            }}
+          >
+            Đang xử lý
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <ComplaintDataGrid2 onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+          <Typography
+            variant="h4"
+            sx={{
+              marginTop: 1,
+            }}
+          >
+            Đã xử lý
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <ComplaintDataGrid3 onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+          <Typography
+            variant="h4"
+            sx={{
+              marginTop: 1,
+            }}
+          >
+            Đã từ chối
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <ComplaintDataGrid4 onDelete={handleDelete} onStatusUpdate={handleStatusUpdate} />
+        </Grid>
+        <Grid item xs={12}>
+          <ComplaintPieChart />
         </Grid>
       </Grid>
 

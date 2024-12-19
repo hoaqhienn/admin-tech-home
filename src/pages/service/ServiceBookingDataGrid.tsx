@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useDeleteServiceBookingMutation, useGetServiceBookingsQuery } from 'api/serviceApi';
 import { ServiceBooking } from 'interface/Service';
-import { DeleteIcon } from 'lucide-react';
+import { DeleteIcon, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -14,7 +14,7 @@ interface DataGridProps {
 const ServiceBookingDataGrid: React.FC<DataGridProps> = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  const { data: services = [], isLoading } = useGetServiceBookingsQuery();
+  const { data: services = [], isLoading, refetch } = useGetServiceBookingsQuery();
 
   const clearSelection = useCallback(() => {
     setSelectedRows([]);
@@ -152,6 +152,11 @@ const ServiceBookingDataGrid: React.FC<DataGridProps> = () => {
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

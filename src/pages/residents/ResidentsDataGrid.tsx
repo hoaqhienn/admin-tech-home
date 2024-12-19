@@ -1,9 +1,9 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useActiveResidentMutation } from 'api/residentApi';
 import { useResidents } from 'hooks/resident/useResident';
 import { Resident, ResidentViaApartment } from 'interface/Residents';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import { DeleteIcon, EditIcon, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
 interface DataGridProps {
@@ -19,7 +19,7 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
   onBulkDelete,
   onSelectionChange,
 }) => {
-  const { residents, isLoading } = useResidents();
+  const { residents, isLoading, refetch } = useResidents();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   // const active = useActiveResidentMutation
@@ -212,6 +212,11 @@ const ResidentsDataGrid: React.FC<DataGridProps> = ({
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

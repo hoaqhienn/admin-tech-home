@@ -5,7 +5,7 @@ import { Vehicle } from 'interface/Vehicle';
 import { useCallback, useState } from 'react';
 import { useDeleteVehicleMutation } from 'api/residentApi';
 import ConfirmDialog from 'components/dialog/ConfirmDialog';
-import { Plus } from 'lucide-react';
+import VehiclePieChart from './VehiclePieChart';
 
 const VehiclePage: React.FC = () => {
   const [current, setCurrent] = useState<Vehicle | null>(null);
@@ -121,11 +121,7 @@ const VehiclePage: React.FC = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h1">Danh sách phương tiện</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Plus />}
-            onClick={() => setOpenVehicleDialog(true)}
-          >
+          <Button variant="contained" onClick={() => setOpenVehicleDialog(true)}>
             Thêm phương tiện
           </Button>
         </Grid>
@@ -141,6 +137,9 @@ const VehiclePage: React.FC = () => {
               setOpenBulkDeleteDialog(true);
             }}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <VehiclePieChart />
         </Grid>
       </Grid>
     </>

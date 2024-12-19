@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useExternalServices } from 'hooks/service/useExternalService';
 import { OutsourcingService } from 'interface/Ad';
-import { DeleteIcon, Info } from 'lucide-react';
+import { DeleteIcon, Info, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { formatDate } from 'utils/dateUtils';
 
@@ -13,7 +13,7 @@ interface DataGridProps {
 }
 
 const ExternalServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { eServices, isLoading } = useExternalServices();
+  const { eServices, isLoading, refetch } = useExternalServices();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -163,6 +163,11 @@ const ExternalServiceDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, on
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

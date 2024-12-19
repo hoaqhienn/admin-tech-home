@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useNotifications } from 'hooks/service/useNotify';
 import { Notify } from 'interface/Utils';
-import { DeleteIcon, Info, Send } from 'lucide-react';
+import { DeleteIcon, Info, RefreshCcw, Send } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { formatDate } from 'utils/dateUtils';
 
@@ -19,7 +19,7 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
   onBulkDelete,
   onSendNotification,
 }) => {
-  const { notifications, isLoading } = useNotifications();
+  const { notifications, isLoading, refetch } = useNotifications();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -182,6 +182,11 @@ const NotifyDataGrid: React.FC<DataGridProps> = ({
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

@@ -1,8 +1,8 @@
-import { Button, Chip, IconButton, Paper, Stack } from '@mui/material';
+import { Button, Chip, IconButton, Paper, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useVehicles } from 'hooks/resident/useVehicle';
 import { Vehicle } from 'interface/Vehicle';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import { DeleteIcon, EditIcon, RefreshCcw } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { formatDate } from 'utils/dateUtils';
 
@@ -13,7 +13,7 @@ interface DataGridProps {
 }
 
 const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDelete }) => {
-  const { vehicles, isLoading } = useVehicles();
+  const { vehicles, isLoading, refetch } = useVehicles();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const clearSelection = useCallback(() => {
@@ -184,6 +184,11 @@ const VehicleDataGrid: React.FC<DataGridProps> = ({ onEdit, onDelete, onBulkDele
         </Button>
       )}
       <GridToolbar />
+      <Tooltip title="Refresh Data">
+        <IconButton size="small" onClick={() => refetch()}>
+          <RefreshCcw/>
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 

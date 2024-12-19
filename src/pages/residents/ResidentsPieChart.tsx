@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { useGetResidentsQuery } from 'api';
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
@@ -26,6 +26,9 @@ const ResidentsPieChart: React.FC = () => {
         padding: 2,
       }}
     >
+      <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+        Biểu đồ số lượng trạng thái cư dân
+      </Typography>
       <PieChart width={600} height={400}>
         <Pie
           data={data}

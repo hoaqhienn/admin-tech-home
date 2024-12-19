@@ -56,7 +56,7 @@ const AddServiceProvider: React.FC<Props> = ({ setSnackbar }) => {
   useEffect(() => {
     // Update username based on idcard
     if (residentInput.idcard.length === 12) {
-      const username = `user${residentInput.idcard.substring(0, 5)}`;
+      const username = `user${residentInput.idcard.substring(6)}`; // Get last 6 digits
       setResidentInput((prev) => ({
         ...prev,
         username,
@@ -68,18 +68,18 @@ const AddServiceProvider: React.FC<Props> = ({ setSnackbar }) => {
     if (validateInput()) {
       try {
         console.log(residentInput);
-        
+
         await addProvider(residentInput).unwrap();
         setSnackbar({
           open: true,
-          message: 'Thêm cư dân thành công',
+          message: 'Thêm thành công',
           severity: 'success',
         });
         handleReset();
       } catch (error) {
         setSnackbar({
           open: true,
-          message: 'Có lỗi xảy ra khi thêm cư dân',
+          message: 'Có lỗi xảy ra khi thêm',
           severity: 'error',
         });
       }
